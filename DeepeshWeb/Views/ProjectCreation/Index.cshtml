@@ -1,0 +1,206 @@
+﻿
+@{
+    ViewBag.Title = "Project Creation";
+}
+
+<!-- Internal Select2 css -->
+<link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
+
+<!--Internal  Datetimepicker-slider css -->
+<link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
+
+
+<!--- Style css-->
+<link href="~/assets/css/style.css" rel="stylesheet">
+
+
+
+<!-- container opened -->
+<div class="container">
+
+    <!-- breadcrumb -->
+    <div class="breadcrumb-header justify-content-between">
+        <div class="my-auto">
+            <div class="d-flex">
+                <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Project Creation</span>
+            </div>
+        </div>
+    </div>
+    <!-- breadcrumb -->
+    <!-- row -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+
+            <!--Entry Code start-->
+            <div class="card custom-card">
+                <div class="card-body">
+
+                    <div class="card-body pt-0">
+                        <div class="">
+                            <div class="row row-sm">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="First_Name">Project Name</label>
+                                        <input type="text" class="form-control" ng-model="ngtxtProjectName" id="txtProjectName" placeholder="Enter Project Name">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="ddlProjectType">Type</label>
+                                        <select class="form-control select2" id="ddlProjectType" ng-model="ngddlProjectType">
+                                            <option>
+                                            </option>
+                                            <option value="Support">
+                                                Support
+                                            </option>
+                                            <option value="Development">
+                                                Development
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="txtClientName">Client Name</label>
+                                        <input type="text" class="form-control" ng-model="ngtxtClientName" id="txtClientName" placeholder="Enter client name">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="txtClientProjectManager">Client Project Manager</label>
+                                        <input type="text" class="form-control" ng-model="ngtxtClientProjectManager" id="txtClientProjectManager" placeholder="Enter client Project Manager">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="txtProjectStartDate">Start Date</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                </div>
+                                            </div><input class="form-control" type="text" ng-model="ngtxtProjectStartDate" id="txtProjectStartDate">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="txtProjectEndDate">Estimated End Date</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                </div>
+                                            </div><input class="form-control" type="text" ng-model="ngtxtProjectEndDate" id="txtProjectEndDate">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="txtNoOfDays">Number of Days</label>
+                                        <input type="text" class="form-control" ng-model="ngtxtNoOfDays" id="txtNoOfDays" placeholder="Enter number of days" disabled="disabled" value="20">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="txtLocation">Location</label>
+                                        <input type="text" class="form-control" ng-model="ngtxtLocation" id="txtLocation" placeholder="Enter location">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="ddlProjectManager">Project Manager</label>
+                                        <select class="form-control select2" id="ddlProjectManager" ng-model="ngddlProjectManager">
+                                            <option>
+                                            </option>
+                                            <option value="Shripal">
+                                                Shripal
+                                            </option>
+                                            <option value="Dhananjay">
+                                                Dhananjay
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="ddlProjectManager">Members</label>
+                                        <select class="form-control select2" id="ddlMembers" ng-model="ngddlMembers" multiple="multiple">
+                                            <option>
+                                            </option>
+                                            <option value="Jay">
+                                                Jay
+                                            </option>
+                                            <option value="Prajesh">
+                                                Prajesh
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="txtDescription">Description</label>
+                                        <textarea class="form-control" ng-model="ngtxtDescription" id="txtDescription" placeholder="Enter Description" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-sm text-center">
+                            <div class="col-sm-3">
+                            </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary btn-block">Submit</button>
+                            </div>
+                            <div class="col-lg-3">
+                                <button class="btn btn-light btn-block">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Entry Code End-->
+        </div>
+    </div>
+    <!-- row closed -->
+</div>
+<!-- Container closed -->
+
+@section scripts
+{
+    <!-- Internal Select2.min js -->
+    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/assets/js/select2.js"></script>
+
+    <!--Internal  jquery-simple-datetimepicker js -->
+    <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
+    <script src="~/assets/js/datePicker.js"></script>
+    <script>
+			$(function() {
+				'use strict'
+				
+				// AmazeUI Datetimepicker
+				$('#txtProjectStartDate').datetimepicker({
+					minView: 2,
+					format: 'dd-mm-yyyy',
+					autoclose: true
+				});
+				
+				$('#txtProjectEndDate').datetimepicker({
+					minView: 2,
+					format: 'dd-mm-yyyy',
+					autoclose: true
+				});
+				
+			});
+    </script>
+}
