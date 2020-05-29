@@ -10,7 +10,7 @@ CommonAppUtility.service('CommonAppUtilityService', function ($http, $q) {
     };
 
 
-    this.CreateItem = function (Url, jsonBody) {
+    this.SendItem = function (Url, jsonBody) {
 
         var spsite = getUrlVars()["SPHostUrl"];
         Url = Url + "?SPHostUrl=" + spsite;
@@ -22,6 +22,8 @@ CommonAppUtility.service('CommonAppUtilityService', function ($http, $q) {
         //} 
 
         //  this.test(fileData, Url);
+
+
         var data = JSON.stringify(jsonBody),
 
             configinfo = {
@@ -34,9 +36,5 @@ CommonAppUtility.service('CommonAppUtilityService', function ($http, $q) {
 
         return $http(configinfo);
     }
-
-
- 
-
 
 });

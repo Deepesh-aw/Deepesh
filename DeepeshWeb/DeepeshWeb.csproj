@@ -182,9 +182,16 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="BAL\NavigationBal.cs" />
+    <Compile Include="BAL\Timesheet\ClientBal.cs" />
+    <Compile Include="BAL\Timesheet\EmoModel.cs" />
+    <Compile Include="BAL\Timesheet\EmpBal.cs" />
+    <Compile Include="BAL\Timesheet\ProjectCreationBal.cs" />
+    <Compile Include="BAL\Timesheet\ProjectTypeBal.cs" />
+    <Compile Include="BAL\Timesheet\WorkFlowBal.cs" />
     <Compile Include="BAL\UsersGroup.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\TimeSheet\ProjectCreationController.cs" />
     <Compile Include="DAL\AuthenticateUser.cs" />
     <Compile Include="DAL\CustomAuthenticationFilter.cs" />
     <Compile Include="DAL\RestService.cs" />
@@ -194,8 +201,12 @@
     </Compile>
     <Compile Include="Models\NavigationModel.cs" />
     <Compile Include="Models\RESTOption.cs" />
-    <Compile Include="Models\Timesheet\TIM_ProjectCreationModel.cs" />
-    <Compile Include="Models\Timesheet\TIM_StatusModel.cs" />
+    <Compile Include="Models\Timesheet\ClientModel.cs" />
+    <Compile Include="Models\Timesheet\EmpModel.cs" />
+    <Compile Include="Models\Timesheet\ProjectCreationModel.cs" />
+    <Compile Include="Models\Timesheet\ProjectTypeModel.cs" />
+    <Compile Include="Models\Timesheet\StatusModel.cs" />
+    <Compile Include="Models\Timesheet\WorkFlowModel.cs" />
     <Compile Include="Models\UserGroupModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharePointContext.cs" />
@@ -8150,6 +8161,7 @@
     <Content Include="Scripts\Angular\DAL\CommonJs.js" />
     <Content Include="Scripts\Angular\DAL\DAL.js" />
     <Content Include="Scripts\Angular\DAL\Navigation.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\ProjectCreation.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="assets\css\sidemenu.css.map" />
@@ -9137,12 +9149,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Scripts\version.json" />
+    <Content Include="Views\ProjectCreation\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="BAL\Timesheet\" />
-    <Folder Include="Controllers\TimeSheet\" />
-    <Folder Include="Scripts\Angular\Timesheet\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

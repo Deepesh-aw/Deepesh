@@ -9,7 +9,7 @@ using Microsoft.SharePoint.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using DeepeshWeb.Models;
-
+using System.Xml;
 
 namespace DeepeshWeb.DAL
 {
@@ -118,8 +118,13 @@ namespace DeepeshWeb.DAL
             try
             {
                 RetrieveAccessToken(ctx);
+                XmlNamespaceManager xmlnspm = AddXmlNameSpaces();
+                string listUrl = RestUrlList(ListName);
 
-                string Metadata = String.Format("SP.Data.{0}ListItem", ListName);
+                string Metadata = GetEntityTypeName(ctx.Url, listUrl, xmlnspm);
+
+
+                // string Metadata = String.Format("SP.Data.{0}ListItem", ListName);
 
                 string listname = "'__metadata':{ 'type': '" + Metadata + "'}";
 
@@ -268,6 +273,62 @@ namespace DeepeshWeb.DAL
             accessToken = e.WebRequestExecutor.RequestHeaders.Get("Authorization");
         }
 
+        public string GetEntityTypeName(string siteUrl, string listUrl, XmlNamespaceManager xmlnspm)
+        {
+            string entitytypeName = string.Empty;
+            try
+            {
+                HttpWebRequest listRequest = (HttpWebRequest)HttpWebRequest.Create(siteUrl + listUrl);
+                listRequest.Method = "GET";
+                listRequest.Accept = "application/atom+xml";
+                listRequest.ContentType = "application/atom+xml;type=entry";
+                // listRequest.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                listRequest.Headers.Add("Authorization", accessToken);
+                HttpWebResponse listResponse = (HttpWebResponse)listRequest.GetResponse();
+                using (StreamReader listReader = new StreamReader(listResponse.GetResponseStream()))
+                {
+                    var listXml = new XmlDocument();
+                    listXml.LoadXml(listReader.ReadToEnd());
+                    var entityTypeNode = listXml.SelectSingleNode("//atom:entry/atom:content/m:properties/d:ListItemEntityTypeFullName", xmlnspm);
+                    var listNameNode = listXml.SelectSingleNode("//atom:entry/atom:content/m:properties/d:Title", xmlnspm);
+                    entitytypeName = entityTypeNode.InnerXml;
+                }
+                //listRequest.KeepAlive = false;
+
+            }
+            catch (Exception ex)
+            {
+                //string method = string.Concat(MethodBase.GetCurrentMethod().Name, " - SiteUrl - ", siteUrl, " - ListUrl - ", listUrl);
+                //string guid = WriteException(ex, method, MethodBase.GetCurrentMethod().DeclaringType.Name, string.Empty);
+                //throw new Exception(string.Format("An error occured while reading data. GUID: {0}", guid));
+            }
+            return entitytypeName;
+        }
+
+        public static string RestUrlList(string listName)
+        {
+            return string.Format("/_api/web/lists/GetByTitle('{0}')", listName);
+        }
+
+        public static XmlNamespaceManager AddXmlNameSpaces()
+        {
+
+            try
+            {
+                XmlNamespaceManager xmlnspm = new XmlNamespaceManager(new NameTable());
+
+                xmlnspm.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+                xmlnspm.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
+                xmlnspm.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
+                return xmlnspm;
+
+            }
+            catch (Exception ex)
+            {
+                // string guid = WriteException(ex, MethodBase.GetCurrentMethod().Name, MethodBase.GetCurrentMethod().DeclaringType.Name, string.Empty);
+                throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ""));
+            }
+        }
     }
 
 }

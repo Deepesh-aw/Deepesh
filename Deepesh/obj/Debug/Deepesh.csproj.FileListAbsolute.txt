@@ -3,3 +3,8 @@ D:\Deep_TIM\Deepesh\Deepesh\bin\Debug\Deepesh.pdb
 D:\Deep_TIM\Deepesh\Deepesh\obj\Debug\Deepesh.csprojAssemblyReference.cache
 D:\Deep_TIM\Deepesh\Deepesh\obj\Debug\Deepesh.dll
 D:\Deep_TIM\Deepesh\Deepesh\obj\Debug\Deepesh.pdb
+D:\Deepesh-Development\Deepesh\Deepesh\bin\Debug\Deepesh.dll.config
+D:\Deepesh-Development\Deepesh\Deepesh\bin\Debug\Deepesh.pdb
+D:\Deepesh-Development\Deepesh\Deepesh\obj\Debug\Deepesh.csprojAssemblyReference.cache
+D:\Deepesh-Development\Deepesh\Deepesh\obj\Debug\Deepesh.dll
+D:\Deepesh-Development\Deepesh\Deepesh\obj\Debug\Deepesh.pdb

@@ -9,15 +9,14 @@
         lstProjectType = ViewBag.ProjectTypeData;
     }*@
 
+@section styles
+{
+    <!-- Internal Select2 css -->
+    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
 
-<!-- Internal Select2 css -->
-<link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
-
-<!--Internal  Datetimepicker-slider css -->
-<link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
-
-<!--- Style css-->
-<link href="~/assets/css/style.css" rel="stylesheet">
+    <!--Internal  Datetimepicker-slider css -->
+    <link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
+}
 
 <form id="frmProjectCreation" ng-app="ProjectCreationApp" ng-controller="ProjectCreationController">
     <!-- container opened -->
@@ -46,13 +45,20 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="First_Name">Project Name</label>
-                                            <input name="ProjectName" type="text" class="form-control" ng-model="ngtxtProjectName" id="txtProjectName" placeholder="Enter Project Name">
+                                            <input required=""  name="ProjectName" type="text" class="form-control" ng-model="ngtxtProjectName" id="txtProjectName" placeholder="Enter Project Name">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="ddlProjectType">Type</label>
-                                            @Html.DropDownList("ProjectType", new SelectList(ViewBag.ProjectTypeData, "Id", "TypeName"), "Choose One", new { @class = "form-control select2", name = "ProjectType" })
+                                            <select required="" class="form-control select2" name="ProjectType" ng-model="ngddlProjectType">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.ProjectTypeData)
+                                                {
+                                                    <option value="@i.Id">@i.TypeName</option>
+                                                }
+                                            </select>
+                                            @*@Html.DropDownList("ddlProjectType", new SelectList(ViewBag.ProjectTypeData, "Id", "TypeName"), "Choose One", new { @class = "form-control select2", @onchange = "GetType()" })*@
                                         </div>
                                     </div>
                                 </div>
@@ -60,7 +66,14 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="txtClientName">Client Name</label>
-                                            @Html.DropDownList("ClientName", new SelectList(ViewBag.ClientData, "Id", "ClientName"), "Choose One", new { @class = "form-control select2", @name = "ClientName" })
+                                            <select class="form-control select2" name="ClientName" ng-model="ngddlClientName" id="ddlClientName">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.ClientData)
+                                                {
+                                                    <option value="@i.Id">@i.ClientName</option>
+                                                }
+                                            </select>
+                                            @*@Html.DropDownList("ddlClientName", new SelectList(ViewBag.ClientData, "Id", "ClientName"), "Choose One", new { @class = "form-control select2" })*@
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -106,7 +119,14 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="ddlProjectManager">Project Manager</label>
-                                            @Html.DropDownList("ProjectManager", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @name = "ProjectManager" })
+                                            <select class="form-control select2" name="ProjectManager" ng-model="ngddlProjectManager" id="ddlProjectManager">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.EmpData)
+                                                {
+                                                    <option value="@i.Id">@i.FullName</option>
+                                                }
+                                            </select>
+                                            @*@Html.DropDownList("ProjectManager", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @name = "ProjectManager" })*@
                                         </div>
                                     </div>
                                 </div>
@@ -114,7 +134,14 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="ddlMembers">Members</label>
-                                            @Html.DropDownList("ddlMembers", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @multiple = "multiple", @onchange = "MakeMembersText()"})
+                                            <select class="form-control select2" ng-model="ngddlMembers" id="ddlMembers" multiple="multiple">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.EmpData)
+                                                {
+                                                    <option value="@i.Id">@i.FullName</option>
+                                                }
+                                            </select>
+                                            @*@Html.DropDownList("ddlMembers", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @multiple = "multiple", @onchange = "MakeMembersText()" })*@
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -129,7 +156,8 @@
                                 <div class="col-sm-3">
                                 </div>
                                 <div class="col-sm-3">
-                                    <button class="btn btn-primary btn-block" ng-click="AddProject()">Submit</button>
+                                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                                    @*"*@
                                 </div>
                                 <div class="col-lg-3">
                                     <button class="btn btn-light btn-block">Cancel</button>
@@ -152,29 +180,13 @@
     <script src="~/assets/plugins/select2/js/select2.min.js"></script>
     <script src="~/assets/js/select2.js"></script>
 
+    <!--Internal  Parsley.min js -->
+    <script src="~/assets/plugins/parsleyjs/parsley.min.js"></script>
+
     <!--Internal  jquery-simple-datetimepicker js -->
     <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
     <script src="~/assets/js/datePicker.js"></script>
+
     <script src="~/Scripts/Angular/Timesheet/JS/ProjectCreation.js"></script>
-    <script src="~/Scripts/Angular/Timesheet/Services/ProjectCreationService.js"></script>
 
-    <script>
-        $(function () {
-            'use strict'
-
-            // AmazeUI Datetimepicker
-            $('#txtProjectStartDate').datetimepicker({
-                minView: 2,
-                format: 'dd-mm-yyyy',
-                autoclose: true
-            });
-
-            $('#txtProjectEndDate').datetimepicker({
-                minView: 2,
-                format: 'dd-mm-yyyy',
-                autoclose: true
-            });
-
-        });
-    </script>
 }

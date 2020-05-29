@@ -27,5 +27,18 @@ namespace DeepeshWeb.BAL.Timesheet
 
             return jArray;
         }
+
+        private string RESTSave(ClientContext clientContext, string ItemData)
+        {
+            RestService restService = new RestService();
+            return restService.SaveItem(clientContext, "TIM_ProjectCreation", ItemData);
+        }
+
+        public string SaveProjectCreation(ClientContext clientContext, string ItemData)
+        {
+            string response = RESTSave(clientContext, ItemData);
+            return response;
+        }
+
     }
 }
