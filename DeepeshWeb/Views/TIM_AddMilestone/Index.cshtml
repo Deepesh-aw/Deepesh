@@ -1,0 +1,291 @@
+﻿@model DeepeshWeb.Models.Timesheet.TIM_ProjectCreationModel
+@{
+    ViewBag.Title = "Add Milestone";
+
+}
+@section style
+{
+    <!-- Internal Select2 css -->
+    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
+
+    <!--Internal  Datetimepicker-slider css -->
+    <link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
+}
+<style>
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+        table caption {
+            font-size: 1.5em;
+            margin: .5em 0 .75em;
+        }
+
+        table tr {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: .35em;
+        }
+
+        table th,
+        table td {
+            padding: .625em;
+            text-align: center;
+        }
+
+        table th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+    .table thead th {
+        padding: 12px !important;
+    }
+
+    i {
+        margin: auto !important;
+    }
+
+    @@media screen and (max-width: 600px) {
+        table {
+            border: 0;
+        }
+
+            table caption {
+                font-size: 1.3em;
+            }
+
+            table thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            table tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            table td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: .8em;
+                text-align: right;
+            }
+
+        input {
+            border-radius: 4px;
+        }
+
+        .input {
+            border-radius: 4px;
+        }
+
+        table td::before {
+            /*
+        * aria-label has no advantage, it won't be read inside a table
+        content: attr(aria-label);
+        */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table td:last-child {
+            border-bottom: 0;
+        }
+        /*table td input {
+            padding: .625em;
+            text-align: center;
+            width: 50% !important;
+            margin-left: auto !important;
+        }*/
+        .responsivetablediv {
+            margin-top: 25px !important;
+        }
+    }
+</style>
+
+<form id="frmAddMilestone" ng-app="AddMilestoneApp" ng-controller="AddMilestoneController">
+    <!-- container opened -->
+    <div class="container">
+
+        <!-- breadcrumb -->
+        <div class="breadcrumb-header justify-content-between">
+            <div class="my-auto">
+                <div class="d-flex">
+                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Add Milestone</span>
+                </div>
+            </div>
+        </div>
+        <!-- breadcrumb -->
+        <!-- row -->
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+
+                <!--Entry Code start-->
+                @Html.Partial("~/Views/Partial/TIM_ViewProjectData.cshtml",Model)
+                <!--Entry Code End-->
+            </div>
+        </div>
+        <!-- row closed -->
+        <!-- row -->
+        <div class="row row-sm">
+            <!--div-->
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="mg-b-0 text-md-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Milestone</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">Estimated End Date</th>
+                                        <th scope="col">Days</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td data-label="Milestone"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestone" id="txtMilestone" placeholder="Enter Milestone"></td>
+                                        <td data-label="Description"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestoneDescription" id="txtDescription" placeholder="Enter Description"></td>
+                                        <td data-label="Start Date">
+                                            <div class="input-group responsivetablediv">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                    </div>
+                                                </div><input class="form-control" type="text" ng-model="ngtxtMilStartDate" id="txtMilStartDate">
+                                            </div>
+                                        </td>
+
+                                        <td data-label="Estimated End Date">
+                                            <div class="input-group responsivetablediv">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                    </div>
+                                                </div><input class="form-control" type="text" ng-model="ngtxtMilEndDate" id="txtMilEndDate">
+                                            </div>
+                                        </td>
+
+                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilDays" id="txtMilDays" placeholder="Enter Days"></td>
+
+                                        <td data-label="Status">
+                                            <div class="responsivetablediv">
+                                                <select class="form-control select2 " id="txtMilStatus">
+                                                    <option value="Approved">
+                                                        Approved
+                                                    </option>
+                                                    <option value="Pending">
+                                                        Pending
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td data-label="Action">
+                                            <div class="btn-icon-list responsivetablediv">
+                                                <i class="fa fa-plus"></i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- bd -->
+                    </div><!-- bd -->
+                </div><!-- bd -->
+            </div>
+            <!--div-->
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Sr.No.</th>
+                                        <th scope="col">Milestone</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">Estimated End Date</th>
+                                        <th scope="col">Days</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td data-label="Sr.No.">1</td>
+                                        <td data-label="Milestone">Test Milestone1</td>
+                                        <td data-label="Description">Test Milestone1</td>
+                                        <td data-label="Start Date">16/05/2020</td>
+                                        <td data-label="Estimated End Date">19/05/2020</td>
+                                        <td data-label="Days">4</td>
+                                        <td data-label="Status">Pending</td>
+                                        <td data-label="Action">
+                                            <i class="fa fa-edit"></i>&nbsp;
+                                            <i class="fa fa-trash"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- bd -->
+                    </div><!-- bd -->
+                </div><!-- bd -->
+            </div>
+
+            <!--/div-->
+            <div class="col-xl-12">
+                <div class="row row-sm text-center">
+                    <div class="col-sm-3">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-primary btn-block">Submit</button>
+                    </div>
+                    <div class="col-lg-3">
+                        <button class="btn btn-secondary btn-block">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- row closed -->
+
+    </div>
+    <!-- Container closed -->
+</form>
+<br />
+
+@section scripts
+{
+    <!-- Internal Select2.min js -->
+    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/assets/js/select2.js"></script>
+
+    <!--Internal  Parsley.min js -->
+    <script src="~/assets/plugins/parsleyjs/parsley.min.js"></script>
+
+    <!--Internal  jquery-simple-datetimepicker js -->
+    <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
+    <script src="~/assets/js/datePicker.js"></script>
+
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_AddMilestone.js"></script>
+
+}

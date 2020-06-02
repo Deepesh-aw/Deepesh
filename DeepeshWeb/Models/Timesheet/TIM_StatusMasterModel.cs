@@ -5,7 +5,7 @@ using System.Web;
 
 namespace DeepeshWeb.Models.Timesheet
 {
-    public class StatusModel
+    public class TIM_StatusMasterModel
     {
         public int Id { get; set; }
         public string StatusName { get; set; }

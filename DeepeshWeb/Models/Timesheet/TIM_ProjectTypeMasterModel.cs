@@ -5,9 +5,9 @@ using System.Web;
 
 namespace DeepeshWeb.Models.Timesheet
 {
-    public class ClientModel
+    public class TIM_ProjectTypeMasterModel
     {
         public int Id { get; set; }
-        public string ClientName { get; set; }
+        public string TypeName { get; set; }
     }
 }

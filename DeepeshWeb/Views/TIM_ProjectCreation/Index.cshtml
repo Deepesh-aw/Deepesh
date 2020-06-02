@@ -9,7 +9,7 @@
         lstProjectType = ViewBag.ProjectTypeData;
     }*@
 
-@section styles
+@section style
 {
     <!-- Internal Select2 css -->
     <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
@@ -51,13 +51,16 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="ddlProjectType">Type</label>
-                                            <select required="" class="form-control select2" name="ProjectType" ng-model="ngddlProjectType">
-                                                <option value="">Choose One</option>
-                                                @foreach (var i in ViewBag.ProjectTypeData)
-                                                {
-                                                    <option value="@i.Id">@i.TypeName</option>
-                                                }
-                                            </select>
+                                            <div id="slType" class="parsley-select">
+                                                <select required="" class="form-control select2" name="ProjectType" ng-model="ngddlProjectType" data-parsley-class-handler="#slType" data-parsley-errors-container="#slTypeError">
+                                                    <option value="">Choose One</option>
+                                                    @foreach (var i in ViewBag.ProjectTypeData)
+                                                    {
+                                                        <option value="@i.Id">@i.TypeName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div id="slTypeError"></div>
                                             @*@Html.DropDownList("ddlProjectType", new SelectList(ViewBag.ProjectTypeData, "Id", "TypeName"), "Choose One", new { @class = "form-control select2", @onchange = "GetType()" })*@
                                         </div>
                                     </div>
@@ -66,20 +69,23 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="txtClientName">Client Name</label>
-                                            <select class="form-control select2" name="ClientName" ng-model="ngddlClientName" id="ddlClientName">
-                                                <option value="">Choose One</option>
-                                                @foreach (var i in ViewBag.ClientData)
-                                                {
-                                                    <option value="@i.Id">@i.ClientName</option>
-                                                }
-                                            </select>
+                                            <div id="slClient" class="parsley-select">
+                                                <select required="" class="form-control select2" name="ClientName" ng-model="ngddlClientName" id="ddlClientName" data-parsley-class-handler="#slClient" data-parsley-errors-container="#slClientError">
+                                                    <option value="">Choose One</option>
+                                                    @foreach (var i in ViewBag.ClientData)
+                                                    {
+                                                        <option value="@i.Id">@i.ClientName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div id="slClientError"></div>
                                             @*@Html.DropDownList("ddlClientName", new SelectList(ViewBag.ClientData, "Id", "ClientName"), "Choose One", new { @class = "form-control select2" })*@
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="txtClientProjectManager">Client Project Manager</label>
-                                            <input name="ClientProjectManager" type="text" class="form-control" ng-model="ngtxtClientProjectManager" id="txtClientProjectManager" placeholder="Enter client Project Manager">
+                                            <input name="ClientProjectManager" type="text" class="form-control" ng-model="ngtxtClientProjectManager" id="txtClientProjectManager" placeholder="Enter client Project Manager" required="">
                                         </div>
                                     </div>
                                 </div>
@@ -92,8 +98,9 @@
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input name="StartDate" class="form-control" type="text" ng-model="ngtxtProjectStartDate" id="txtProjectStartDate">
+                                                </div><input required="" name="StartDate" class="form-control date" type="text" data-parsley-class-handler="#slStartDate" data-parsley-errors-container="#slStartDateError" ng-model="ngtxtProjectStartDate" id="txtProjectStartDate" >
                                             </div>
+                                            <div id="slStartDateError"></div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -104,8 +111,9 @@
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input name="EndDate" class="form-control" type="text" ng-model="ngtxtProjectEndDate" id="txtProjectEndDate">
+                                                </div><input required="" data-parsley-class-handler="#slEndDate" data-parsley-errors-container="#slEndDateError" name="EndDate" class="form-control date" type="text" ng-model="ngtxtProjectEndDate" id="txtProjectEndDate">
                                             </div>
+                                            <div id="slEndDateError"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -113,19 +121,22 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="txtNoOfDays">Number of Days</label>
-                                            <input name="NoOfDays" type="text" class="form-control" ng-model="ngtxtNoOfDays" id="txtNoOfDays" placeholder="Enter number of days" disabled="disabled" value="20">
+                                            <input name="NoOfDays" type="text" class="form-control" ng-model="ngtxtNoOfDays" id="txtNoOfDays" placeholder="Enter number of days" disabled="disabled" value="20" required="">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="ddlProjectManager">Project Manager</label>
-                                            <select class="form-control select2" name="ProjectManager" ng-model="ngddlProjectManager" id="ddlProjectManager">
-                                                <option value="">Choose One</option>
-                                                @foreach (var i in ViewBag.EmpData)
-                                                {
-                                                    <option value="@i.Id">@i.FullName</option>
-                                                }
-                                            </select>
+                                            <div id="slProjectManager" class="parsley-select">
+                                                <select class="form-control select2" name="ProjectManager" ng-model="ngddlProjectManager" required="" data-parsley-class-handler="#slProjectManager" data-parsley-errors-container="#slProjectManagerError" id="ddlProjectManager">
+                                                    <option value="">Choose One</option>
+                                                    @foreach (var i in ViewBag.EmpData)
+                                                    {
+                                                        <option value="@i.Id">@i.FullName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div id="slProjectManagerError"></div>
                                             @*@Html.DropDownList("ProjectManager", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @name = "ProjectManager" })*@
                                         </div>
                                     </div>
@@ -134,20 +145,23 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="ddlMembers">Members</label>
-                                            <select class="form-control select2" ng-model="ngddlMembers" id="ddlMembers" multiple="multiple">
-                                                <option value="">Choose One</option>
-                                                @foreach (var i in ViewBag.EmpData)
-                                                {
-                                                    <option value="@i.Id">@i.FullName</option>
-                                                }
-                                            </select>
+                                            <div id="slMembers">
+                                                <select required="" class="form-control select2" ng-model="ngddlMembers" id="ddlMembers"  data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError" multiple="multiple" data-parsley-mincheck="1">
+                                                    <option value="">Choose One</option>
+                                                    @foreach (var i in ViewBag.EmpData)
+                                                    {
+                                                        <option value="@i.Id">@i.FullName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div id="slMembersError"></div>
                                             @*@Html.DropDownList("ddlMembers", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @multiple = "multiple", @onchange = "MakeMembersText()" })*@
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="txtDescription">Description</label>
-                                            <textarea name="Description" class="form-control" ng-model="ngtxtDescription" id="txtDescription" placeholder="Enter Description" rows="3"></textarea>
+                                            <textarea name="Description" class="form-control" ng-model="ngtxtDescription" id="txtDescription" placeholder="Enter Description" rows="3" required=""></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -157,7 +171,6 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <button type="submit" class="btn btn-primary btn-block">Submit</button>
-                                    @*"*@
                                 </div>
                                 <div class="col-lg-3">
                                     <button class="btn btn-light btn-block">Cancel</button>
@@ -187,6 +200,6 @@
     <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
     <script src="~/assets/js/datePicker.js"></script>
 
-    <script src="~/Scripts/Angular/Timesheet/JS/ProjectCreation.js"></script>
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_ProjectCreation.js"></script>
 
 }

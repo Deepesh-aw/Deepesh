@@ -5,7 +5,7 @@ using System.Web;
 
 namespace DeepeshWeb.Models.Timesheet
 {
-    public class WorkFlowModel
+    public class TIM_WorkFlowMasterModel
     {
         public string TransactionType { get; set; }
         public string FromStatusID { get; set; }

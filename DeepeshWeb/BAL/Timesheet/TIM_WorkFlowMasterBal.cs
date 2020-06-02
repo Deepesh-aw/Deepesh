@@ -10,31 +10,8 @@ using System.Web;
 
 namespace DeepeshWeb.BAL.Timesheet
 {
-    public class WorkFlowBal
+    public class TIM_WorkFlowMasterBal
     {
-        public List<WorkFlowModel> GetWorkFlowForProjectCreation(ClientContext clientContext)
-        {
-            List<WorkFlowModel> _WorkFlowModel = new List<WorkFlowModel>();
-
-            string filter = "TransactionType eq 'ProjectCreation' and Action eq 'Forward'";
-
-            JArray jArray = RESTGet(clientContext, filter);
-
-            foreach (JObject j in jArray)
-            {
-                _WorkFlowModel.Add(new WorkFlowModel
-                {
-                    TransactionType = j["TransactionType"] == null ? "" : j["TransactionType"].ToString(),
-                    FromStatus = j["FromStatus"]["StatusName"] == null ? "" : Convert.ToString(j["FromStatus"]["StatusName"].ToString()),
-                    ToStatus = j["ToStatus"]["StatusName"] == null ? "" : Convert.ToString(j["ToStatus"]["StatusName"].ToString()),
-                    ToStatusID = j["ToStatus"] == null ? "" : Convert.ToString(j["ToStatus"]["ID"].ToString()),
-                    InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"].ToString())
-                });
-            }
-
-            return _WorkFlowModel;
-        }
-
         private JArray RESTGet(ClientContext clientContext, string filter)
         {
             RestService restService = new RestService();
@@ -51,5 +28,29 @@ namespace DeepeshWeb.BAL.Timesheet
 
             return jArray;
         }
+
+        public List<TIM_WorkFlowMasterModel> GetWorkFlowForProjectCreation(ClientContext clientContext)
+        {
+            List<TIM_WorkFlowMasterModel> _WorkFlowModel = new List<TIM_WorkFlowMasterModel>();
+
+            string filter = "TransactionType eq 'ProjectCreation' and Action eq 'Forward'";
+
+            JArray jArray = RESTGet(clientContext, filter);
+
+            foreach (JObject j in jArray)
+            {
+                _WorkFlowModel.Add(new TIM_WorkFlowMasterModel
+                {
+                    TransactionType = j["TransactionType"] == null ? "" : j["TransactionType"].ToString(),
+                    FromStatus = j["FromStatus"]["StatusName"] == null ? "" : Convert.ToString(j["FromStatus"]["StatusName"].ToString()),
+                    ToStatus = j["ToStatus"]["StatusName"] == null ? "" : Convert.ToString(j["ToStatus"]["StatusName"].ToString()),
+                    ToStatusID = j["ToStatus"] == null ? "" : Convert.ToString(j["ToStatus"]["ID"].ToString()),
+                    InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"].ToString())
+                });
+            }
+
+            return _WorkFlowModel;
+        }
+
     }
 }

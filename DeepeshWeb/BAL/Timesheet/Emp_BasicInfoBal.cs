@@ -10,33 +10,36 @@ using System.Web;
 
 namespace DeepeshWeb.BAL.Timesheet
 {
-    public class ProjectTypeBal
+    public class Emp_BasicInfoBal
     {
-        private JArray RESTGet(ClientContext clientContext)
+        private JArray RESTGet(ClientContext clientContext, string filter = "")
         {
             RestService restService = new RestService();
             JArray jArray = new JArray();
             RESTOption rESTOption = new RESTOption();
 
-            rESTOption.select = "ID,TypeName";
+            rESTOption.filter = filter;
+            rESTOption.select = "ID, FirstName, LastName";
+            //rESTOption.expand = "TypeName,ApproverName,Employee";
             rESTOption.top = "5000";
 
-            jArray = restService.GetAllItemFromList(clientContext, "TIM_ProjectTypeMaster", rESTOption);
+            jArray = restService.GetAllItemFromList(clientContext, "Emp_BasicInfo", rESTOption);
             return jArray;
         }
-        public List<ProjectTypeModel> GetProjectType(ClientContext clientContext)
+
+        public List<Emp_BasicInfoModel> GetEmp(ClientContext clientContext)
         {
-            List<ProjectTypeModel> lstProjectType = new List<ProjectTypeModel>();
+            List<Emp_BasicInfoModel> lstEmp = new List<Emp_BasicInfoModel>();
             JArray jArray = RESTGet(clientContext);
             foreach (JObject j in jArray)
             {
-                lstProjectType.Add(new ProjectTypeModel
+                lstEmp.Add(new Emp_BasicInfoModel
                 {
                     Id = Convert.ToInt32(j["Id"]),
-                    TypeName = j["TypeName"].ToString(),
+                    FullName = j["FirstName"].ToString()+ j["LastName"].ToString(),
                 }); ;
             }
-            return lstProjectType;
+            return lstEmp;
         }
     }
 }

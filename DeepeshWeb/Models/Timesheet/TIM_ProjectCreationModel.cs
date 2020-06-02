@@ -6,11 +6,12 @@ using System.Web;
 
 namespace DeepeshWeb.Models.Timesheet
 {
-    public class ProjectCreationModel
+    public class TIM_ProjectCreationModel
     {
         public int Id { get; set; }
         public string ProjectName { get; set; }
         public int ClientName { get; set; }
+        public string Client { get; set; }
         public string ClientProjectManager { get; set; }
         public string Description { get; set; }
         public string EndDate { get; set; }
@@ -19,8 +20,10 @@ namespace DeepeshWeb.Models.Timesheet
         public string MembersText { get; set; }
         public int NoOfDays { get; set; }
         public int ProjectManager { get; set; }
+        public string ProjectManagerName { get; set; }
         public string StartDate { get; set; }
         public int ProjectType { get; set; }
+        public string ProjectTypeName { get; set; }
         public int Status { get; set; }
     }
 }

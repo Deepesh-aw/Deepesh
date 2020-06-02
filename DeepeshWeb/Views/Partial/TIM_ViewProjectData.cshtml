@@ -1,0 +1,127 @@
+﻿@model DeepeshWeb.Models.Timesheet.TIM_ProjectCreationModel
+
+
+<div class="card custom-card">
+    <div class="card-body">
+
+        <div class="card-body pt-0">
+            <div class="">
+                <div class="row row-sm">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Project Name</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.ProjectName
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Project Type</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.ProjectTypeName
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-sm">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Client Name</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.Client
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Client Project Manager</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.ClientProjectManager
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-sm">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Start Date</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.StartDate.Split(' ')[0]
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>End Date</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.EndDate.Split(' ')[0]
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-sm">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>No of days</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.NoOfDays
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Project Manager</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @Model.ProjectManagerName
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-sm">
+
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Member</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <ul class="list-group">
+                                <li>Deepesh </li>
+                                <li>Vivek</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <b>Description</b>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            Project development and deployment
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

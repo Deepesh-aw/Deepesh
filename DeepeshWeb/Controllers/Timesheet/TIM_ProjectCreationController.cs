@@ -4,18 +4,19 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DeepeshWeb.BAL.EmployeeManagement;
 using DeepeshWeb.BAL.Timesheet;
 using DeepeshWeb.Models.Timesheet;
 
 namespace DeepeshWeb.Controllers.TimeSheet
 {
-    public class ProjectCreationController : Controller
+    public class TIM_ProjectCreationController : Controller
     {
-        ProjectCreationBal BalProjectCreation = new ProjectCreationBal();
-        ProjectTypeBal BalProjectType = new ProjectTypeBal();
-        ClientBal BalClient = new ClientBal();
-        EmpBal BalEmp = new EmpBal();
-        WorkFlowBal BalWorkflow = new WorkFlowBal();
+        TIM_ProjectCreationBal BalProjectCreation = new TIM_ProjectCreationBal();
+        TIM_ProjectTypeMasterBal BalProjectType = new TIM_ProjectTypeMasterBal();
+        Emp_ClientMasterDetailsBal BalClient = new Emp_ClientMasterDetailsBal();
+        Emp_BasicInfoBal BalEmp = new Emp_BasicInfoBal();
+        TIM_WorkFlowMasterBal BalWorkflow = new TIM_WorkFlowMasterBal();
 
         // GET: ProjectCreation
         public ActionResult Index()
@@ -32,13 +33,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
         [SharePointContextFilter]
         [ActionName("SaveProject")]
-        public JsonResult SaveProject(ProjectCreationModel Project)
+        public JsonResult SaveProject(TIM_ProjectCreationModel Project)
         {
             List<object> obj = new List<object>();
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
-                List<WorkFlowModel> lstWorkFlow = new List<WorkFlowModel>();
+                List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                 lstWorkFlow = BalWorkflow.GetWorkFlowForProjectCreation(clientContext);
                 string returnID = "0";
                 //Project.Members = Request["Members"].Split(',').Select(int.Parse).ToArray();

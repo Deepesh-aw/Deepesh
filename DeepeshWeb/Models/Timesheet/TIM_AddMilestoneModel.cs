@@ -5,9 +5,7 @@ using System.Web;
 
 namespace DeepeshWeb.Models.Timesheet
 {
-    public class ProjectTypeModel
+    public class TIM_AddMilestoneModel
     {
-        public int Id { get; set; }
-        public string TypeName { get; set; }
     }
 }

@@ -13,6 +13,7 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
             AddProject();
              return false;
         });
+
         // AmazeUI Datetimepicker
         $('#txtProjectStartDate').datetimepicker({
             minView: 2,
@@ -25,6 +26,23 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
             format: 'dd-mm-yyyy',
             autoclose: true
         });
+
+        $('.date').datetimepicker().on('changeDate', function (e) {
+            if ($('#txtProjectStartDate').val() != "" && $('#txtProjectEndDate').val() != "") {
+                var start = moment($("#txtProjectStartDate").val(), 'DD/MM/YYYY');
+                var end = moment($("#txtProjectEndDate").val(), 'DD/MM/YYYY');
+                var days = end.diff(start, 'days');
+                if (days <= 0) {
+                    alert("End date should not be less than or equal to the start date");
+                    $("#txtProjectEndDate").val('');
+                    $("#txtNoOfDays").val('');
+                    $scope.ngtxtNoOfDays = '';
+                    return false;
+                }
+                $scope.ngtxtNoOfDays = days;
+                $("#txtNoOfDays").val(days);
+            }
+        });		
 
     });
 
