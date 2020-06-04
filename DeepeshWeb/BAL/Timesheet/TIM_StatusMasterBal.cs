@@ -17,7 +17,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RestService restService = new RestService();
             JArray jArray = new JArray();
             RESTOption rESTOption = new RESTOption();
-
+            rESTOption.filter = filter;
             rESTOption.select = "ID,StatusName";
             rESTOption.top = "5000";
 

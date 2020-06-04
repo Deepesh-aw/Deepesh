@@ -42,9 +42,12 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                 lstWorkFlow = BalWorkflow.GetWorkFlowForProjectCreation(clientContext);
                 string returnID = "0";
+                string arr = String.Join(",", Project.Members);
                 //Project.Members = Request["Members"].Split(',').Select(int.Parse).ToArray();
+                //itemdata += " ,'MembersId': {'results': [1,3] }";
                 string itemdata = " 'ProjectName': '" + Project.ProjectName + "'";
-                itemdata += " ,'MembersId': ''results':[1,4]}'";
+                itemdata += " ,'MembersId': {'results': [" + arr + "] }";
+                itemdata += " ,'MembersId': {'results': "+Project.Members+" }";
                 itemdata += " ,'ClientProjectManager': '" + Project.ClientProjectManager + "'";
                 itemdata += " ,'StartDate': '" + Project.StartDate + "'";
                 itemdata += " ,'EndDate': '" + Project.EndDate + "'";
@@ -61,6 +64,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
                 }
                 returnID = BalProjectCreation.SaveProjectCreation(clientContext, itemdata);
+                if (Convert.ToInt32(returnID) > 0)
+                    obj.Add("OK");
             }
 
             return Json(obj, JsonRequestBehavior.AllowGet);

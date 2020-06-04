@@ -104,8 +104,13 @@
                     <div class="col-lg-3">
                         <div class="form-group">
                             <ul class="list-group">
-                                <li>Deepesh </li>
-                                <li>Vivek</li>
+                                @{
+                                    var Members = Model.MembersText.Split(',');
+                                    foreach(var i in Members){
+                                        <li>@i </li>
+                                    }
+                                }
+
                             </ul>
                         </div>
                     </div>

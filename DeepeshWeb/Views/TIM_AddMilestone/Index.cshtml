@@ -12,7 +12,7 @@
     <link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
 }
 <style>
-    table {
+    .tableCss {
         border: 1px solid #ccc;
         border-collapse: collapse;
         margin: 0;
@@ -21,47 +21,55 @@
         table-layout: fixed;
     }
 
-        table caption {
+        .tableCss caption {
             font-size: 1.5em;
             margin: .5em 0 .75em;
         }
 
-        table tr {
+        .tableCss tr {
             background-color: #f8f8f8;
             border: 1px solid #ddd;
             padding: .35em;
         }
 
-        table th,
-        table td {
+        .tableCss th,
+        .tableCss td {
             padding: .625em;
             text-align: center;
         }
 
-        table th {
+        .tableCss th {
             font-size: .85em;
             letter-spacing: .1em;
             text-transform: uppercase;
         }
 
-    .table thead th {
-        padding: 12px !important;
-    }
+        .tableCss thead th {
+            padding: 12px !important;
+        }
 
-    i {
+    .fa {
         margin: auto !important;
     }
 
     @@media screen and (max-width: 600px) {
-        table {
+        .datetimepicker table {
+            background: none;
+        }
+
+        .datetimepicker {
+            width: auto;
+        }
+
+        .tableCss {
             border: 0;
         }
 
-            table caption {
+            .tableCss caption {
                 font-size: 1.3em;
             }
 
-            table thead {
+            .tableCss thead {
                 border: none;
                 clip: rect(0 0 0 0);
                 height: 1px;
@@ -72,13 +80,13 @@
                 width: 1px;
             }
 
-            table tr {
+            .tableCss tr {
                 border-bottom: 3px solid #ddd;
                 display: block;
                 margin-bottom: .625em;
             }
 
-            table td {
+            .tableCss td {
                 border-bottom: 1px solid #ddd;
                 display: block;
                 font-size: .8em;
@@ -93,7 +101,7 @@
             border-radius: 4px;
         }
 
-        table td::before {
+        .tableCss td::before {
             /*
         * aria-label has no advantage, it won't be read inside a table
         content: attr(aria-label);
@@ -104,7 +112,7 @@
             text-transform: uppercase;
         }
 
-        table td:last-child {
+        .tableCss td:last-child {
             border-bottom: 0;
         }
         /*table td input {
@@ -117,9 +125,12 @@
             margin-top: 25px !important;
         }
     }
+    .erralign{
+        text-align:left;
+    }
 </style>
 
-<form id="frmAddMilestone" ng-app="AddMilestoneApp" ng-controller="AddMilestoneController">
+<form id="frmAddMilestone" ng-app="AddMilestoneApp" ng-controller="AddMilestoneController" autocomplete="off">
     <!-- container opened -->
     <div class="container">
 
@@ -137,7 +148,7 @@
             <div class="col-xl-12 col-lg-12">
 
                 <!--Entry Code start-->
-                @Html.Partial("~/Views/Partial/TIM_ViewProjectData.cshtml",Model)
+                @Html.Partial("~/Views/Partial/TIM_ViewProjectData.cshtml", Model)
                 <!--Entry Code End-->
             </div>
         </div>
@@ -149,7 +160,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="mg-b-0 text-md-nowrap">
+                            <table class="mg-b-0 text-md-nowrap tableCss">
                                 <thead>
                                     <tr>
                                         <th scope="col">Milestone</th>
@@ -157,51 +168,43 @@
                                         <th scope="col">Start Date</th>
                                         <th scope="col">Estimated End Date</th>
                                         <th scope="col">Days</th>
-                                        <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td data-label="Milestone"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestone" id="txtMilestone" placeholder="Enter Milestone"></td>
-                                        <td data-label="Description"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestoneDescription" id="txtDescription" placeholder="Enter Description"></td>
+                                        <td data-label="Milestone"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestone" id="txtMilestone" placeholder="Enter Milestone" required=""></td>
+
+                                        <td data-label="Description"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDescription" id="txtMileDescription" placeholder="Enter Description" required=""></td>
+
                                         <td data-label="Start Date">
                                             <div class="input-group responsivetablediv">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input class="form-control" type="text" ng-model="ngtxtMilStartDate" id="txtMilStartDate">
+                                                </div>
+                                                <input required="" type="text" class="form-control date" ng-model="ngtxtMileStartDate" id="txtMileStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
                                             </div>
+                                            <div id="slMilestoneStartDateError"></div>
                                         </td>
 
                                         <td data-label="Estimated End Date">
-                                            <div class="input-group responsivetablediv">
+                                            <div class="input-group responsivetablediv" id="slMilestoneEndDate">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input class="form-control" type="text" ng-model="ngtxtMilEndDate" id="txtMilEndDate">
+                                                </div><input class="form-control date" type="text" ng-model="ngtxtMileEndDate" id="txtMileEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
                                             </div>
+                                            <div id="slMilestoneEndDateError"></div>
                                         </td>
 
-                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilDays" id="txtMilDays" placeholder="Enter Days"></td>
+                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDays" id="txtMileDays" placeholder="Enter Days" readonly="readonly"></td>
 
-                                        <td data-label="Status">
-                                            <div class="responsivetablediv">
-                                                <select class="form-control select2 " id="txtMilStatus">
-                                                    <option value="Approved">
-                                                        Approved
-                                                    </option>
-                                                    <option value="Pending">
-                                                        Pending
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </td>
                                         <td data-label="Action">
                                             <div class="btn-icon-list responsivetablediv">
-                                                <i class="fa fa-plus"></i>
+                                                <button type="button" class="fa fa-plus" title="Add" ng-click="AddMilestone()"></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -212,12 +215,12 @@
                 </div><!-- bd -->
             </div>
             <!--div-->
-            <div class="col-xl-12">
+            <div class="col-xl-12" ng-if="Milestone.length>0">
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
 
-                            <table>
+                            <table class="tableCss">
                                 <thead>
                                     <tr>
                                         <th scope="col">Sr.No.</th>
@@ -226,22 +229,20 @@
                                         <th scope="col">Start Date</th>
                                         <th scope="col">Estimated End Date</th>
                                         <th scope="col">Days</th>
-                                        <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr ng-repeat="m in Milestone">
                                         <td data-label="Sr.No.">1</td>
-                                        <td data-label="Milestone">Test Milestone1</td>
-                                        <td data-label="Description">Test Milestone1</td>
-                                        <td data-label="Start Date">16/05/2020</td>
-                                        <td data-label="Estimated End Date">19/05/2020</td>
-                                        <td data-label="Days">4</td>
-                                        <td data-label="Status">Pending</td>
+                                        <td data-label="Milestone">{{m.Milestone}}</td>
+                                        <td data-label="Description">{{m.Description}}</td>
+                                        <td data-label="Start Date">{{m.StartDate}}</td>
+                                        <td data-label="Estimated End Date">{{m.EndDate}}</td>
+                                        <td data-label="Days">{{m.NoOfDays}}</td>
                                         <td data-label="Action">
-                                            <i class="fa fa-edit"></i>&nbsp;
-                                            <i class="fa fa-trash"></i>
+                                            <i class="fa fa-edit" ng-click="EditMilestone($index)"></i>&nbsp;
+                                            <i class="fa fa-trash" ng-click="DeleteMilestone($index)"></i>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -257,7 +258,7 @@
                     <div class="col-sm-3">
                     </div>
                     <div class="col-sm-3">
-                        <button class="btn btn-primary btn-block">Submit</button>
+                        <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">Submit</button>
                     </div>
                     <div class="col-lg-3">
                         <button class="btn btn-secondary btn-block">Cancel</button>
@@ -269,7 +270,20 @@
         <!-- row closed -->
 
     </div>
+    <!-- Modal alert message Success -->
+    <div class="modal" id="SuccessModelMilestone" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content tx-size-sm">
+                <div class="modal-body tx-center pd-y-20 pd-x-20">
+                    <i class="icon ion-ios-checkmark-circle-outline tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
+                    <h4 class="tx-success tx-semibold mg-b-20">Congratulations!</h4>
+                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveRedirect()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Container closed -->
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
 </form>
 <br />
 
@@ -279,13 +293,17 @@
     <script src="~/assets/plugins/select2/js/select2.min.js"></script>
     <script src="~/assets/js/select2.js"></script>
 
-    <!--Internal  Parsley.min js -->
-    <script src="~/assets/plugins/parsleyjs/parsley.min.js"></script>
-
     <!--Internal  jquery-simple-datetimepicker js -->
     <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
     <script src="~/assets/js/datePicker.js"></script>
 
     <script src="~/Scripts/Angular/Timesheet/JS/TIM_AddMilestone.js"></script>
+    @*<script type="text/javascript">
+            var model = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(this.Model));
+            AddMilestoneApp.value("viewModel", model);
+        </script>*@
 
 }
+
+
+

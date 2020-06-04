@@ -10,7 +10,7 @@ CommonAppUtility.service('CommonAppUtilityService', function ($http, $q) {
     };
 
 
-    this.SendItem = function (Url, jsonBody) {
+    this.CreateItem = function (Url, jsonBody) {
 
         var spsite = getUrlVars()["SPHostUrl"];
         Url = Url + "?SPHostUrl=" + spsite;

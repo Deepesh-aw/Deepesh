@@ -46,7 +46,6 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
 
     });
 
-    //$scope.AddProject = function () {
     function AddProject() {
         var MembersText = $("#ddlMembers option:selected").map(function () { return this.text }).get().join(', ');
         //var data = $("#frmProjectCreation").serialize();
@@ -66,15 +65,16 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
             'ProjectType': $scope.ngddlProjectType,
         }
 
-        CommonAppUtilityService.SendItem("/ProjectCreation/SaveProject", data).then(function (response) {
-            if (response.status == 200) {
-                alert("Done");
-                //Pageredirect("/Approve");
-            } else {
-                alert("Error");
-            }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/SaveProject", data).then(function (response) {
+            if (response.data[0] == "OK")
+                $('#SuccessModelProject').modal('show');
+
         });
-    }    
+    } 
+
+    $scope.SaveRedirect = function () {
+
+    }
 });
 
 

@@ -2,6 +2,7 @@
 using DeepeshWeb.Models;
 using DeepeshWeb.Models.Timesheet;
 using Microsoft.SharePoint.Client;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,16 @@ namespace DeepeshWeb.BAL.Timesheet
             foreach (JObject j in jArray)
             { 
                 TIM_ProjectCreationModel data = new TIM_ProjectCreationModel();
+                int i = 0;
+                data.Members = new Int32[((Newtonsoft.Json.Linq.JContainer)j["Members"]["results"]).Count];
+                foreach (var item in j["Members"]["results"])
+                {
+                    data.Members[i] = Convert.ToInt32(item["ID"]);
+                    i++;
+                }
                 data.Id = j["Id"] == null ? 0 : Convert.ToInt32(j["Id"]);
+                data.ProjectManager = j["ProjectManager"]["Id"] == null ? 0 : Convert.ToInt32(j["ProjectManager"]["Id"]);
+                data.MembersText = j["MembersText"] == null ? "" : Convert.ToString(j["MembersText"]);
                 data.ProjectName = j["ProjectName"] == null ? "" : Convert.ToString(j["ProjectName"]);
                 data.ProjectTypeName = j["ProjectType"]["TypeName"] == null ? "" : Convert.ToString(j["ProjectType"]["TypeName"]);
                 data.Client = j["ClientName"]["ClientName"] == null ? "" : Convert.ToString(j["ClientName"]["ClientName"].ToString());
@@ -49,7 +59,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "ID,ClientProjectManager,ProjectName,StartDate,EndDate,Description,Status/StatusName,InternalStatus,NoOfDays,ProjectType/TypeName,ClientName/ClientName,Members/FirstName,Members/LastName,ProjectManager/FirstName,ProjectManager/LastName";
+            rESTOption.select = "ID,ClientProjectManager,ProjectName,StartDate,EndDate,Description,Status/StatusName,InternalStatus,NoOfDays,ProjectType/TypeName,ClientName/ClientName,MembersText,Members/ID,Members/FirstName,Members/LastName,ProjectManager/FirstName,ProjectManager/LastName,ProjectManager/Id";
             rESTOption.expand = "ProjectType,ClientName,Members,ProjectManager,Status";
             rESTOption.top = "5000";
 

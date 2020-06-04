@@ -45,7 +45,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="First_Name">Project Name</label>
-                                            <input required=""  name="ProjectName" type="text" class="form-control" ng-model="ngtxtProjectName" id="txtProjectName" placeholder="Enter Project Name">
+                                            <input required="" name="ProjectName" type="text" class="form-control" ng-model="ngtxtProjectName" id="txtProjectName" placeholder="Enter Project Name">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -74,7 +74,7 @@
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.ClientData)
                                                     {
-                                                        <option value="@i.Id">@i.ClientName</option>
+                                                        <option value="@i.ID">@i.ClientName</option>
                                                     }
                                                 </select>
                                             </div>
@@ -98,7 +98,7 @@
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input required="" name="StartDate" class="form-control date" type="text" data-parsley-class-handler="#slStartDate" data-parsley-errors-container="#slStartDateError" ng-model="ngtxtProjectStartDate" id="txtProjectStartDate" >
+                                                </div><input required="" name="StartDate" class="form-control date" type="text" data-parsley-class-handler="#slStartDate" data-parsley-errors-container="#slStartDateError" ng-model="ngtxtProjectStartDate" id="txtProjectStartDate">
                                             </div>
                                             <div id="slStartDateError"></div>
                                         </div>
@@ -121,7 +121,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="txtNoOfDays">Number of Days</label>
-                                            <input name="NoOfDays" type="text" class="form-control" ng-model="ngtxtNoOfDays" id="txtNoOfDays" placeholder="Enter number of days" disabled="disabled" value="20" required="">
+                                            <input name="NoOfDays" type="text" class="form-control" ng-model="ngtxtNoOfDays" id="txtNoOfDays" placeholder="Enter number of days" disabled="disabled" value="20">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -132,7 +132,7 @@
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.EmpData)
                                                     {
-                                                        <option value="@i.Id">@i.FullName</option>
+                                                        <option value="@i.ID">@i.FullName</option>
                                                     }
                                                 </select>
                                             </div>
@@ -146,11 +146,11 @@
                                         <div class="form-group">
                                             <label for="ddlMembers">Members</label>
                                             <div id="slMembers">
-                                                <select required="" class="form-control select2" ng-model="ngddlMembers" id="ddlMembers"  data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError" multiple="multiple" data-parsley-mincheck="1">
+                                                <select required="" class="form-control select2" ng-model="ngddlMembers" id="ddlMembers" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError" multiple="multiple" data-parsley-mincheck="1">
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.EmpData)
                                                     {
-                                                        <option value="@i.Id">@i.FullName</option>
+                                                        <option value="@i.ID">@i.FullName</option>
                                                     }
                                                 </select>
                                             </div>
@@ -185,6 +185,18 @@
         <!-- row closed -->
     </div>
     <!-- Container closed -->
+    <!-- Modal alert message Success -->
+    <div class="modal" id="SuccessModelProject" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content tx-size-sm">
+                <div class="modal-body tx-center pd-y-20 pd-x-20">
+                    <i class="icon ion-ios-checkmark-circle-outline tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
+                    <h4 class="tx-success tx-semibold mg-b-20">Congratulations!</h4>
+                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveRedirect()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
 @section scripts

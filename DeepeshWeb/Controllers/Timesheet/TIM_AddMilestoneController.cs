@@ -11,7 +11,9 @@ namespace DeepeshWeb.Controllers.TimeSheet
     public class TIM_AddMilestoneController : Controller
     {
         TIM_ProjectCreationBal BalProjectCreation = new TIM_ProjectCreationBal();
-        TIM_StatusMasterBal BalStatus = new TIM_StatusMasterBal();
+        TIM_WorkFlowMasterBal BalWorkflow = new TIM_WorkFlowMasterBal();
+        TIM_AddMilestoneBal BalAddMilestone = new TIM_AddMilestoneBal();
+
         // GET: TIM_AddMilestone
         public ActionResult Index()
         {
@@ -20,9 +22,50 @@ namespace DeepeshWeb.Controllers.TimeSheet
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
                 lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext);
-                ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
             }
             return View(lstProjectCreation[0]);
+        }
+
+        [HttpPost]
+        [ActionName("AddMilestone")]
+        public JsonResult AddMilestone(List<TIM_AddMilestoneModel> AddMilestone)
+        {
+            List<object> obj = new List<object>();
+            int i = 0;
+            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            {
+                List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
+                lstWorkFlow = BalWorkflow.GetWorkFlowForAddMilestone(clientContext);
+                string returnID = "0";
+                foreach (var item in AddMilestone)
+                {
+                    string arr = String.Join(",", item.Members); 
+                    
+                    string itemdata = " 'MileStone': '" + item.Milestone + "'";
+                    itemdata += " ,'MembersId': {'results': ["+arr+"] }";
+                    itemdata += " ,'Description': '" + item.Description + "'";
+                    itemdata += " ,'StartDate': '" + item.StartDate + "'";
+                    itemdata += " ,'EndDate': '" + item.EndDate + "'";
+                    itemdata += " ,'NoOfDays': '" + item.NoOfDays + "'";
+                    itemdata += " ,'ProjectId': '" + item.Project + "'";
+                    itemdata += " ,'ProjectManagerId': '" + item.ProjectManager + "'";
+                    itemdata += " ,'MembersText': '" + item.MembersText + "'";
+
+                    if (lstWorkFlow.Count > 0)
+                    {
+                        itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                        itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                    }
+                    returnID = BalAddMilestone.SaveMilestone(clientContext, itemdata);
+                    if (Convert.ToInt32(returnID) > 0)
+                        i++;
+                    
+                }
+                if (i == AddMilestone.Count)
+                    obj.Add("OK");
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
         }
     }
 }
