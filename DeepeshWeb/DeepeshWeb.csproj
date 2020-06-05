@@ -184,16 +184,19 @@
     <Compile Include="BAL\EmployeeManagement\Emp_BasicInfoBal.cs" />
     <Compile Include="BAL\EmployeeManagement\Emp_ClientMasterDetailsBal.cs" />
     <Compile Include="BAL\NavigationBal.cs" />
-    <Compile Include="BAL\Timesheet\TIM_AddMilestoneBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_MilestoneBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectCreationBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectTypeMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_StatusMasterBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_TaskBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_WorkFlowMasterBal.cs" />
     <Compile Include="BAL\UsersGroup.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_MilestoneDetailsController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_AddMilestoneController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_ProjectCreationController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_AddTaskController.cs" />
     <Compile Include="DAL\AuthenticateUser.cs" />
     <Compile Include="DAL\CustomAuthenticationFilter.cs" />
     <Compile Include="DAL\RestService.cs" />
@@ -205,10 +208,11 @@
     <Compile Include="Models\EmployeeManagement\Emp_ClientMasterDetailsModel.cs" />
     <Compile Include="Models\NavigationModel.cs" />
     <Compile Include="Models\RESTOption.cs" />
-    <Compile Include="Models\Timesheet\TIM_AddMilestoneModel.cs" />
+    <Compile Include="Models\Timesheet\TIM_MilestoneModel.cs" />
     <Compile Include="Models\Timesheet\TIM_ProjectCreationModel.cs" />
     <Compile Include="Models\Timesheet\TIM_ProjectTypeMasterModel.cs" />
     <Compile Include="Models\Timesheet\TIM_StatusMasterModel.cs" />
+    <Compile Include="Models\Timesheet\TIM_TaskModel.cs" />
     <Compile Include="Models\Timesheet\TIM_WorkFlowMasterModel.cs" />
     <Compile Include="Models\UserGroupModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -8165,6 +8169,7 @@
     <Content Include="Scripts\Angular\DAL\DAL.js" />
     <Content Include="Scripts\Angular\DAL\Navigation.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddMilestone.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\TIM_MilestoneDetails.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_ProjectCreation.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -9156,9 +9161,12 @@
     <Content Include="Views\TIM_ProjectCreation\Index.cshtml" />
     <Content Include="Views\TIM_AddMilestone\Index.cshtml" />
     <Content Include="Views\Partial\TIM_ViewProjectData.cshtml" />
+    <Content Include="Views\TIM_MilestoneDetails\Index.cshtml" />
+    <Content Include="Views\TIM_AddTask\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\TIM_Task\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

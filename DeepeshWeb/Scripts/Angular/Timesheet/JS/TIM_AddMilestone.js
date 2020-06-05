@@ -25,6 +25,7 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
         
         $('.date').datetimepicker().on('changeDate', function (e)
         {
+            
             var start = moment($("#txtMileStartDate").val(), 'DD/MM/YYYY');
             var end = moment($("#txtMileEndDate").val(), 'DD/MM/YYYY');
             var days = end.diff(start, 'days');
@@ -62,18 +63,23 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
                 $scope.ngtxtMileDays = days;
                 $("#txtMileDays").val(days);
             }
-        });	
-
-        $('input,select,textarea').keypress(function () {
-            if ($(this).hasClass("parsley-error")){
+            if ($(this).hasClass("parsley-error")) {
                 $(this).removeClass("parsley-error");
                 $(this).addClass("parsley-success");
                 $(this).next().remove();
-            }
+            } 
+        });	
 
+        $('input,select,textarea').keypress(function () {
+            if ($(this).hasClass("parsley-error")) {
+                $(this).removeClass("parsley-error");
+                $(this).addClass("parsley-success");
+                $(this).next().remove();
+            }   
         });
-
     });
+
+    
 
     $scope.DeleteMilestone = function (index) {
         $scope.Milestone.splice(index, 1);
@@ -136,7 +142,9 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
             $scope.ngtxtMilestone = "";
             $scope.ngtxtMileDescription = "";
             $("#txtMileStartDate").val('');
+            $scope.ngtxtMileStartDate = "";
             $("#txtMileEndDate").val('');
+            $scope.ngtxtMileEndDate = "";
             $("#txtMileDays").val('');
             $scope.ngtxtMileDays = '';
         }

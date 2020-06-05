@@ -12,23 +12,31 @@ namespace DeepeshWeb.Controllers.TimeSheet
     {
         TIM_ProjectCreationBal BalProjectCreation = new TIM_ProjectCreationBal();
         TIM_WorkFlowMasterBal BalWorkflow = new TIM_WorkFlowMasterBal();
-        TIM_AddMilestoneBal BalAddMilestone = new TIM_AddMilestoneBal();
+        TIM_MilestoneBal BalAddMilestone = new TIM_MilestoneBal();
 
         // GET: TIM_AddMilestone
         public ActionResult Index()
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
-            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            try
             {
-                lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext);
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext);
+                }
             }
+            catch(Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+
             return View(lstProjectCreation[0]);
         }
 
         [HttpPost]
         [ActionName("AddMilestone")]
-        public JsonResult AddMilestone(List<TIM_AddMilestoneModel> AddMilestone)
+        public JsonResult AddMilestone(List<TIM_MilestoneModel> AddMilestone)
         {
             List<object> obj = new List<object>();
             int i = 0;
@@ -42,7 +50,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 {
                     string arr = String.Join(",", item.Members); 
                     
-                    string itemdata = " 'MileStone': '" + item.Milestone + "'";
+                    string itemdata = " 'MileStone': '" + item.MileStone + "'";
                     itemdata += " ,'MembersId': {'results': ["+arr+"] }";
                     itemdata += " ,'Description': '" + item.Description + "'";
                     itemdata += " ,'StartDate': '" + item.StartDate + "'";

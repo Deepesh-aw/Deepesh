@@ -1,8 +1,12 @@
-﻿@model DeepeshWeb.Models.Timesheet.TIM_ProjectCreationModel
-@{
-    ViewBag.Title = "Add Milestone";
+﻿@using DeepeshWeb.Models.Timesheet
+@model TIM_ProjectCreationModel
 
+@{
+    ViewBag.Title = "Add Task";
+    TIM_MilestoneModel Milestone = new TIM_MilestoneModel();
+    Milestone = ViewBag.MilestoneData[0];
 }
+
 @section style
 {
     <!-- Internal Select2 css -->
@@ -125,12 +129,13 @@
             margin-top: 25px !important;
         }
     }
-    .erralign{
-        text-align:left;
+
+    .erralign {
+        text-align: left;
     }
 </style>
 
-<form id="frmAddMilestone" ng-app="AddMilestoneApp" ng-controller="AddMilestoneController" autocomplete="off">
+<form id="frmMilestoneDetails" autocomplete="off" ng-app="MilestoneDetailsApp" ng-controller="MilestoneDetailController">
     <!-- container opened -->
     <div class="container">
 
@@ -138,12 +143,11 @@
         <div class="breadcrumb-header justify-content-between">
             <div class="my-auto">
                 <div class="d-flex">
-                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Add Milestone</span>
+                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Add Task</span>
                 </div>
             </div>
         </div>
         <!-- breadcrumb -->
-        <!-- row -->
         <div class="row">
             <div class="col-xl-12 col-lg-12">
 
@@ -152,15 +156,19 @@
                 <!--Entry Code End-->
             </div>
         </div>
-        <!-- row closed -->
         <!-- row -->
         <div class="row row-sm">
-            <!--div-->
             <div class="col-xl-12">
                 <div class="card">
+                    <div class="card-header pb-0">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="card-title mg-b-0">Milestone</h4>
+                        </div>
+                    </div><hr />
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="mg-b-0 text-md-nowrap tableCss">
+
+                            <table class="tableCss">
                                 <thead>
                                     <tr>
                                         <th scope="col">Milestone</th>
@@ -168,14 +176,62 @@
                                         <th scope="col">Start Date</th>
                                         <th scope="col">Estimated End Date</th>
                                         <th scope="col">Days</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td data-label="Milestone">@Milestone.MileStone</td>
+                                        <td data-label="Description">@Milestone.Description</td>
+                                        <td data-label="Start Date">@Milestone.StartDate.Split(' ')[0]</td>
+                                        <td data-label="Estimated End Date">@Milestone.EndDate.Split(' ')[0]</td>
+                                        <td data-label="Days">@Milestone.NoOfDays</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- bd -->
+                    </div><!-- bd -->
+                </div><!-- bd -->
+            </div>
+        </div>
+
+        <div class="row row-sm">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="card-title mg-b-0">Task</h4>
+                        </div>
+                    </div><hr />
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="tableCss">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Task</th>
+                                        <th scope="col">Members</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">Estimated End Date</th>
+                                        <th scope="col">Days</th>
+                                        <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td data-label="Milestone"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestone" id="txtMilestone" placeholder="Enter Milestone" required=""></td>
+                                        <td data-label="Task"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTask" id="txtTask" placeholder="Enter Task" required=""></td>
 
-                                        <td data-label="Description"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDescription" id="txtMileDescription" placeholder="Enter Description" required=""></td>
+                                        <td data-label="Members">
+                                            <div id="slMembers">
+                                                <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError">
+                                                    <option value="">Choose One</option>
+                                                    @foreach (var i in ViewBag.EmpData)
+                                                    {
+                                                        <option value="@i.ID">@i.FullName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div id="slMembersError"></div>
+                                        </td>
 
                                         <td data-label="Start Date">
                                             <div class="input-group responsivetablediv">
@@ -184,7 +240,7 @@
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
                                                 </div>
-                                                <input required="" type="text" class="form-control date" ng-model="ngtxtMileStartDate" id="txtMileStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
+                                                <input required="" type="text" class="form-control date" ng-model="ngtxtTaskStartDate" id="txtTaskStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
                                             </div>
                                             <div id="slMilestoneStartDateError"></div>
                                         </td>
@@ -195,12 +251,25 @@
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input class="form-control date" type="text" ng-model="ngtxtMileEndDate" id="txtMileEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
+                                                </div><input class="form-control date" type="text" ng-model="ngtxtTaskEndDate" id="txtTaskEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
                                             </div>
                                             <div id="slMilestoneEndDateError"></div>
                                         </td>
 
-                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDays" id="txtMileDays" placeholder="Enter Days" readonly="readonly"></td>
+                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTaskDays" id="txtTaskDays" placeholder="Enter Days" readonly="readonly"></td>
+
+                                        <td>
+                                            <div id="slStatus">
+                                                <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus" data-parsley-class-handler="#slStatus" data-parsley-errors-container="#slStatusError">
+                                                    <option value="">Choose One</option>
+                                                    @foreach (var i in ViewBag.StatusData)
+                                                    {
+                                                        <option value="@i.Id">@i.StatusName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div id="slStatusError"></div>
+                                        </td>
 
                                         <td data-label="Action">
                                             <div class="btn-icon-list responsivetablediv">
@@ -214,8 +283,11 @@
                     </div><!-- bd -->
                 </div><!-- bd -->
             </div>
-            <!--div-->
-            <div class="col-xl-12" ng-if="Milestone.length>0">
+
+        </div>
+
+        <div class="row row-sm">
+            <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -224,25 +296,27 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">Sr.No.</th>
-                                        <th scope="col">Milestone</th>
-                                        <th scope="col">Description</th>
+                                        <th scope="col">Task</th>
+                                        <th scope="col">Members</th>
                                         <th scope="col">Start Date</th>
                                         <th scope="col">Estimated End Date</th>
                                         <th scope="col">Days</th>
+                                        <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="m in Milestone">
-                                        <td data-label="Sr.No.">{{$index+1}}</td>
-                                        <td data-label="Milestone">{{m.Milestone}}</td>
-                                        <td data-label="Description">{{m.Description}}</td>
-                                        <td data-label="Start Date">{{m.StartDate}}</td>
-                                        <td data-label="Estimated End Date">{{m.EndDate}}</td>
-                                        <td data-label="Days">{{m.NoOfDays}}</td>
+                                    <tr>
+                                        <td data-label="Sr.No.">1</td>
+                                        <td data-label="Task">Test Task1</td>
+                                        <td data-label="Members">Abc</td>
+                                        <td data-label="Start Date">16/05/2020</td>
+                                        <td data-label="Estimated End Date">19/05/2020</td>
+                                        <td data-label="Days">4</td>
+                                        <td data-label="Status">Pending</td>
                                         <td data-label="Action">
-                                            <i class="fa fa-edit" ng-click="EditMilestone($index)"></i>&nbsp;
-                                            <i class="fa fa-trash" ng-click="DeleteMilestone($index)"></i>
+                                            <i class="fa fa-edit" ng-click="EditTask($index)"></i>&nbsp;
+                                            <i class="fa fa-trash" ng-click="DeleteTask($index)"></i>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -251,33 +325,29 @@
                     </div><!-- bd -->
                 </div><!-- bd -->
             </div>
-
-            <!--/div-->
-            <div class="col-xl-12" >
+            <div class="col-xl-12">
                 <div class="row row-sm text-center">
-                        <div class="col-sm-3">
-                        </div>
-                        <div class="col-sm-3">
-                            <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">Submit</button>&nbsp;
-                        </div>
-                        <div class="col-lg-3">
-                            <button class="btn btn-secondary btn-block">Cancel</button>
-                        </div>
+                    <div class="col-sm-3">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">Submit</button>&nbsp;
+                    </div>
+                    <div class="col-lg-3">
+                        <button class="btn btn-secondary btn-block">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
-
         <!-- row closed -->
-
     </div>
     <!-- Modal alert message Success -->
-    <div class="modal" id="SuccessModelMilestone" data-backdrop="static" data-keyboard="false">
+    <div class="modal" id="SuccessModelTask" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content tx-size-sm">
                 <div class="modal-body tx-center pd-y-20 pd-x-20">
                     <i class="icon ion-ios-checkmark-circle-outline tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
                     <h4 class="tx-success tx-semibold mg-b-20">Congratulations!</h4>
-                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveRedirect()">Continue</button>
+                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveTaskRedirect()">Continue</button>
                 </div>
             </div>
         </div>
@@ -285,7 +355,7 @@
     <!-- Container closed -->
     <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
 </form>
-<br />
+
 
 @section scripts
 {
@@ -297,13 +367,6 @@
     <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
     <script src="~/assets/js/datePicker.js"></script>
 
-    <script src="~/Scripts/Angular/Timesheet/JS/TIM_AddMilestone.js"></script>
-    @*<script type="text/javascript">
-            var model = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(this.Model));
-            AddMilestoneApp.value("viewModel", model);
-        </script>*@
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_AddTask.js"></script>
 
 }
-
-
-
