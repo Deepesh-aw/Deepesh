@@ -8169,6 +8169,7 @@
     <Content Include="Scripts\Angular\DAL\DAL.js" />
     <Content Include="Scripts\Angular\DAL\Navigation.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddMilestone.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddTask.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_MilestoneDetails.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_ProjectCreation.js" />
     <Content Include="Scripts\bootstrap.js" />

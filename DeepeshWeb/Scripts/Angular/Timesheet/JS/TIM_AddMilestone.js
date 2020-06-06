@@ -62,6 +62,11 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
                 }
                 $scope.ngtxtMileDays = days;
                 $("#txtMileDays").val(days);
+                $("#txtMileDays").hasClass("parsley-error"); {
+                    $("#txtMileDays").removeClass("parsley-error");
+                    $("#txtMileDays").addClass("parsley-success");
+                    $("#txtMileDays").next().remove();
+                }
             }
             if ($(this).hasClass("parsley-error")) {
                 $(this).removeClass("parsley-error");
@@ -115,6 +120,12 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
         if ($scope.ngtxtMileEndDate == "" || $scope.ngtxtMileEndDate == undefined || $scope.ngtxtMileEndDate == null) {
             $("#txtMileEndDate").addClass("parsley-error"); 
             $("#txtMileEndDate").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
+        if ($scope.ngtxtMileDays == "" || $scope.ngtxtMileDays == undefined || $scope.ngtxtMileDays == null) {
+            $("#txtMileDays").addClass("parsley-error");
+            $("#txtMileDays").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
             rv = false;
         }
 

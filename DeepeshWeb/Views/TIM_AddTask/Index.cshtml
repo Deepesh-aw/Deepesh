@@ -135,7 +135,7 @@
     }
 </style>
 
-<form id="frmMilestoneDetails" autocomplete="off" ng-app="MilestoneDetailsApp" ng-controller="MilestoneDetailController">
+<form id="frmMilestoneDetails" autocomplete="off" ng-app="AddTaskApp" ng-controller="AddTaskController">
     <!-- container opened -->
     <div class="container">
 
@@ -273,7 +273,7 @@
 
                                         <td data-label="Action">
                                             <div class="btn-icon-list responsivetablediv">
-                                                <button type="button" class="fa fa-plus" title="Add" ng-click="AddMilestone()"></button>
+                                                <button type="button" class="fa fa-plus" title="Add" ng-click="AddTask()"></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -286,7 +286,7 @@
 
         </div>
 
-        <div class="row row-sm">
+        <div class="row row-sm" ng-if="Task.length>0">
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
@@ -306,14 +306,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td data-label="Sr.No.">1</td>
-                                        <td data-label="Task">Test Task1</td>
-                                        <td data-label="Members">Abc</td>
-                                        <td data-label="Start Date">16/05/2020</td>
-                                        <td data-label="Estimated End Date">19/05/2020</td>
-                                        <td data-label="Days">4</td>
-                                        <td data-label="Status">Pending</td>
+                                    <tr ng-repeat="t in Task">
+                                        <td data-label="Sr.No.">{{$index+1}}</td>
+                                        <td data-label="Task">{{t.Task}}</td>
+                                        <td data-label="Members">{{t.MemberTitle}}</td>
+                                        <td data-label="Start Date">{{t.StartDate}}</td>
+                                        <td data-label="Estimated End Date">{{t.EndDate}}</td>
+                                        <td data-label="Days">{{t.NoOfDays}}</td>
+                                        <td data-label="Status">{{t.StatusName}}</td>
                                         <td data-label="Action">
                                             <i class="fa fa-edit" ng-click="EditTask($index)"></i>&nbsp;
                                             <i class="fa fa-trash" ng-click="DeleteTask($index)"></i>
@@ -325,12 +325,12 @@
                     </div><!-- bd -->
                 </div><!-- bd -->
             </div>
-            <div class="col-xl-12">
+            <div class="col-xl-12" ng-if="Task.length>0">
                 <div class="row row-sm text-center">
                     <div class="col-sm-3">
                     </div>
                     <div class="col-sm-3">
-                        <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">Submit</button>&nbsp;
+                        <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddTask()">Submit</button>&nbsp;
                     </div>
                     <div class="col-lg-3">
                         <button class="btn btn-secondary btn-block">Cancel</button>
@@ -354,6 +354,7 @@
     </div>
     <!-- Container closed -->
     <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.MilestoneData[0])" id="hdnMilestoneData" />
 </form>
 
 
@@ -368,5 +369,5 @@
     <script src="~/assets/js/datePicker.js"></script>
 
     <script src="~/Scripts/Angular/Timesheet/JS/TIM_AddTask.js"></script>
-
+    
 }

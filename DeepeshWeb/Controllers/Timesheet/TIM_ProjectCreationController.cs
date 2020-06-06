@@ -47,7 +47,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 //itemdata += " ,'MembersId': {'results': [1,3] }";
                 string itemdata = " 'ProjectName': '" + Project.ProjectName + "'";
                 itemdata += " ,'MembersId': {'results': [" + arr + "] }";
-                itemdata += " ,'MembersId': {'results': "+Project.Members+" }";
                 itemdata += " ,'ClientProjectManager': '" + Project.ClientProjectManager + "'";
                 itemdata += " ,'StartDate': '" + Project.StartDate + "'";
                 itemdata += " ,'EndDate': '" + Project.EndDate + "'";

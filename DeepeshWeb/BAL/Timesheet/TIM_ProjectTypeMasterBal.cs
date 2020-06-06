@@ -32,7 +32,7 @@ namespace DeepeshWeb.BAL.Timesheet
             {
                 lstProjectType.Add(new TIM_ProjectTypeMasterModel
                 {
-                    Id = Convert.ToInt32(j["Id"]),
+                    ID = Convert.ToInt32(j["ID"]),
                     TypeName = j["TypeName"].ToString(),
                 }); ;
             }

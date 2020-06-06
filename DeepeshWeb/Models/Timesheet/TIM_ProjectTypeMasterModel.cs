@@ -7,7 +7,7 @@ namespace DeepeshWeb.Models.Timesheet
 {
     public class TIM_ProjectTypeMasterModel
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string TypeName { get; set; }
     }
 }

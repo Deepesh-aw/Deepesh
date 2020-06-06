@@ -33,7 +33,7 @@ namespace DeepeshWeb.BAL.Timesheet
             {
                 lstStatus.Add(new TIM_StatusMasterModel
                 {
-                    Id = Convert.ToInt32(j["Id"]),
+                    ID = Convert.ToInt32(j["Id"]),
                     StatusName = j["StatusName"].ToString(),
                 }); ;
             }

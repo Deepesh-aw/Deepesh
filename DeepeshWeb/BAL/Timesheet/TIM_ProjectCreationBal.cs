@@ -16,7 +16,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_ProjectCreationModel> GetProjectCreationById(ClientContext clientContext, int Id = 2)
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
-            string filter = "Id eq "+Id+"";
+            string filter = "ID eq "+Id+"";
             JArray jArray = RESTGet(clientContext, filter);
             foreach (JObject j in jArray)
             { 
@@ -28,7 +28,7 @@ namespace DeepeshWeb.BAL.Timesheet
                     data.Members[i] = Convert.ToInt32(item["ID"]);
                     i++;
                 }
-                data.Id = j["Id"] == null ? 0 : Convert.ToInt32(j["Id"]);
+                data.ID = j["ID"] == null ? 0 : Convert.ToInt32(j["ID"]);
                 data.ProjectManager = j["ProjectManager"]["Id"] == null ? 0 : Convert.ToInt32(j["ProjectManager"]["Id"]);
                 data.MembersText = j["MembersText"] == null ? "" : Convert.ToString(j["MembersText"]);
                 data.ProjectName = j["ProjectName"] == null ? "" : Convert.ToString(j["ProjectName"]);

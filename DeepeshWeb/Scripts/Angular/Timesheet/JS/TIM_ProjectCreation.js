@@ -73,7 +73,7 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
     } 
 
     $scope.SaveRedirect = function () {
-
+        Location.reload();
     }
 });
 

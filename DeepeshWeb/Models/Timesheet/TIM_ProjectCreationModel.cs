@@ -8,7 +8,7 @@ namespace DeepeshWeb.Models.Timesheet
 {
     public class TIM_ProjectCreationModel
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string ProjectName { get; set; }
         public int ClientName { get; set; }
         public string Client { get; set; }
