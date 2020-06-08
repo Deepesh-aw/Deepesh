@@ -38,6 +38,7 @@ namespace DeepeshWeb.BAL.EmployeeManagement
             return lstEmp;
         }
 
+
         public List<Emp_BasicInfoModel> GetAllEmployee(ClientContext clientContext)
         {
             List<Emp_BasicInfoModel> EmpBasicinfo = new List<Emp_BasicInfoModel>();

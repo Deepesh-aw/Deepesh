@@ -18,8 +18,29 @@ namespace DeepeshWeb.BAL.Timesheet
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
             string filter = "ID eq "+Id+"";
             JArray jArray = RESTGet(clientContext, filter);
+            lstProjectCreation = GetProjectCreationListItems(jArray);
+            return lstProjectCreation;
+        }
+
+        public List<TIM_ProjectCreationModel> GetProjectCreationAllItems(ClientContext clientContext)
+        {
+            List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
+            JArray jArray = RESTGet(clientContext, null);
+            lstProjectCreation = GetProjectCreationListItems(jArray);
+            return lstProjectCreation;
+        }
+
+        public string SaveProjectCreation(ClientContext clientContext, string ItemData)
+        {
+            string response = RESTSave(clientContext, ItemData);
+            return response;
+        }
+
+        public List<TIM_ProjectCreationModel> GetProjectCreationListItems(JArray jArray)
+        {
+            List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
             foreach (JObject j in jArray)
-            { 
+            {
                 TIM_ProjectCreationModel data = new TIM_ProjectCreationModel();
                 int i = 0;
                 data.Members = new Int32[((Newtonsoft.Json.Linq.JContainer)j["Members"]["results"]).Count];
@@ -34,24 +55,19 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.ProjectName = j["ProjectName"] == null ? "" : Convert.ToString(j["ProjectName"]);
                 data.ProjectTypeName = j["ProjectType"]["TypeName"] == null ? "" : Convert.ToString(j["ProjectType"]["TypeName"]);
                 data.Client = j["ClientName"]["ClientName"] == null ? "" : Convert.ToString(j["ClientName"]["ClientName"].ToString());
-                data.ProjectManagerName = j["ProjectManager"]["FirstName"] == null ? "" : j["ProjectManager"]["FirstName"].ToString()+" "+j["ProjectManager"]["LastName"].ToString();
+                data.ProjectManagerName = j["ProjectManager"]["FirstName"] == null ? "" : j["ProjectManager"]["FirstName"].ToString() + " " + j["ProjectManager"]["LastName"].ToString();
                 data.ClientProjectManager = j["ClientProjectManager"] == null ? "" : Convert.ToString(j["ClientProjectManager"]);
                 data.StartDate = j["StartDate"] == null ? "" : Convert.ToString(j["StartDate"]);
                 data.EndDate = j["EndDate"] == null ? "" : Convert.ToString(j["EndDate"]);
                 data.NoOfDays = j["NoOfDays"] == null ? 0 : Convert.ToInt32(j["NoOfDays"]);
                 data.Description = j["Description"] == null ? "" : Convert.ToString(j["Description"]);
-
+                data.InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"]);
                 lstProjectCreation.Add(data);
             }
             return lstProjectCreation;
-        }
 
-        public string SaveProjectCreation(ClientContext clientContext, string ItemData)
-        {
-            string response = RESTSave(clientContext, ItemData);
-            return response;
         }
-
+ 
         private JArray RESTGet(ClientContext clientContext, string filter)
         {
             RestService restService = new RestService();

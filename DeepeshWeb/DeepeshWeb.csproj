@@ -197,6 +197,7 @@
     <Compile Include="Controllers\TimeSheet\TIM_AddMilestoneController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_ProjectCreationController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_AddTaskController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_ProjectDashboardController.cs" />
     <Compile Include="DAL\AuthenticateUser.cs" />
     <Compile Include="DAL\CustomAuthenticationFilter.cs" />
     <Compile Include="DAL\RestService.cs" />
@@ -8168,6 +8169,7 @@
     <Content Include="Scripts\Angular\DAL\CommonJs.js" />
     <Content Include="Scripts\Angular\DAL\DAL.js" />
     <Content Include="Scripts\Angular\DAL\Navigation.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\TIM_ProjectDashboard.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddMilestone.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddTask.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_MilestoneDetails.js" />
@@ -9164,6 +9166,7 @@
     <Content Include="Views\Partial\TIM_ViewProjectData.cshtml" />
     <Content Include="Views\TIM_MilestoneDetails\Index.cshtml" />
     <Content Include="Views\TIM_AddTask\Index.cshtml" />
+    <Content Include="Views\TIM_ProjectDashboard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,162 @@
+﻿@using DeepeshWeb.Models.Timesheet;
+
+@model List<TIM_ProjectCreationModel>
+
+@{
+    ViewBag.Title = "Project Dashboard";
+}
+
+@section style
+{
+    <!-- Internal Select2 css -->
+    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
+
+    <!--Internal  Datetimepicker-slider css -->
+    <link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
+
+    <!-- Internal Data table css -->
+    <link href="~/assets/plugins/datatable/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatable/css/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/datatable/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatable/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/datatable/css/responsive.dataTables.min.css" rel="stylesheet">
+    
+}
+
+<form id="frmProjectDashboard" ng-app="ProjectDashboardApp" ng-controller="ProjectDashboardController" autocomplete="off">
+    <!-- container opened -->
+    <div class="container">
+        <!-- breadcrumb -->
+        <div class="breadcrumb-header justify-content-between">
+            <div class="my-auto">
+                <div class="d-flex">
+                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Project Dashboard</span>
+                </div>
+            </div>
+        </div>
+        <!-- breadcrumb -->
+        <!-- row -->
+        <div class="row row-sm">
+            @foreach (var item in Model)
+            {
+                <div class="col-12  col-lg-12 col-xl-4">
+
+                    <div class="card card-purple">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-md-5">
+                                    <b>Project Name</b>
+                                </div>
+                                <div class="col-md-2">
+                                    <span>:</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <span>@item.ProjectName</span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-5">
+                                    <b>Client Name</b>
+                                </div>
+                                <div class="col-md-2">
+                                    <span>:</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <span>@item.Client</span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-12">
+                                    <span class="card-subtitle text-primary">Last Updated On Jan 01</span>
+                                </div>
+                            </div><hr />
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <i class="fa">&#xf017; <span class="card-subtitle text-primary">9 days left</span></i>
+                                </div>
+                                <div class="col-md-2">
+                                    <span>:</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <span>
+                                        <i class="fa fa-edit" title="Edit" ng-click="EditProject(@item.ID)"></i>&nbsp;&nbsp;
+                                        <i class="fa fa-trash" title="Delete" ng-click="ProjectDeletionAlert(@item.ID)"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+        </div>
+        <!-- row closed -->
+        <!--Dashboard Code start-->
+        <h4>My Project</h4>
+        <hr />
+        <div class="card mg-b-20">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tblProject" class="table key-buttons text-md-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="border-bottom-0">Sr.no.</th>
+                                <th class="border-bottom-0">Project Name</th>
+                                <th class="border-bottom-0">Start Date</th>
+                                <th class="border-bottom-0">End Date</th>
+                                <th class="border-bottom-0">Description</th>
+                                @*<th class="border-bottom-0">Status</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="p in ProjectData">
+                                <td class="details-control" id="Milestone{{$index}}"><span class="details-control" ng-if="p.InternalStatus!='ProjectCreated'"><i class="fa fa-plus" aria-hidden="true"></i></span></td>
+                                <td>{{$index+1}}</td>
+                                <td>{{p.ProjectName}}</td>
+                                <td>{{p.StartDate}}</td>
+                                <td>{{p.EndDate}}</td>
+                                <td>{{p.Description}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container closed -->
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnAllProjectData" />
+</form>
+
+@section scripts
+{
+    <!-- Internal Select2.min js -->
+    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/assets/js/select2.js"></script>
+
+    <!--Internal  jquery-simple-datetimepicker js -->
+    <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
+    <script src="~/assets/js/datePicker.js"></script>
+
+    <!-- Internal Data tables -->
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/responsive.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.bootstrap4.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/pdfmake.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/vfs_fonts.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/responsive.bootstrap4.min.js"></script>
+
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_ProjectDashboard.js"></script>
+
+}
