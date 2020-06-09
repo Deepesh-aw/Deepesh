@@ -19,6 +19,7 @@ namespace DeepeshWeb.Models.Timesheet
         public string MileStoneName { get; set; }
         public int Delegate { get; set; }
         public int Members { get; set; }
+        public string MembersName { get; set; }
         public int TaskStatus { get; set; }
         public string TaskStatusName { get; set; }
         public int Status { get; set; }
