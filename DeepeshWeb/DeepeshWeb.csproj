@@ -188,11 +188,14 @@
     <Compile Include="BAL\Timesheet\TIM_ProjectCreationBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectTypeMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_StatusMasterBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_SubTaskBal.cs" />
+    <Compile Include="Models\Timesheet\TIM_SubTaskModel.cs" />
     <Compile Include="BAL\Timesheet\TIM_TaskBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_WorkFlowMasterBal.cs" />
     <Compile Include="BAL\UsersGroup.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_AddSubTaskController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_MilestoneDetailsController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_AddMilestoneController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_ProjectCreationController.cs" />
@@ -8169,6 +8172,7 @@
     <Content Include="Scripts\Angular\DAL\CommonJs.js" />
     <Content Include="Scripts\Angular\DAL\DAL.js" />
     <Content Include="Scripts\Angular\DAL\Navigation.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddSubTask.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_ProjectDashboard.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddMilestone.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddTask.js" />
@@ -9131,6 +9135,7 @@
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.cookie.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -9167,6 +9172,7 @@
     <Content Include="Views\TIM_MilestoneDetails\Index.cshtml" />
     <Content Include="Views\TIM_AddTask\Index.cshtml" />
     <Content Include="Views\TIM_ProjectDashboard\Index.cshtml" />
+    <Content Include="Views\TIM_AddSubTask\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

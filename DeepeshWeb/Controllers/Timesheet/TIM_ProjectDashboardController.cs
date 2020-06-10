@@ -14,6 +14,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_ProjectCreationBal BalProjectCreation = new TIM_ProjectCreationBal();
         TIM_MilestoneBal BalMilestone = new TIM_MilestoneBal();
         TIM_TaskBal BalTask = new TIM_TaskBal();
+        TIM_SubTaskBal BalSubTask = new TIM_SubTaskBal();
+
 
         public ActionResult Index()
         {
@@ -66,6 +68,25 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 {
                     obj.Add("OK");
                     obj.Add(lstTask);
+                }
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ActionName("GetSubTask")]
+        public JsonResult GetSubTask(int TaskId)
+        {
+            List<object> obj = new List<object>();
+            List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            {
+                lstSubTask = BalSubTask.GetSubTaskByTaskId(clientContext, TaskId);
+                if (lstSubTask.Count > 0)
+                {
+                    obj.Add("OK");
+                    obj.Add(lstSubTask);
                 }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);

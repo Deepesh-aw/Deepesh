@@ -13,10 +13,10 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_ProjectCreationBal
     {
-        public List<TIM_ProjectCreationModel> GetProjectCreationById(ClientContext clientContext, int Id = 2)
+        public List<TIM_ProjectCreationModel> GetProjectCreationById(ClientContext clientContext, int ProjectId = 2)
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
-            string filter = "ID eq "+Id+"";
+            string filter = "ID eq "+ ProjectId + "";
             JArray jArray = RESTGet(clientContext, filter);
             lstProjectCreation = GetProjectCreationListItems(jArray);
             return lstProjectCreation;

@@ -20,10 +20,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
             try
             {
+                int ProjectId = Convert.ToInt32(Request.Cookies["ProjectId"].Value);
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext);
+                    lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
                 }
             }
             catch(Exception ex)

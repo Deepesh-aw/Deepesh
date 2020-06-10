@@ -2,9 +2,12 @@
 @model TIM_ProjectCreationModel
 
 @{
-    ViewBag.Title = "Add Task";
+    ViewBag.Title = "Add SubTask";
     TIM_MilestoneModel Milestone = new TIM_MilestoneModel();
     Milestone = ViewBag.MilestoneData[0];
+
+    TIM_TaskModel Task = new TIM_TaskModel();
+     Task = ViewBag.TaskData[0];
 }
 
 @section style
@@ -135,7 +138,7 @@
     }
 </style>
 
-<form id="frmMilestoneDetails" autocomplete="off" ng-app="AddTaskApp" ng-controller="AddTaskController">
+<form id="frmMilestoneDetails" autocomplete="off" ng-app="AddSubTaskApp" ng-controller="AddSubTaskController">
     <!-- container opened -->
     <div class="container">
 
@@ -143,7 +146,7 @@
         <div class="breadcrumb-header justify-content-between">
             <div class="my-auto">
                 <div class="d-flex">
-                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Add Task</span>
+                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Add SubTask</span>
                 </div>
             </div>
         </div>
@@ -204,10 +207,48 @@
                     </div><hr />
                     <div class="card-body">
                         <div class="table-responsive">
+
                             <table class="tableCss">
                                 <thead>
                                     <tr>
                                         <th scope="col">Task</th>
+                                        <th scope="col">Member</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">Estimated End Date</th>
+                                        <th scope="col">Days</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td data-label="Milestone">@Task.Task</td>
+                                        <td data-label="Description">@Task.MembersName</td>
+                                        <td data-label="Start Date">@Task.StartDate.Split(' ')[0]</td>
+                                        <td data-label="Estimated End Date">@Task.EndDate.Split(' ')[0]</td>
+                                        <td data-label="Days">@Task.NoOfDays</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- bd -->
+                    </div><!-- bd -->
+                </div><!-- bd -->
+            </div>
+        </div>
+
+
+        <div class="row row-sm">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="card-title mg-b-0">SubTask</h4>
+                        </div>
+                    </div><hr />
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="tableCss">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">SubTask</th>
                                         <th scope="col">Members</th>
                                         <th scope="col">Start Date</th>
                                         <th scope="col">Estimated End Date</th>
@@ -218,7 +259,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td data-label="Task"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTask" id="txtTask" placeholder="Enter Task" required=""></td>
+                                        <td data-label="SubTask"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTask" id="txtSubTask" placeholder="Enter SubTask" required=""></td>
 
                                         <td data-label="Members">
                                             <div id="slMembers">
@@ -240,7 +281,7 @@
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
                                                 </div>
-                                                <input required="" type="text" class="form-control date" ng-model="ngtxtTaskStartDate" id="txtTaskStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
+                                                <input required="" type="text" class="form-control date" ng-model="ngtxtSubTaskStartDate" id="txtSubTaskStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
                                             </div>
                                             <div id="slMilestoneStartDateError"></div>
                                         </td>
@@ -251,12 +292,12 @@
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input class="form-control date" type="text" ng-model="ngtxtTaskEndDate" id="txtTaskEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
+                                                </div><input class="form-control date" type="text" ng-model="ngtxtSubTaskEndDate" id="txtSubTaskEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
                                             </div>
                                             <div id="slMilestoneEndDateError"></div>
                                         </td>
 
-                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTaskDays" id="txtTaskDays" placeholder="Enter Days" readonly="readonly"></td>
+                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTaskDays" id="txtSubTaskDays" placeholder="Enter Days" readonly="readonly"></td>
 
                                         <td>
                                             <div id="slStatus">
@@ -273,7 +314,7 @@
 
                                         <td data-label="Action">
                                             <div class="btn-icon-list responsivetablediv">
-                                                <button type="button" class="fa fa-plus" title="Add" ng-click="AddTask()"></button>
+                                                <button type="button" class="fa fa-plus" title="Add" ng-click="AddSubTask()"></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -287,7 +328,7 @@
         </div>
 
         <div class="row row-sm">
-            <div class="col-xl-12" ng-if="Task.length>0">
+            <div class="col-xl-12" ng-if="SubTask.length>0">
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -296,7 +337,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">Sr.No.</th>
-                                        <th scope="col">Task</th>
+                                        <th scope="col">SubTask</th>
                                         <th scope="col">Members</th>
                                         <th scope="col">Start Date</th>
                                         <th scope="col">Estimated End Date</th>
@@ -306,17 +347,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="t in Task">
+                                    <tr ng-repeat="t in SubTask">
                                         <td data-label="Sr.No.">{{$index+1}}</td>
-                                        <td data-label="Task">{{t.Task}}</td>
+                                        <td data-label="SubTask">{{t.SubTask}}</td>
                                         <td data-label="Members">{{t.MemberTitle}}</td>
                                         <td data-label="Start Date">{{t.StartDate}}</td>
                                         <td data-label="Estimated End Date">{{t.EndDate}}</td>
                                         <td data-label="Days">{{t.NoOfDays}}</td>
                                         <td data-label="Status">{{t.StatusName}}</td>
                                         <td data-label="Action">
-                                            <i class="fa fa-edit" ng-click="EditTask($index)"></i>&nbsp;
-                                            <i class="fa fa-trash" ng-click="DeleteTask($index)"></i>
+                                            <i class="fa fa-edit" ng-click="EditSubTask($index)"></i>&nbsp;
+                                            <i class="fa fa-trash" ng-click="DeleteSubTask($index)"></i>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -329,8 +370,8 @@
                 <div class="row row-sm text-center">
                     <div class="col-sm-3">
                     </div>
-                    <div class="col-sm-3" >
-                        <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddTask()">Submit</button>&nbsp;
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddSubTask()">Submit</button>&nbsp;
                     </div>
                     <div class="col-lg-3">
                         <button type="button" ng-click="BackToDashboard()" class="btn btn-secondary btn-block">Cancel</button>
@@ -341,22 +382,22 @@
         <!-- row closed -->
     </div>
     <!-- Modal alert message Success -->
-    <div class="modal" id="SuccessModelTask" data-backdrop="static" data-keyboard="false">
+    <div class="modal" id="SuccessModelSubTask" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content tx-size-sm">
                 <div class="modal-body tx-center pd-y-20 pd-x-20">
                     <i class="icon ion-ios-checkmark-circle-outline tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
                     <h4 class="tx-success tx-semibold mg-b-20">Congratulations!</h4>
-                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveTaskRedirect()">Continue</button>
+                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveSubTaskRedirect()">Continue</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- Container closed -->
-    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
-    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.MilestoneData[0])" id="hdnMilestoneData" />
+        <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
+        <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.MilestoneData[0])" id="hdnMilestoneData" />
+        <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TaskData[0])" id="hdnTaskData" />
 </form>
-
 
 @section scripts
 {
@@ -368,6 +409,6 @@
     <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
     <script src="~/assets/js/datePicker.js"></script>
     <script src="~/Scripts/jquery.cookie.min.js"></script>
-    <script src="~/Scripts/Angular/Timesheet/JS/TIM_AddTask.js"></script>
-    
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_AddSubTask.js"></script>
+
 }

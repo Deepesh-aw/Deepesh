@@ -1,5 +1,6 @@
 ﻿@using DeepeshWeb.Models.Timesheet;
 
+
 @model List<TIM_ProjectCreationModel>
 
 @{
@@ -24,6 +25,14 @@
 }
 
 <style>
+    .details-td {
+        text-align: center !important;
+        width: 15% !important;
+    }
+    #tblProject, .tabs-menu-body{
+        width:100%!important;
+    }
+
     .tableCss {
         border: 1px solid #ccc;
         border-collapse: collapse;
@@ -148,131 +157,250 @@
     <!-- container opened -->
     <div class="container">
         <!-- breadcrumb -->
-        <div class="breadcrumb-header justify-content-between">
+        <div class="breadcrumb-header mg-t-0 mg-b-0 justify-content-between">
             <div class="my-auto">
                 <div class="d-flex">
                     <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Project Dashboard</span>
+                </div>
+            </div>
+            <div class="my-auto">
+                <div class="d-flex">
+                    <div class="panel panel-primary tabs-style-3 bd-y-0 bd-x-0">
+                        <div class="tab-menu-heading">
+                            <div class="tabs-menu ">
+                                <!-- Tabs -->
+                                <ul class="nav panel-tabs">
+                                    <li class=""><a href="#tab1" data-toggle="tab"><i class="fa fa-tasks"></i> View Cards</a></li>
+                                    <li><a href="#tab2" data-toggle="tab"><i class="fa fa-cube"></i>View Table</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- breadcrumb -->
         <!-- row -->
         <div class="row row-sm">
-            @foreach (var item in Model)
-            {
-                <div class="col-12  col-lg-12 col-xl-4">
+            <div class="panel-body tabs-menu-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab1">
+                        <div class="row row-sm">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-12  col-lg-12 col-xl-4">
 
-                    <div class="card card-purple">
-                        <div class="card-body">
-                            <div class="row mb-2">
-                                <div class="col-md-5">
-                                    <b>Project Name</b>
+                                    <div class="card card-purple">
+                                        <div class="card-body">
+                                            <div class="row mb-2">
+                                                <div class="col-md-5">
+                                                    <b>Project Name</b>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span>:</span>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <span>@item.ProjectName</span>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-md-5">
+                                                    <b>Client Name</b>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span>:</span>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <span>@item.Client</span>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-md-12">
+                                                    <span class="card-subtitle text-primary">Last Updated On Jan 01</span>
+                                                </div>
+                                            </div><hr />
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <i class="fa">&#xf017; <span class="card-subtitle text-primary">9 days left</span></i>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span>:</span>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <span>
+                                                        <i class="fa fa-edit" title="Edit" ng-click="EditProject(@item.ID)"></i>&nbsp;&nbsp;
+                                                        <i class="fa fa-trash" title="Delete" ng-click="ProjectDeletionAlert(@item.ID)"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <span>:</span>
-                                </div>
-                                <div class="col-md-5">
-                                    <span>@item.ProjectName</span>
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-5">
-                                    <b>Client Name</b>
-                                </div>
-                                <div class="col-md-2">
-                                    <span>:</span>
-                                </div>
-                                <div class="col-md-5">
-                                    <span>@item.Client</span>
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-12">
-                                    <span class="card-subtitle text-primary">Last Updated On Jan 01</span>
-                                </div>
-                            </div><hr />
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <i class="fa">&#xf017; <span class="card-subtitle text-primary">9 days left</span></i>
-                                </div>
-                                <div class="col-md-2">
-                                    <span>:</span>
-                                </div>
-                                <div class="col-md-5">
-                                    <span>
-                                        <i class="fa fa-edit" title="Edit" ng-click="EditProject(@item.ID)"></i>&nbsp;&nbsp;
-                                        <i class="fa fa-trash" title="Delete" ng-click="ProjectDeletionAlert(@item.ID)"></i>
-                                    </span>
+
+                            }
+
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab2">
+                        <div class="card mg-b-20">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="tblProject" class="table key-buttons text-md-nowrap datatable">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="border-bottom-0">Sr.no.</th>
+                                                <th class="border-bottom-0">Project Name</th>
+                                                <th class="border-bottom-0">Start Date</th>
+                                                <th class="border-bottom-0">End Date</th>
+                                                <th class="border-bottom-0">Description</th>
+                                                @*<th class="border-bottom-0">Status</th>*@
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                int i = 0;
+                                            }
+                                            @foreach (var item in Model)
+                                            {
+                                                { i++; }
+                                                <tr>
+                                                    <td class="details-td" id="Milestone@(i)">
+                                                        @if (item.InternalStatus != "ProjectCreated")
+                                                        {
+                                                            <button><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i></button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
+                                                        }
+                                                    </td>
+                                                    <td>@i</td>
+                                                    <td>@item.ProjectName</td>
+                                                    <td>@item.StartDate.Split(' ')[0]</td>
+                                                    <td>@item.EndDate.Split(' ')[0]</td>
+                                                    <td>@item.Description</td>
+
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-            }
-
-        </div>
-        <!-- row closed -->
-        <!--Dashboard Code start-->
-        <h4>My Project</h4>
-        <hr />
-        <div class="card mg-b-20">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="tblProject" class="table key-buttons text-md-nowrap datatable">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th class="border-bottom-0">Sr.no.</th>
-                                <th class="border-bottom-0">Project Name</th>
-                                <th class="border-bottom-0">Start Date</th>
-                                <th class="border-bottom-0">End Date</th>
-                                <th class="border-bottom-0">Description</th>
-                                @*<th class="border-bottom-0">Status</th>*@
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="p in ProjectData">
-                                <td class="details-control" id="Milestone{{$index}}"><span class="details-control" ng-if="p.InternalStatus!='ProjectCreated'"><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone($index, p)"></i></span></td>
-                                <td>{{$index+1}}</td>
-                                <td>{{p.ProjectName}}</td>
-                                <td>{{p.StartDate | date : 'dd-MM-yyyy'}}</td>
-                                <td>{{p.EndDate | date : 'dd-MM-yyyy'}}</td>
-                                <td>{{p.Description}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
-        </div>
-    </div>
-    <!-- Container closed -->
-    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnAllProjectData" />
-    <div class="MileDiv d-none">
-        <table class="mg-b-0 text-md-nowrap tableCss dataTable" id="tblMilestone">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th scope="col">Milestone</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Start Date</th>
-                    <th scope="col">Estimated End Date</th>
-                    <th scope="col">Days</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="m in Milestone">
-                    <td id="Task{{$index}}"><span class="details-control" ng-if="m.InternalStatus!='MilestoneCreated'"><i class="fa fa-plus" aria-hidden="true" ng-click="ShowTask()"></i></span></td>
-                    <td data-label="Milestone">{{m.MileStone}}</td>
-                    <td data-label="Description">{{m.Description}}</td>
-                    <td data-label="Start Date">{{m.StartDate | date : 'DD-MM-YYYY'}}</td>
-                    <td data-label="Estimated End Date">{{m.EndDate | date : 'DD-MM-YYYY'}}</td>
-                    <td data-label="Days">{{m.NoOfDays}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
+        </div>
+
+            @*<div class="row row-sm">
+                @foreach (var item in Model)
+                {
+                    <div class="col-12  col-lg-12 col-xl-4">
+
+                        <div class="card card-purple">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-5">
+                                        <b>Project Name</b>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span>:</span>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <span>@item.ProjectName</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-5">
+                                        <b>Client Name</b>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span>:</span>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <span>@item.Client</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-12">
+                                        <span class="card-subtitle text-primary">Last Updated On Jan 01</span>
+                                    </div>
+                                </div><hr />
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <i class="fa">&#xf017; <span class="card-subtitle text-primary">9 days left</span></i>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span>:</span>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <span>
+                                            <i class="fa fa-edit" title="Edit" ng-click="EditProject(@item.ID)"></i>&nbsp;&nbsp;
+                                            <i class="fa fa-trash" title="Delete" ng-click="ProjectDeletionAlert(@item.ID)"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+            </div>*@
+            <!-- row closed -->
+            <!--Dashboard Code start-->
+            @*<h4>My Project</h4>
+            <hr />*@
+            @*<div class="card mg-b-20">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tblProject" class="table key-buttons text-md-nowrap datatable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="border-bottom-0">Sr.no.</th>
+                                    <th class="border-bottom-0">Project Name</th>
+                                    <th class="border-bottom-0">Start Date</th>
+                                    <th class="border-bottom-0">End Date</th>
+                                    <th class="border-bottom-0">Description</th>
+                                    <th class="border-bottom-0">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 0;
+                                }
+                                @foreach (var item in Model)
+                                {
+                                    { i++; }
+                                    <tr>
+                                        <td class="details-td" id="Milestone@(i)">
+                                            @if (item.InternalStatus != "ProjectCreated")
+                                            {
+                                                <button><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i></button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
+                                            }
+                                        </td>
+                                        <td>@i</td>
+                                        <td>@item.ProjectName</td>
+                                        <td>@item.StartDate.Split(' ')[0]</td>
+                                        <td>@item.EndDate.Split(' ')[0]</td>
+                                        <td>@item.Description</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>*@
+        </div>
+        <!-- Container closed -->
 </form>
 
 @section scripts
@@ -303,6 +431,11 @@
     <script src="~/assets/plugins/datatable/js/dataTables.responsive.min.js"></script>
     <script src="~/assets/plugins/datatable/js/responsive.bootstrap4.min.js"></script>
 
+    <!--- Tabs JS-->
+    <script src="../assets/plugins/tabs/jquery.multipurpose_tabcontent.js"></script>
+    <script src="../assets/js/tabs.js"></script>
+
+    <script src="~/Scripts/jquery.cookie.min.js"></script>
     <script src="~/Scripts/Angular/Timesheet/JS/TIM_ProjectDashboard.js"></script>
 
 }

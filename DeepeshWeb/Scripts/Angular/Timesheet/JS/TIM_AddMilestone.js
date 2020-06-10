@@ -84,7 +84,12 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
         });
     });
 
-    
+    $scope.BackToDashboard = function () {
+        $.removeCookie('ProjectId');
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_ProjectDashboard' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
+    }
 
     $scope.DeleteMilestone = function (index) {
         $scope.Milestone.splice(index, 1);

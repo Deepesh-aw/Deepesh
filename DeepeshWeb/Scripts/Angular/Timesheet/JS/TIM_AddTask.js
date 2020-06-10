@@ -104,6 +104,13 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
         });
     });
 
+    $scope.BackToDashboard = function () {
+        $.removeCookie('ProjectId');
+        $.removeCookie('MilestoneId');
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_ProjectDashboard' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
+    }
 
 
     $scope.DeleteTask = function (index) {
