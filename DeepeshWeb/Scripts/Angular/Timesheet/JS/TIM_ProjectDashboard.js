@@ -7,7 +7,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     var SubTaskTable;
 
     $(function () {
-        $scope.$apply();
+        //$scope.$apply();
         setTimeout(function () {
             table = $('#tblProject').DataTable({
                 lengthChange: true,
@@ -43,10 +43,11 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetMilestone", data).then(function (response) {
                 if (response.data[0] == "OK") {
-                    var Html = '<div><table class="mg-b-0 text-md-nowrap tableCss dataTable" id = "tblMilestone" ><thead><tr><th></th><th scope="col">Milestone</th><th scope="col">Description</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
+                    var Html = '<div><table class="mg-b-0 text-md-nowrap tableCss dataTable" id = "tblMilestone" ><thead><tr><th>Sr.No.</th><th></th><th scope="col">Milestone</th><th scope="col">Description</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
                     angular.forEach(response.data[1], function (value, key) {
                         //this.push(key + ': ' + value);
-                        Html += '<tr><td class = "details-td" id = "Task' + key + '">';
+                        var i = key + 1;
+                        Html += '<tr><td>' + i + '</td><td class = "details-td" id = "Task' + key + '">';
                         if (value.InternalStatus != "MilestoneCreated") {
                             Html += '<span><button><i class="fa fa-plus" ng-click = "ShowTask(' + key + ', ' + value.ID + ', ' + ProjectId + ')"  aria-hidden="true"></i></button></span>';
                         }
@@ -62,7 +63,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     setTimeout(function () {
                         //row.child($(".MileDiv").html()).show();
                         MilestoneTable = $('#tblMilestone').DataTable({
-                            lengthChange: true,
+                            "paging": false,
+                            "ordering": false,
+                            "info": false,
+                            "lengthChange": true,
                             responsive: true,
                             bDestroy: true,
                             "createdRow": function (row, data, index) {
@@ -74,6 +78,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                                 lengthMenu: '_MENU_ ',
                             }
                         });
+                        MilestoneTable.buttons().container()
+                            .appendTo('#tblTask_wrapper .col-md-6:eq(0)');
                         $("#Milestone" + index).find('i').removeClass('spinner-border spinner-border-sm');
                         $("#Milestone" + index).find('i').addClass('fa fa-minus');
 
@@ -114,9 +120,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
                 console.log(response);
                 if (response.data[0] == "OK") {
-                    var Html = '<div><table class="mg-b-0 text-md-nowrap tableCss dataTable" id = "tblTask" ><thead><tr><th></th><th scope="col">Task</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
+                    var Html = '<div><table class="table key-buttons text-md-nowrap" id = "tblTask" ><thead><tr><th>Sr.No.</th><th></th><th scope="col">Task</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
                     angular.forEach(response.data[1], function (value, key) {
-                        Html += '<tr><td class = "details-td" id = "SubTask' + key + '">';
+                        var i = key + 1;
+                        Html += '<tr><td>' + i + '</td><td class = "details-td" id = "SubTask' + key + '">';
                         if (value.InternalStatus != "TaskCreated")
                             Html += '<span><button><i class="fa fa-plus" ng-click = "ShowSubTask(' + key + ', ' + value.ID + ')"  aria-hidden="true"></i></button></span>';
                         else
@@ -129,8 +136,11 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
                     setTimeout(function () {
                         TaskTable = $('#tblTask').DataTable({
-                            lengthChange: true,
-                            responsive: true,
+                            "paging": false,
+                            "ordering": false,
+                            "info": false,
+                            "lengthChange": true,
+                            "responsive": true,
                             bDestroy: true,
                             "createdRow": function (row, data, index) {
                                 $compile(row)($scope); //add this to compile the DOM
@@ -141,6 +151,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                                 lengthMenu: '_MENU_ ',
                             }
                         });
+                        TaskTable.buttons().container()
+                            .appendTo('#tblTask_wrapper .col-md-6:eq(0)');
                         $("#Task" + index).find('i').removeClass('spinner-border spinner-border-sm');
                         $("#Task" + index).find('i').addClass('fa fa-minus');
                     }, 2);
@@ -173,9 +185,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetSubTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
-                    var Html = '<div><table class="mg-b-0 text-md-nowrap tableCss dataTable" id = "tblSubTask" ><thead><tr><th></th><th scope="col">SubTask</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
+                    var Html = '<div><table class="mg-b-0 text-md-nowrap tableCss dataTable" id = "tblSubTask" ><thead><tr><th>Sr.No.</th><th scope="col">SubTask</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
                     angular.forEach(response.data[1], function (value, key) {
-                        Html += '<tr><td class = "details-td" id = "SubTask' + key + '">';
+                        var i = key + 1;
+                        Html += '<tr><td class = "details-td" id = "SubTask' + key + '">' + i + '';
 
                         Html += '</td ><td data-label="SubTask">' + value.SubTask + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td></tr > ';
                     });
@@ -184,7 +197,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
                     setTimeout(function () {
                         SubTaskTable = $('#tblSubTask').DataTable({
-                            lengthChange: true,
+                            "paging": false,
+                            "ordering": false,
+                            "info": false,
+                            "lengthChange": true,
                             responsive: true,
                             bDestroy: true,
                             "createdRow": function (row, data, index) {

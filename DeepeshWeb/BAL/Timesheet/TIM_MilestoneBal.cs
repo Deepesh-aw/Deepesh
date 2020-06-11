@@ -92,6 +92,20 @@ namespace DeepeshWeb.BAL.Timesheet
             return restService.SaveItem(clientContext, "TIM_MileStone", ItemData);
         }
 
+        public string UpdateMilestone(ClientContext clientContext, string ItemData, string ID)
+        {
+
+            string response = RESTUpdate(clientContext, ItemData, ID);
+
+            return response;
+        }
+
+        private string RESTUpdate(ClientContext clientContext, string ItemData, string ID)
+        {
+            RestService restService = new RestService();
+
+            return restService.UpdateItem(clientContext, "TIM_MileStone", ItemData, ID);
+        }
 
     }
 }

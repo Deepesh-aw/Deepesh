@@ -91,6 +91,19 @@ namespace DeepeshWeb.BAL.Timesheet
             return restService.SaveItem(clientContext, "TIM_ProjectCreation", ItemData);
         }
 
+        public string UpdateProject(ClientContext clientContext, string ItemData, string ID)
+        {
 
+            string response = RESTUpdate(clientContext, ItemData, ID);
+
+            return response;
+        }
+
+        private string RESTUpdate(ClientContext clientContext, string ItemData, string ID)
+        {
+            RestService restService = new RestService();
+
+            return restService.UpdateItem(clientContext, "TIM_ProjectCreation", ItemData, ID);
+        }
     }
 }

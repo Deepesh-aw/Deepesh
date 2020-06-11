@@ -160,7 +160,6 @@ namespace DeepeshWeb.DAL
             }
         }
 
-
         public string UpdateItem(ClientContext ctx, string ListName, string Itemdate, string ID)
         {
             var responseText = "";
@@ -168,7 +167,9 @@ namespace DeepeshWeb.DAL
             {
                 RetrieveAccessToken(ctx);
 
-                string Metadata = String.Format("SP.Data.{0}ListItem", ListName);
+                string listUrl = RestUrlList(ListName);
+                XmlNamespaceManager xmlnspm = AddXmlNameSpaces();
+                string Metadata = GetEntityTypeName(ctx.Url, listUrl, xmlnspm);
 
                 string listname = "'__metadata':{ 'type': '" + Metadata + "'}";
 
@@ -207,8 +208,6 @@ namespace DeepeshWeb.DAL
                 throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ex.ToString()));
             }
         }
-
-
 
         public JArray GetAllUserListList(ClientContext ctx)
         {
@@ -261,7 +260,6 @@ namespace DeepeshWeb.DAL
                 throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ex.ToString()));
             }
         }
-
 
         private void RetrieveAccessToken(ClientContext ctx)
         {

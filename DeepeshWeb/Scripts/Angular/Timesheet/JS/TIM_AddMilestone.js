@@ -7,7 +7,6 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
     $(function () {
 
         $scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
-        console.log($scope.ProjectData);
         'use strict'
         // AmazeUI Datetimepicker
         $('#txtMileStartDate').datetimepicker({
@@ -62,7 +61,7 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
                 }
                 $scope.ngtxtMileDays = days;
                 $("#txtMileDays").val(days);
-                $("#txtMileDays").hasClass("parsley-error"); {
+                if($("#txtMileDays").hasClass("parsley-error")) {
                     $("#txtMileDays").removeClass("parsley-error");
                     $("#txtMileDays").addClass("parsley-success");
                     $("#txtMileDays").next().remove();
@@ -145,10 +144,12 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
             var obj = {};
             obj.Milestone = $scope.ngtxtMilestone;
             obj.Description = $scope.ngtxtMileDescription;
+            obj.StartDateView = moment($("#txtMileStartDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.EndDateView = moment($("#txtMileEndDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
             obj.StartDate = moment($("#txtMileStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY");
             obj.EndDate = moment($("#txtMileEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY");
             obj.NoOfDays = $scope.ngtxtMileDays;
-            obj.Project = $scope.ProjectData.Id;
+            obj.Project = $scope.ProjectData.ID;
             obj.ProjectManager = $scope.ProjectData.ProjectManager;
             obj.MembersText = $scope.ProjectData.MembersText;
             obj.Members = $scope.ProjectData.Members;
@@ -178,20 +179,26 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
     }
 
 
-    $scope.FinalAddMilestone = function() {
-        var AddMilestone = new Array();
-        AddMilestone = $scope.Milestone;
+    $scope.FinalAddMilestone = function () {
+        if ($scope.Milestone.length > 0) {
+            $scope.Load = true;
+            var AddMilestone = new Array();
+            AddMilestone = $scope.Milestone;
 
-        CommonAppUtilityService.CreateItem("/TIM_AddMilestone/AddMilestone", AddMilestone).then(function (response) {
-            if (response.data[0] == "OK")
-                $('#SuccessModelMilestone').modal('show');
-
-        });
+            CommonAppUtilityService.CreateItem("/TIM_AddMilestone/AddMilestone", AddMilestone).then(function (response) {
+                if (response.data[0] == "OK") {
+                    $scope.Load = false;
+                    $('#SuccessModelMilestone').modal('show');
+                }
+                else
+                    $scope.Load = false;
+            });
+        }
+        else {
+            $scope.ValidateRequest();
+        }
     }
 
-    $scope.SaveRedirect = function () {
-        
-    }
 });
 
 

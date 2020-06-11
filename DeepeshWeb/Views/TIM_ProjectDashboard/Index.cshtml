@@ -32,121 +32,9 @@
     #tblProject, .tabs-menu-body{
         width:100%!important;
     }
-
-    .tableCss {
-        border: 1px solid #ccc;
-        border-collapse: collapse;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        table-layout: fixed;
-    }
-
-        .tableCss caption {
-            font-size: 1.5em;
-            margin: .5em 0 .75em;
-        }
-
-        .tableCss tr {
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-            padding: .35em;
-        }
-
-        .tableCss th,
-        .tableCss td {
-            padding: .625em;
-            text-align: center;
-        }
-
-        .tableCss th {
-            font-size: .85em;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-        }
-
-        .tableCss thead th {
-            padding: 12px !important;
-        }
-
     .fa {
         margin: auto !important;
     }
-
-    @@media screen and (max-width: 600px) {
-        .datetimepicker table {
-            background: none;
-        }
-
-        .datetimepicker {
-            width: auto;
-        }
-
-        .tableCss {
-            border: 0;
-        }
-
-            .tableCss caption {
-                font-size: 1.3em;
-            }
-
-            .tableCss thead {
-                border: none;
-                clip: rect(0 0 0 0);
-                height: 1px;
-                margin: -1px;
-                overflow: hidden;
-                padding: 0;
-                position: absolute;
-                width: 1px;
-            }
-
-            .tableCss tr {
-                border-bottom: 3px solid #ddd;
-                display: block;
-                margin-bottom: .625em;
-            }
-
-            .tableCss td {
-                border-bottom: 1px solid #ddd;
-                display: block;
-                font-size: .8em;
-                text-align: right;
-            }
-
-        input {
-            border-radius: 4px;
-        }
-
-        .input {
-            border-radius: 4px;
-        }
-
-        .tableCss td::before {
-            /*
-        * aria-label has no advantage, it won't be read inside a table
-        content: attr(aria-label);
-        */
-            content: attr(data-label);
-            float: left;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .tableCss td:last-child {
-            border-bottom: 0;
-        }
-        /*table td input {
-            padding: .625em;
-            text-align: center;
-            width: 50% !important;
-            margin-left: auto !important;
-        }*/
-        .responsivetablediv {
-            margin-top: 25px !important;
-        }
-    }
-
     .erralign {
         text-align: left;
     }
@@ -245,11 +133,11 @@
                         <div class="card mg-b-20">
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="tblProject" class="table key-buttons text-md-nowrap datatable">
+                                    <table id="tblProject" class="table key-buttons text-md-nowrap">
                                         <thead>
                                             <tr>
-                                                <th></th>
-                                                <th class="border-bottom-0">Sr.no.</th>
+                                                <th>Sr.no.</th>
+                                                <th class="border-bottom-0"></th>
                                                 <th class="border-bottom-0">Project Name</th>
                                                 <th class="border-bottom-0">Start Date</th>
                                                 <th class="border-bottom-0">End Date</th>
@@ -264,24 +152,24 @@
                                             @foreach (var item in Model)
                                             {
                                                 { i++; }
-                                                <tr>
-                                                    <td class="details-td" id="Milestone@(i)">
-                                                        @if (item.InternalStatus != "ProjectCreated")
-                                                        {
-                                                            <button><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i></button>
-                                                        }
-                                                        else
-                                                        {
-                                                            <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
-                                                        }
-                                                    </td>
-                                                    <td>@i</td>
-                                                    <td>@item.ProjectName</td>
-                                                    <td>@item.StartDate.Split(' ')[0]</td>
-                                                    <td>@item.EndDate.Split(' ')[0]</td>
-                                                    <td>@item.Description</td>
+                                            <tr>
+                                                <td>@i</td>
+                                                <td class="details-td" id="Milestone@(i)">
+                                                    @if (item.InternalStatus != "ProjectCreated")
+                                                    {
+                                                        <button><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i></button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
+                                                    }
+                                                </td>
+                                                <td>@item.ProjectName</td>
+                                                <td>@item.StartDate.Split(' ')[0]</td>
+                                                <td>@item.EndDate.Split(' ')[0]</td>
+                                                <td>@item.Description</td>
 
-                                                </tr>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -428,7 +316,6 @@
     <script src="~/assets/plugins/datatable/js/buttons.html5.min.js"></script>
     <script src="~/assets/plugins/datatable/js/buttons.print.min.js"></script>
     <script src="~/assets/plugins/datatable/js/buttons.colVis.min.js"></script>
-    <script src="~/assets/plugins/datatable/js/dataTables.responsive.min.js"></script>
     <script src="~/assets/plugins/datatable/js/responsive.bootstrap4.min.js"></script>
 
     <!--- Tabs JS-->

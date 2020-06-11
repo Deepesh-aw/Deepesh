@@ -95,11 +95,19 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
             }
         });
 
-        $('input,select,textarea').keypress(function () {
+        $('input,textarea').keypress(function () {
             if ($(this).hasClass("parsley-error")) {
                 $(this).removeClass("parsley-error");
                 $(this).addClass("parsley-success");
                 $(this).next().remove();
+            }
+        });
+
+        $('.select2').on('select2:selecting', function (e) {
+            if ($(this).hasClass("parsley-error")) {
+                $(this).removeClass("parsley-error");
+                $(this).next().children().first().children().css("border-color", "#22c03c");
+                $(this).siblings("li").remove();
             }
         });
     });
@@ -120,6 +128,8 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
     function clearErrorClass() {
         $('input').removeClass("parsley-success");
         $('input').removeClass("parsley-error");
+        $('#ddlMember').next().children().first().children().css("border-color", "#e1e5ef");
+        $("#ddlStatus").next().children().first().children().css("border-color", "#e1e5ef");
         $(".parsley-errors-list").remove();
     }
 
@@ -147,9 +157,18 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
             rv = false;
         }
 
+        if ($scope.ngddlMember == "" || $scope.ngddlMember == undefined || $scope.ngddlMember == null)
+        {
+            $("#ddlMember").addClass("parsley-error");
+            $("#ddlMember").next().children().first().children().css("border-color", "#ee335e");
+            $("#ddlMember").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
         if ($scope.ngddlStatus == "" || $scope.ngddlStatus == undefined || $scope.ngddlStatus == null)
         {
             $("#ddlStatus").addClass("parsley-error");
+            $("#ddlStatus").next().children().first().children().css("border-color", "#ee335e");
             $("#ddlStatus").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
             rv = false;
         }
@@ -177,7 +196,7 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
             obj.NoOfDays = $scope.ngtxtTaskDays;
             obj.TaskStatus = $scope.ngddlStatus;
             obj.StatusName = $("#ddlStatus option:selected").text();
-            obj.Project = $scope.ProjectData.Id;
+            obj.Project = $scope.ProjectData.ID;
             obj.Milestone = $scope.MilestoneData.ID;
             $scope.Task.push(obj);
 
@@ -188,6 +207,8 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
             $scope.ngtxtMileDescription = "";
             $("#txtTaskStartDate").val('');
             $("#txtTaskEndDate").val('');
+            $scope.ngtxtTaskStartDate = "";
+            $scope.ngtxtTaskEndDate = "";
             $scope.ngtxtTaskDays = "";
             $timeout(function () {
                 $("#ddlMember").trigger('change');
@@ -207,8 +228,8 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
         $scope.ngtxtTaskDays = $scope.Task[index].NoOfDays;
 
         $timeout(function () {
-            $("#ddlMember").val($scope.Task[index].MemberId).trigger('change');
-            $("#ddlStatus").val($scope.Task[index].StatusId).trigger('change');
+            $("#ddlMember").val($scope.Task[index].Members).trigger('change');
+            $("#ddlStatus").val($scope.Task[index].TaskStatus).trigger('change');
             $scope.Task.splice(index, 1);
         }, 10);
 

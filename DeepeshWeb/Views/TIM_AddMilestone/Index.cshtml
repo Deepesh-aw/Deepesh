@@ -237,8 +237,8 @@
                                         <td data-label="Sr.No.">{{$index+1}}</td>
                                         <td data-label="Milestone">{{m.Milestone}}</td>
                                         <td data-label="Description">{{m.Description}}</td>
-                                        <td data-label="Start Date">{{m.StartDate}}</td>
-                                        <td data-label="Estimated End Date">{{m.EndDate}}</td>
+                                        <td data-label="Start Date">{{m.StartDateView}}</td>
+                                        <td data-label="Estimated End Date">{{m.EndDateView}}</td>
                                         <td data-label="Days">{{m.NoOfDays}}</td>
                                         <td data-label="Action">
                                             <i class="fa fa-edit" ng-click="EditMilestone($index)"></i>&nbsp;
@@ -257,8 +257,16 @@
                 <div class="row row-sm text-center">
                         <div class="col-sm-3">
                         </div>
-                        <div class="col-sm-3">
-                            <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">Submit</button>&nbsp;
+                        <div class="col-sm-3" ng-hide="Load">
+                            <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">
+                                Submit
+                            </button>&nbsp;
+                        </div>
+                        <div class="col-sm-3" ng-show="Load">
+                            <button class="btn btn-primary btn-block" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Please wait...
+                            </button>
                         </div>
                         <div class="col-lg-3">
                             <button type="button" class="btn btn-secondary btn-block" ng-click="BackToDashboard()">Cancel</button>
@@ -277,7 +285,7 @@
                 <div class="modal-body tx-center pd-y-20 pd-x-20">
                     <i class="icon ion-ios-checkmark-circle-outline tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
                     <h4 class="tx-success tx-semibold mg-b-20">Congratulations!</h4>
-                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveRedirect()">Continue</button>
+                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="BackToDashboard()">Continue</button>
                 </div>
             </div>
         </div>

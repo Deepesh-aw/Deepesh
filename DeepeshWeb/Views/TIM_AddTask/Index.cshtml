@@ -221,16 +221,13 @@
                                         <td data-label="Task"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTask" id="txtTask" placeholder="Enter Task" required=""></td>
 
                                         <td data-label="Members">
-                                            <div id="slMembers">
-                                                <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError">
+                                                <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember">
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.EmpData)
                                                     {
                                                         <option value="@i.ID">@i.FullName</option>
                                                     }
                                                 </select>
-                                            </div>
-                                            <div id="slMembersError"></div>
                                         </td>
 
                                         <td data-label="Start Date">
@@ -240,9 +237,8 @@
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
                                                 </div>
-                                                <input required="" type="text" class="form-control date" ng-model="ngtxtTaskStartDate" id="txtTaskStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
+                                                <input required="" type="text" class="form-control date" ng-model="ngtxtTaskStartDate" id="txtTaskStartDate">
                                             </div>
-                                            <div id="slMilestoneStartDateError"></div>
                                         </td>
 
                                         <td data-label="Estimated End Date">
@@ -251,24 +247,20 @@
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input class="form-control date" type="text" ng-model="ngtxtTaskEndDate" id="txtTaskEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
+                                                </div><input class="form-control date" type="text" ng-model="ngtxtTaskEndDate" id="txtTaskEndDate">
                                             </div>
-                                            <div id="slMilestoneEndDateError"></div>
                                         </td>
 
-                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTaskDays" id="txtTaskDays" placeholder="Enter Days" readonly="readonly"></td>
+                                        <td data-label="Days" class="wd-10%"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTaskDays" id="txtTaskDays" placeholder="Enter Days" readonly="readonly"></td>
 
                                         <td>
-                                            <div id="slStatus">
-                                                <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus" data-parsley-class-handler="#slStatus" data-parsley-errors-container="#slStatusError">
+                                                <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus">
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.StatusData)
                                                     {
                                                         <option value="@i.ID">@i.StatusName</option>
                                                     }
                                                 </select>
-                                            </div>
-                                            <div id="slStatusError"></div>
                                         </td>
 
                                         <td data-label="Action">

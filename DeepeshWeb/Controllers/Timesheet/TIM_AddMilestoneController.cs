@@ -72,7 +72,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     
                 }
                 if (i == AddMilestone.Count)
-                    obj.Add("OK");
+                {
+                    string projectdata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                    projectdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                    string returnText = BalProjectCreation.UpdateProject(clientContext, projectdata, AddMilestone[0].Project.ToString());
+                    if (returnText == "Update")
+                        obj.Add("OK");
+                }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
