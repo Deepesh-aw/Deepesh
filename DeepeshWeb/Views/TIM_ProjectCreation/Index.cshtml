@@ -150,7 +150,7 @@
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.EmpData)
                                                     {
-                                                        <option value="@i.ID">@i.FullName</option>
+                                                        <option value="@i.ID" id="@i.EmpCode">@i.FullName</option>
                                                     }
                                                 </select>
                                             </div>
@@ -169,11 +169,17 @@
                             <div class="row row-sm text-center">
                                 <div class="col-sm-3">
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-3" ng-hide="ProjectCreationLoad">
                                     <button type="submit" class="btn btn-primary btn-block">Submit</button>
                                 </div>
+                                <div class="col-sm-3" ng-show="ProjectCreationLoad">
+                                    <button class="btn btn-primary btn-block" type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        Please wait...
+                                    </button>
+                                </div>
                                 <div class="col-lg-3">
-                                    <button class="btn btn-secondary btn-block">Cancel</button>
+                                    <button type="button" class="btn btn-secondary btn-block">Cancel</button>
                                 </div>
                             </div>
                         </div>

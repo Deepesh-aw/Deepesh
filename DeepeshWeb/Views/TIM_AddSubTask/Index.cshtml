@@ -262,16 +262,13 @@
                                         <td data-label="SubTask"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTask" id="txtSubTask" placeholder="Enter SubTask" required=""></td>
 
                                         <td data-label="Members">
-                                            <div id="slMembers">
-                                                <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError">
+                                                <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember">
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.EmpData)
                                                     {
                                                         <option value="@i.ID">@i.FullName</option>
                                                     }
                                                 </select>
-                                            </div>
-                                            <div id="slMembersError"></div>
                                         </td>
 
                                         <td data-label="Start Date">
@@ -281,9 +278,8 @@
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
                                                 </div>
-                                                <input required="" type="text" class="form-control date" ng-model="ngtxtSubTaskStartDate" id="txtSubTaskStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
+                                                <input required="" type="text" class="form-control date" ng-model="ngtxtSubTaskStartDate" id="txtSubTaskStartDate">
                                             </div>
-                                            <div id="slMilestoneStartDateError"></div>
                                         </td>
 
                                         <td data-label="Estimated End Date">
@@ -292,24 +288,21 @@
                                                     <div class="input-group-text">
                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                     </div>
-                                                </div><input class="form-control date" type="text" ng-model="ngtxtSubTaskEndDate" id="txtSubTaskEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
+                                                </div><input class="form-control date" type="text" ng-model="ngtxtSubTaskEndDate" id="txtSubTaskEndDate">
                                             </div>
-                                            <div id="slMilestoneEndDateError"></div>
                                         </td>
 
-                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTaskDays" id="txtSubTaskDays" placeholder="Enter Days" readonly="readonly"></td>
+                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTaskDays" id="txtSubTaskDays" placeholder="Enter Days" readonly="readonly">
+                                        </td>
 
                                         <td>
-                                            <div id="slStatus">
-                                                <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus" data-parsley-class-handler="#slStatus" data-parsley-errors-container="#slStatusError">
+                                                <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus">
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.StatusData)
                                                     {
                                                         <option value="@i.ID">@i.StatusName</option>
                                                     }
                                                 </select>
-                                            </div>
-                                            <div id="slStatusError"></div>
                                         </td>
 
                                         <td data-label="Action">
@@ -351,8 +344,8 @@
                                         <td data-label="Sr.No.">{{$index+1}}</td>
                                         <td data-label="SubTask">{{t.SubTask}}</td>
                                         <td data-label="Members">{{t.MemberTitle}}</td>
-                                        <td data-label="Start Date">{{t.StartDate}}</td>
-                                        <td data-label="Estimated End Date">{{t.EndDate}}</td>
+                                        <td data-label="Start Date">{{t.StartDateView}}</td>
+                                        <td data-label="Estimated End Date">{{t.EndDateView}}</td>
                                         <td data-label="Days">{{t.NoOfDays}}</td>
                                         <td data-label="Status">{{t.StatusName}}</td>
                                         <td data-label="Action">
@@ -370,8 +363,14 @@
                 <div class="row row-sm text-center">
                     <div class="col-sm-3">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-3" ng-hide="SubTaskLoad">
                         <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddSubTask()">Submit</button>&nbsp;
+                    </div>
+                    <div class="col-sm-3" ng-show="SubTaskLoad">
+                        <button class="btn btn-primary btn-block" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Please wait...
+                        </button>
                     </div>
                     <div class="col-lg-3">
                         <button type="button" ng-click="BackToDashboard()" class="btn btn-secondary btn-block">Cancel</button>
@@ -388,7 +387,7 @@
                 <div class="modal-body tx-center pd-y-20 pd-x-20">
                     <i class="icon ion-ios-checkmark-circle-outline tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
                     <h4 class="tx-success tx-semibold mg-b-20">Congratulations!</h4>
-                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveSubTaskRedirect()">Continue</button>
+                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="BackToDashboard()">Continue</button>
                 </div>
             </div>
         </div>

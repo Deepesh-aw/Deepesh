@@ -125,6 +125,14 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
                 $(this).next().remove();
             }
         });
+
+        $('.select2').on('select2:selecting', function (e) {
+            if ($(this).hasClass("parsley-error")) {
+                $(this).removeClass("parsley-error");
+                $(this).next().children().first().children().css("border-color", "#22c03c");
+                $(this).siblings("li").remove();
+            }
+        });
     });
 
     $scope.BackToDashboard = function () {
@@ -144,6 +152,8 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
     function clearErrorClass() {
         $('input').removeClass("parsley-success");
         $('input').removeClass("parsley-error");
+        $('#ddlMember').next().children().first().children().css("border-color", "#e1e5ef");
+        $("#ddlStatus").next().children().first().children().css("border-color", "#e1e5ef");
         $(".parsley-errors-list").remove();
     }
 
@@ -170,7 +180,15 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
 
         if ($scope.ngddlStatus == "" || $scope.ngddlStatus == undefined || $scope.ngddlStatus == null) {
             $("#ddlStatus").addClass("parsley-error");
+            $("#ddlStatus").next().children().first().children().css("border-color", "#ee335e");
             $("#ddlStatus").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
+        if ($scope.ngddlMember == "" || $scope.ngddlMember == undefined || $scope.ngddlMember == null) {
+            $("#ddlMember").addClass("parsley-error");
+            $("#ddlMember").next().children().first().children().css("border-color", "#ee335e");
+            $("#ddlMember").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
             rv = false;
         }
 
@@ -183,7 +201,6 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
         return rv;
     }
 
-
     $scope.AddSubTask = function () {
         var ValidateStatus = $scope.ValidateRequest();
         if (ValidateStatus) {
@@ -191,13 +208,16 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
             obj.SubTask = $scope.ngtxtSubTask;
             obj.Members = $scope.ngddlMember;
             obj.MemberTitle = $("#ddlMember option:selected").text();
-            obj.StartDate = moment($("#txtSubTaskStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY");
-            obj.EndDate = moment($("#txtSubTaskEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY");
+            obj.StartDateView = moment($("#txtSubTaskStartDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.EndDateView = moment($("#txtSubTaskEndDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.StartDate = moment($("#txtSubTaskStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.EndDate = moment($("#txtSubTaskEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
             obj.NoOfDays = $scope.ngtxtSubTaskDays;
             obj.SubTaskStatus = $scope.ngddlStatus;
             obj.StatusName = $("#ddlStatus option:selected").text();
-            obj.Project = $scope.ProjectData.Id;
+            obj.Project = $scope.ProjectData.ID;
             obj.Milestone = $scope.MilestoneData.ID;
+            obj.Task = $scope.TaskData.ID;
             $scope.SubTask.push(obj);
 
             //clear all the fields
@@ -226,28 +246,32 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
         $scope.ngtxtSubTaskDays = $scope.SubTask[index].NoOfDays;
 
         $timeout(function () {
-            $("#ddlMember").val($scope.SubTask[index].MemberId).trigger('change');
-            $("#ddlStatus").val($scope.SubTask[index].StatusId).trigger('change');
+            $("#ddlMember").val($scope.SubTask[index].Members).trigger('change');
+            $("#ddlStatus").val($scope.SubTask[index].SubTaskStatus).trigger('change');
             $scope.SubTask.splice(index, 1);
         }, 10);
 
     }
 
-
     $scope.FinalAddSubTask = function () {
-        var AddSubTask = new Array();
-        AddSubTask = $scope.SubTask;
+        if ($scope.SubTask.length > 0) {
+            $scope.SubTaskLoad = true;
+            var AddSubTask = new Array();
+            AddSubTask = $scope.SubTask;
 
-        CommonAppUtilityService.CreateItem("/TIM_AddSubTask/AddSubTask", AddSubTask).then(function (response) {
-            if (response.data[0] == "OK")
-                $('#SuccessModelSubTask').modal('show');
-
-        });
+            CommonAppUtilityService.CreateItem("/TIM_AddSubTask/AddSubTask", AddSubTask).then(function (response) {
+                if (response.data[0] == "OK") {
+                    $('#SuccessModelSubTask').modal('show');
+                    $scope.SubTaskLoad = false;
+                }
+                else
+                    $scope.SubTaskLoad = false;
+            });
+        }
+        else
+            $scope.ValidateRequest();
     }
 
-    $scope.SaveRedirect = function () {
-
-    }
 });
 
 

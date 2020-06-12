@@ -53,6 +53,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 itemdata += " ,'Description': '" + Project.Description + "'";
                 itemdata += " ,'ProjectTypeId': '" + Project.ProjectType + "'";
                 itemdata += " ,'MembersText': '" + Project.MembersText + "'";
+                itemdata += " ,'MembersCodeText': '" + Project.MembersCodeText + "'";
                 itemdata += " ,'ClientNameId': '" + Project.ClientName + "'";
                 itemdata += " ,'ProjectManagerId': '" + Project.ProjectManager + "'";
                 itemdata += " ,'NoOfDays': '" + Project.NoOfDays + "'";

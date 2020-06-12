@@ -57,8 +57,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 string returnID = "0";
                 foreach (var item in AddTask)
                 {
-                    string arr = String.Join(",", item.Members);
-
                     string itemdata = " 'MileStoneId': '" + item.MileStone + "'";
                     itemdata += " ,'MembersId': '" + item.Members + "'";
                     itemdata += " ,'StartDate': '" + item.StartDate + "'";
@@ -79,7 +77,19 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
                 }
                 if (i == AddTask.Count)
-                    obj.Add("OK");
+                {
+                    string milestonedata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                    milestonedata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                    string returnMileText = BalMilestone.UpdateMilestone(clientContext, milestonedata, AddTask[0].MileStone.ToString());
+                    if (returnMileText == "Update")
+                    {
+                        string projectdata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                        projectdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                        string returnText = BalProjectCreation.UpdateProject(clientContext, projectdata, AddTask[0].Project.ToString());
+                        if (returnText == "Update")
+                            obj.Add("OK");
+                    }
+                }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }

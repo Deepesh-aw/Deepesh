@@ -18,6 +18,7 @@ namespace DeepeshWeb.Models.Timesheet
         public string InternalStatus { get; set; }
         public Int32[] Members { get; set; }
         public string MembersText { get; set; }
+        public string MembersCodeText { get; set; }
         public int NoOfDays { get; set; }
         public int ProjectManager { get; set; }
         public string ProjectManagerName { get; set; }

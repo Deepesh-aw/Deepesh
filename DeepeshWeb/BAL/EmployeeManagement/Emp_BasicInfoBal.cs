@@ -32,8 +32,9 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 lstEmp.Add(new Emp_BasicInfoModel
                 {
                     ID = Convert.ToInt32(j["Id"]),
+                    EmpCode = j["EmpCode"].ToString(),
                     FullName = j["FirstName"].ToString() +" "+ j["LastName"].ToString(),
-                }); ;
+                });; ;
             }
             return lstEmp;
         }

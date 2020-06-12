@@ -120,7 +120,6 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
         window.location.href = Url;
     }
 
-
     $scope.DeleteTask = function (index) {
         $scope.Task.splice(index, 1);
     }
@@ -183,7 +182,6 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
         return rv;
     }
 
-
     $scope.AddTask = function () {
         var ValidateStatus = $scope.ValidateRequest();
         if (ValidateStatus) {
@@ -191,8 +189,10 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
             obj.Task = $scope.ngtxtTask;
             obj.Members = $scope.ngddlMember;
             obj.MemberTitle = $("#ddlMember option:selected").text();
-            obj.StartDate = moment($("#txtTaskStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY");
-            obj.EndDate = moment($("#txtTaskEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY");
+            obj.StartDateView = moment($("#txtTaskStartDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.EndDateView = moment($("#txtTaskEndDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.StartDate = moment($("#txtTaskStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.EndDate = moment($("#txtTaskEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
             obj.NoOfDays = $scope.ngtxtTaskDays;
             obj.TaskStatus = $scope.ngddlStatus;
             obj.StatusName = $("#ddlStatus option:selected").text();
@@ -235,21 +235,25 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
 
     }
 
-
     $scope.FinalAddTask = function () {
-        var AddTask = new Array();
-        AddTask = $scope.Task;
+        if ($scope.Task.length > 0) {
+            $scope.TaskLoad = true;
+            var AddTask = new Array();
+            AddTask = $scope.Task;
 
-        CommonAppUtilityService.CreateItem("/TIM_AddTask/AddTask", AddTask).then(function (response) {
-            if (response.data[0] == "OK")
-                $('#SuccessModelTask').modal('show');
-
-        });
+            CommonAppUtilityService.CreateItem("/TIM_AddTask/AddTask", AddTask).then(function (response) {
+                if (response.data[0] == "OK") {
+                    $('#SuccessModelTask').modal('show');
+                    $scope.TaskLoad = false;
+                }
+                else 
+                    $scope.TaskLoad = false;
+            });
+        }
+        else
+            $scope.ValidateRequest();
     }
 
-    $scope.SaveRedirect = function () {
-
-    }
 });
 
 

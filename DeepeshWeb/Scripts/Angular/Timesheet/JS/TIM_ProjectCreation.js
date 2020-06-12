@@ -47,7 +47,9 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
     });
 
     function AddProject() {
+        $scope.ProjectCreationLoad = true;
         var MembersText = $("#ddlMembers option:selected").map(function () { return this.text }).get().join(', ');
+        var MembersCode = $("#ddlMembers option:selected").map(function () { return this.id }).get().join(', ');
         //var data = $("#frmProjectCreation").serialize();
         //data += "&Members=" + $("#ddlMembers").val() + "&MembersText=" + MembersText;
         //alert(data);
@@ -59,6 +61,7 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
             'ClientProjectManager': $scope.ngtxtClientProjectManager,
             'Description': $scope.ngtxtDescription,
             'Members': $("#ddlMembers").val(),
+            'MembersCodeText': MembersCode,
             'MembersText': MembersText,
             'NoOfDays': $scope.ngtxtNoOfDays,
             'ProjectManager': $scope.ngddlProjectManager,
@@ -66,14 +69,19 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
         }
 
         CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/SaveProject", data).then(function (response) {
-            if (response.data[0] == "OK")
+            if (response.data[0] == "OK") {
+                $scope.ProjectCreationLoad = false;
                 $('#SuccessModelProject').modal('show');
-
+            }
+            else
+                $scope.ProjectCreationLoad = false;
         });
     } 
 
     $scope.SaveRedirect = function () {
-        Location.reload();
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_ProjectDashboard' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
     }
 });
 
