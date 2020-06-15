@@ -23,6 +23,7 @@ namespace DeepeshWeb.Models.Timesheet
         public int ProjectManager { get; set; }
         public string ProjectManagerName { get; set; }
         public string StartDate { get; set; }
+        public Nullable<System.DateTime> Modified { get; set; }
         public int ProjectType { get; set; }
         public string ProjectTypeName { get; set; }
         public int Status { get; set; }

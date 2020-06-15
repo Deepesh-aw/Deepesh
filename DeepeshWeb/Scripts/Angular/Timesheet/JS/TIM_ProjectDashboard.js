@@ -118,7 +118,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 'MilestoneId': MilestoneId
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
-                console.log(response);
                 if (response.data[0] == "OK") {
                     var Html = '<div><table class="table key-buttons text-md-nowrap" id = "tblTask" ><thead><tr><th>Sr.No.</th><th></th><th scope="col">Task</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
                     angular.forEach(response.data[1], function (value, key) {
@@ -247,6 +246,42 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         var spsite = getUrlVars()["SPHostUrl"];
         Url = '/TIM_AddSubTask' + "?SPHostUrl=" + spsite;
         window.location.href = Url;
+    }
+
+    $scope.AddProject = function () {
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_ProjectCreation' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
+    }
+
+    $scope.EditProject = function (ProjectId) {
+        $.cookie('ProjectId', ProjectId);
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_ProjectCreation' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
+    }
+
+    //function for Project Deletion Alert Message
+    $scope.ProjectDeletionAlert = function (ProjectId) {
+            swal({
+                title: "Project Deletion",
+                text: "Are you sure do you really want to delete this project?",
+                type: "info",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function () {
+                $scope.DeleteProject(ProjectId);
+            });
+    }
+
+    $scope.DeleteProject = function (ProjectId) {
+        $.cookie('ProjectId', ProjectId);
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/DeleteProject", "").then(function (response) {
+            if (response.data[0] == "OK") {
+                swal("Project deleted successfully.");
+            }
+        });
     }
 
 

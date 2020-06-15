@@ -21,14 +21,51 @@ namespace DeepeshWeb.Controllers.TimeSheet
         // GET: ProjectCreation
         public ActionResult Index()
         {
-            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            try
             {
-                ViewBag.ProjectTypeData = BalProjectType.GetProjectType(clientContext);
-                ViewBag.ClientData = BalClient.GetClient(clientContext);
-                ViewBag.EmpData = BalEmp.GetEmp(clientContext);
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    ViewBag.ProjectTypeData = BalProjectType.GetProjectType(clientContext);
+                    ViewBag.ClientData = BalClient.GetClient(clientContext);
+                    ViewBag.EmpData = BalEmp.GetEmp(clientContext);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
             }
             return View();
+        }
+
+        [SharePointContextFilter]
+        [ActionName("GetEditProject")]
+        public JsonResult GetEditProject(TIM_ProjectCreationModel Project)
+        {
+            List<object> obj = new List<object>();
+            List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
+            try
+            {
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    if (Request.Cookies["ProjectId"] != null)
+                    {
+                        int ProjectId = Convert.ToInt32(Request.Cookies["ProjectId"].Value);
+                        lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
+                        if (lstProjectCreation.Count > 0)
+                        {
+                            obj.Add("OK");
+                            obj.Add(lstProjectCreation);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
         [SharePointContextFilter]
@@ -39,8 +76,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
-                List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
-                lstWorkFlow = BalWorkflow.GetWorkFlowForProjectCreation(clientContext);
                 string returnID = "0";
                 string arr = String.Join(",", Project.Members);
                 //Project.Members = Request["Members"].Split(',').Select(int.Parse).ToArray();
@@ -58,16 +93,27 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 itemdata += " ,'ProjectManagerId': '" + Project.ProjectManager + "'";
                 itemdata += " ,'NoOfDays': '" + Project.NoOfDays + "'";
 
-                if (lstWorkFlow.Count > 0)
+                if(Project.ID == 0)
                 {
-                    itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
-                    itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                    List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
+                    lstWorkFlow = BalWorkflow.GetWorkFlowForProjectCreation(clientContext);
+                    if (lstWorkFlow.Count > 0)
+                    {
+                        itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                        itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                    }
+                    returnID = BalProjectCreation.SaveProjectCreation(clientContext, itemdata);
+                    if (Convert.ToInt32(returnID) > 0)
+                        obj.Add("OK");
                 }
-                returnID = BalProjectCreation.SaveProjectCreation(clientContext, itemdata);
-                if (Convert.ToInt32(returnID) > 0)
-                    obj.Add("OK");
-            }
+                else
+                {
+                    returnID = BalProjectCreation.UpdateProject(clientContext, itemdata, Project.ID.ToString());
+                    if (returnID == "Update")
+                        obj.Add("OK");
+                }
 
+            }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 

@@ -21,7 +21,7 @@
     <link href="~/assets/plugins/datatable/css/responsive.bootstrap4.min.css" rel="stylesheet" />
     <link href="~/assets/plugins/datatable/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="~/assets/plugins/datatable/css/responsive.dataTables.min.css" rel="stylesheet">
-
+    <link href="~/assets/plugins/sweet-alert/sweetalert.css" rel="stylesheet" />
 }
 
 <style>
@@ -60,6 +60,7 @@
                                 <ul class="nav panel-tabs">
                                     <li class=""><a href="#tab1" data-toggle="tab"><i class="fa fa-tasks"></i> View Cards</a></li>
                                     <li><a href="#tab2" data-toggle="tab"><i class="fa fa-cube"></i>View Table</a></li>
+                                    <li><a href="#" ng-click="AddProject()"><i class="fa fa-plus"></i>Add Project</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -104,12 +105,26 @@
                                             </div>
                                             <div class="row mb-2">
                                                 <div class="col-md-12">
-                                                    <span class="card-subtitle text-primary">Last Updated On Jan 01</span>
+                                                    <span class="card-subtitle text-primary">Last Updated On @item.Modified.Value.ToString("MMM dd")</span>
                                                 </div>
                                             </div><hr />
                                             <div class="row">
                                                 <div class="col-md-5">
-                                                    <i class="fa">&#xf017; <span class="card-subtitle text-primary">9 days left</span></i>
+                                                    @{
+                                                        var result = string.Empty;
+                                                        var diff = (string.Format("{0}", Math.Round(Math.Abs(((DateTime.Now - Convert.ToDateTime(item.EndDate)).TotalDays))).ToString()));
+                                                        if (Convert.ToInt32(diff) < 0)
+                                                        {
+                                                            result = "Date  Exceeded";
+                                                        }
+                                                        else
+                                                        {
+                                                            result = diff +" days left";
+                                                        }
+
+                                                    }
+                                                    <span></span>
+                                                    <i class="fa">&#xf017; <span class="card-subtitle text-primary">@result</span></i>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <span>:</span>
@@ -321,6 +336,7 @@
     <!--- Tabs JS-->
     <script src="../assets/plugins/tabs/jquery.multipurpose_tabcontent.js"></script>
     <script src="../assets/js/tabs.js"></script>
+    <script src="~/assets/plugins/sweet-alert/sweetalert.min.js"></script>
 
     <script src="~/Scripts/jquery.cookie.min.js"></script>
     <script src="~/Scripts/Angular/Timesheet/JS/TIM_ProjectDashboard.js"></script>

@@ -1,6 +1,41 @@
 ﻿var ProjectCreationApp = angular.module('ProjectCreationApp', ['CommonAppUtility'])
 
-ProjectCreationApp.controller('ProjectCreationController', function ($scope, $http, CommonAppUtilityService) {
+ProjectCreationApp.controller('ProjectCreationController', function ($scope, $http, $timeout, CommonAppUtilityService) {
+    var ProjectId = $.cookie("ProjectId");
+    $scope.ProjectDetails = [];
+
+    if (ProjectId != null || ProjectId != undefined) {
+        CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/GetEditProject", "").then(function (response) {
+            if (response.data[0] == "OK") {
+                
+                $scope.ProjectDetails = response.data[1];
+                $scope.ngtxtProjectName = $scope.ProjectDetails[0].ProjectName;
+                $scope.ngtxtClientProjectManager = $scope.ProjectDetails[0].ClientProjectManager;
+                $scope.ngtxtProjectStartDate = $scope.ProjectDetails[0].StartDate.split(' ')[0];
+                $scope.ngtxtProjectEndDate = $scope.ProjectDetails[0].EndDate.split(' ')[0];
+                $scope.ngtxtNoOfDays = $scope.ProjectDetails[0].NoOfDays;
+                $scope.ngtxtDescription = $scope.ProjectDetails[0].Description;
+                $timeout(function () {
+                    var MemberVal = [];
+                    angular.forEach($scope.ProjectDetails[0].Members, function (value, key) {
+                        MemberVal.push(value);
+                    });
+                    $("#ddlClientName").val($scope.ProjectDetails[0].ClientName).trigger('change');
+                    $("#ddlProjectType").val($scope.ProjectDetails[0].ProjectType).trigger('change');
+                    $("#ddlProjectManager").val($scope.ProjectDetails[0].ProjectManager).trigger('change');
+                    $("#ddlMembers").val(MemberVal).trigger('change');
+                });
+
+            }
+            else {
+
+            }
+        });
+
+        $("#btnProjectCreation").text("Update");
+    }
+
+
     $(function () {
         'use strict'
         //validation
@@ -67,6 +102,8 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
             'ProjectManager': $scope.ngddlProjectManager,
             'ProjectType': $scope.ngddlProjectType,
         }
+        if ($scope.ProjectDetails.length > 0)
+            data.ID = ProjectId;
 
         CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/SaveProject", data).then(function (response) {
             if (response.data[0] == "OK") {
@@ -78,7 +115,10 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
         });
     } 
 
-    $scope.SaveRedirect = function () {
+    $scope.BackToDashboard = function () {
+        if ($scope.ProjectDetails.length > 0)
+            $.removeCookie('ProjectId');
+
         var spsite = getUrlVars()["SPHostUrl"];
         Url = '/TIM_ProjectDashboard' + "?SPHostUrl=" + spsite;
         window.location.href = Url;

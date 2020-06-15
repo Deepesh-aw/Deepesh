@@ -15,7 +15,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_MilestoneBal BalMilestone = new TIM_MilestoneBal();
         TIM_TaskBal BalTask = new TIM_TaskBal();
         TIM_SubTaskBal BalSubTask = new TIM_SubTaskBal();
-
+        TIM_WorkFlowMasterBal BalWorkflow = new TIM_WorkFlowMasterBal();
 
         public ActionResult Index()
         {
@@ -91,5 +91,35 @@ namespace DeepeshWeb.Controllers.TimeSheet
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        [ActionName("DeleteProject")]
+        public JsonResult DeleteProject()
+        {
+            List<object> obj = new List<object>();
+            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            {
+                if (Request.Cookies["ProjectId"] != null)
+                {
+                    int ProjectId = Convert.ToInt32(Request.Cookies["ProjectId"].Value);
+                    string returnID = "0";
+                    List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
+                    lstWorkFlow = BalWorkflow.GetWorkFlowForProjectDeletion(clientContext);
+                    if (lstWorkFlow.Count > 0)
+                    {
+                        string itemdata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                        itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                        returnID = BalProjectCreation.UpdateProject(clientContext, itemdata, ProjectId.ToString());
+                    }
+                    if (returnID == "Update")
+                    {
+                        obj.Add("OK");
+                    }
+                }
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

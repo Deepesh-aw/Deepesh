@@ -25,7 +25,8 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_ProjectCreationModel> GetProjectCreationAllItems(ClientContext clientContext)
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
-            JArray jArray = RESTGet(clientContext, null);
+            string filter = "InternalStatus ne 'ProjectDeleted'";
+            JArray jArray = RESTGet(clientContext, filter);
             lstProjectCreation = GetProjectCreationListItems(jArray);
             return lstProjectCreation;
         }
@@ -55,9 +56,12 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.ProjectName = j["ProjectName"] == null ? "" : Convert.ToString(j["ProjectName"]);
                 data.ProjectTypeName = j["ProjectType"]["TypeName"] == null ? "" : Convert.ToString(j["ProjectType"]["TypeName"]);
                 data.Client = j["ClientName"]["ClientName"] == null ? "" : Convert.ToString(j["ClientName"]["ClientName"].ToString());
+                data.ClientName = j["ClientName"]["ID"] == null ? 0 : Convert.ToInt32(j["ClientName"]["ID"].ToString());
+                data.ProjectType = j["ProjectType"]["ID"] == null ? 0 : Convert.ToInt32(j["ProjectType"]["ID"].ToString());
                 data.ProjectManagerName = j["ProjectManager"]["FirstName"] == null ? "" : j["ProjectManager"]["FirstName"].ToString() + " " + j["ProjectManager"]["LastName"].ToString();
                 data.ClientProjectManager = j["ClientProjectManager"] == null ? "" : Convert.ToString(j["ClientProjectManager"]);
                 data.StartDate = j["StartDate"] == null ? "" : Convert.ToString(j["StartDate"]);
+                data.Modified = j["Modified"] == null ? (DateTime?)null : Convert.ToDateTime(j["Modified"]);
                 data.EndDate = j["EndDate"] == null ? "" : Convert.ToString(j["EndDate"]);
                 data.NoOfDays = j["NoOfDays"] == null ? 0 : Convert.ToInt32(j["NoOfDays"]);
                 data.Description = j["Description"] == null ? "" : Convert.ToString(j["Description"]);
@@ -75,7 +79,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "ID,ClientProjectManager,ProjectName,StartDate,EndDate,Description,Status/StatusName,InternalStatus,NoOfDays,ProjectType/TypeName,ClientName/ClientName,MembersText,Members/ID,Members/FirstName,Members/LastName,ProjectManager/FirstName,ProjectManager/LastName,ProjectManager/Id";
+            rESTOption.select = "ID,ClientProjectManager,Modified,ProjectName,StartDate,EndDate,Description,Status/StatusName,InternalStatus,NoOfDays,ProjectType/TypeName,ProjectType/ID,ClientName/ClientName,ClientName/ID,MembersText,Members/ID,Members/FirstName,Members/LastName,ProjectManager/FirstName,ProjectManager/LastName,ProjectManager/Id";
             rESTOption.expand = "ProjectType,ClientName,Members,ProjectManager,Status";
             rESTOption.top = "5000";
 

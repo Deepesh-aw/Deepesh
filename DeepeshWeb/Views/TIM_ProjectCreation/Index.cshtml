@@ -52,7 +52,7 @@
                                         <div class="form-group">
                                             <label for="ddlProjectType">Type</label>
                                             <div id="slType" class="parsley-select">
-                                                <select required="" class="form-control select2" name="ProjectType" ng-model="ngddlProjectType" data-parsley-class-handler="#slType" data-parsley-errors-container="#slTypeError">
+                                                <select required="" class="form-control select2" name="ProjectType" id="ddlProjectType" ng-model="ngddlProjectType" data-parsley-class-handler="#slType" data-parsley-errors-container="#slTypeError"> 
                                                     <option value="">Choose One</option>
                                                     @foreach (var i in ViewBag.ProjectTypeData)
                                                     {
@@ -170,7 +170,7 @@
                                 <div class="col-sm-3">
                                 </div>
                                 <div class="col-sm-3" ng-hide="ProjectCreationLoad">
-                                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                                    <button type="submit" class="btn btn-primary btn-block" id="btnProjectCreation">Submit</button>
                                 </div>
                                 <div class="col-sm-3" ng-show="ProjectCreationLoad">
                                     <button class="btn btn-primary btn-block" type="button" disabled>
@@ -179,7 +179,7 @@
                                     </button>
                                 </div>
                                 <div class="col-lg-3">
-                                    <button type="button" class="btn btn-secondary btn-block">Cancel</button>
+                                    <button type="button" class="btn btn-secondary btn-block" ng-click="BackToDashboard()">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -198,7 +198,7 @@
                 <div class="modal-body tx-center pd-y-20 pd-x-20">
                     <i class="icon ion-ios-checkmark-circle-outline tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
                     <h4 class="tx-success tx-semibold mg-b-20">Congratulations!</h4>
-                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="SaveRedirect()">Continue</button>
+                    <p class="mg-b-20 mg-x-20">Your request have been successfully submitted.</p><button aria-label="Close" class="btn ripple btn-success pd-x-25" data-dismiss="modal" type="button" ng-click="BackToDashboard()">Continue</button>
                 </div>
             </div>
         </div>
@@ -217,7 +217,7 @@
     <!--Internal  jquery-simple-datetimepicker js -->
     <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
     <script src="~/assets/js/datePicker.js"></script>
-
+    <script src="~/Scripts/jquery.cookie.min.js"></script>
     <script src="~/Scripts/Angular/Timesheet/JS/TIM_ProjectCreation.js"></script>
 
 }
