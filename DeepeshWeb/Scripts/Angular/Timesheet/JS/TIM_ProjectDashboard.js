@@ -1,13 +1,14 @@
 ﻿var ProjectDashboardApp = angular.module('ProjectDashboardApp', ['CommonAppUtility'])
 
-ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, CommonAppUtilityService) {
+ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, $timeout, CommonAppUtilityService) {
     var table;
     var MilestoneTable;
     var TaskTable;
     var SubTaskTable;
-
+    $scope.ProjectData = [];
+    var ProjectID;
     $(function () {
-        //$scope.$apply();
+        LoadProjectData();
         setTimeout(function () {
             table = $('#tblProject').DataTable({
                 lengthChange: true,
@@ -21,8 +22,68 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             });
             table.buttons().container()
                 .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
-        },20);
+        }, 20);
+
+        // AmazeUI Datetimepicker
+        $('#txtProjectStartDate').datetimepicker({
+            minView: 2,
+            format: 'dd-mm-yyyy',
+            autoclose: true
+        });
+
+        $('#txtProjectEndDate').datetimepicker({
+            minView: 2,
+            format: 'dd-mm-yyyy',
+            autoclose: true
+        });
+
+        $('.date').datetimepicker().on('changeDate', function (e) {
+            if ($('#txtProjectStartDate').val() != "" && $('#txtProjectEndDate').val() != "") {
+                var start = moment($("#txtProjectStartDate").val(), 'DD/MM/YYYY');
+                var end = moment($("#txtProjectEndDate").val(), 'DD/MM/YYYY');
+                var days = end.diff(start, 'days');
+                if (days <= 0) {
+                    alert("End date should not be less than or equal to the start date");
+                    $("#txtProjectEndDate").val('');
+                    $("#txtNoOfDays").val('');
+                    $scope.ngtxtNoOfDays = '';
+                    return false;
+                }
+                $scope.ngtxtNoOfDays = days;
+                $("#txtNoOfDays").val(days);
+            }
+        });
+
+        $('#frmProjectDashboard').parsley().on('field:validated', function () {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-warning').toggleClass('hidden', ok);
+        })
+            .on('form:submit', function () {
+                AddProject();
+                return false;
+            });
+
     })
+
+    function LoadProjectData() {
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectData", "").then(function (response) {
+            if (response.data[0] == "OK") {
+                $scope.ProjectData = response.data[1];
+                //for (var i = 0; i < $scope.ProjectData.length; i++) {
+                //    var Today = moment();
+                //    var EndDate = moment($scope.ProjectData[i].EndDate.split(' ')[0]);
+                //    $scope.timeDiff = Number(EndDate.diff(Today, 'days')) + 1;
+                //    if ($scope.timeDiff < 0)
+                //        $scope.ProjectData[i].LeftDays = "Date Exceeded";
+                //    else
+                //        $scope.ProjectData[i].LeftDays = $scope.timeDiff + " days left";
+                //}
+
+                //console.log($scope.ProjectData);
+            }
+        });
+    }
 
     $scope.ShowMilestone = function (index, ProjectId) {
         $("#Milestone" + index).find('i').removeClass('fa fa-plus');
@@ -95,10 +156,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             });
         }
     }
-
-    //$(document).on("click", ".ClickEvent", function () {
-    //    alert($(this).attr("name"));
-    //});
 
     $scope.ShowTask = function (index, MilestoneId, ProjectId) {
         $("#Task" + index).find('i').removeClass('fa fa-plus');
@@ -256,9 +313,39 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     $scope.EditProject = function (ProjectId) {
         $.cookie('ProjectId', ProjectId);
-        var spsite = getUrlVars()["SPHostUrl"];
-        Url = '/TIM_ProjectCreation' + "?SPHostUrl=" + spsite;
-        window.location.href = Url;
+        ProjectID = ProjectId;
+        ////var spsite = getUrlVars()["SPHostUrl"];
+        ////Url = '/TIM_ProjectCreation' + "?SPHostUrl=" + spsite;
+        ////window.location.href = Url;
+        CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/GetEditProject", "").then(function (response) {
+            if (response.data[0] == "OK") {
+
+                $scope.ProjectDetails = response.data[1];
+                $scope.ngtxtProjectName = $scope.ProjectDetails[0].ProjectName;
+                $scope.ngtxtClientProjectManager = $scope.ProjectDetails[0].ClientProjectManager;
+                $scope.ngtxtProjectStartDate = $scope.ProjectDetails[0].StartDate.split(' ')[0];
+                $scope.ngtxtProjectEndDate = $scope.ProjectDetails[0].EndDate.split(' ')[0];
+                $scope.ngtxtNoOfDays = $scope.ProjectDetails[0].NoOfDays;
+                $scope.ngtxtDescription = $scope.ProjectDetails[0].Description;
+                $timeout(function () {
+                    var MemberVal = [];
+                    angular.forEach($scope.ProjectDetails[0].Members, function (value, key) {
+                        MemberVal.push(value);
+                    });
+                    $("#ddlClientName").val($scope.ProjectDetails[0].ClientName).trigger('change');
+                    $("#ddlProjectType").val($scope.ProjectDetails[0].ProjectType).trigger('change');
+                    $("#ddlProjectManager").val($scope.ProjectDetails[0].ProjectManager).trigger('change');
+                    $("#ddlMembers").val(MemberVal).trigger('change');
+                });
+                $("#AddProjectPopUp").modal("show");
+
+            }
+            else {
+
+            }
+        });
+
+        $("#btnProjectCreation").text("Update");
     }
 
     //function for Project Deletion Alert Message
@@ -280,10 +367,45 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/DeleteProject", "").then(function (response) {
             if (response.data[0] == "OK") {
                 swal("Project deleted successfully.");
+                LoadProjectData();
             }
         });
     }
 
+    function AddProject() {
+        $scope.ProjectCreationLoad = true;
+        var MembersText = $("#ddlMembers option:selected").map(function () { return this.text }).get().join(', ');
+        var MembersCode = $("#ddlMembers option:selected").map(function () { return this.id }).get().join(', ');
+        //var data = $("#frmProjectCreation").serialize();
+        //data += "&Members=" + $("#ddlMembers").val() + "&MembersText=" + MembersText;
+        //alert(data);
+        var data = {
+            'ProjectName': $scope.ngtxtProjectName,
+            'StartDate': moment($("#txtProjectStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss"),
+            'EndDate': moment($("#txtProjectEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss"),
+            'ClientName': $scope.ngddlClientName,
+            'ClientProjectManager': $scope.ngtxtClientProjectManager,
+            'Description': $scope.ngtxtDescription,
+            'Members': $("#ddlMembers").val(),
+            'MembersCodeText': MembersCode,
+            'MembersText': MembersText,
+            'NoOfDays': $scope.ngtxtNoOfDays,
+            'ProjectManager': $scope.ngddlProjectManager,
+            'ProjectType': $scope.ngddlProjectType,
+        }
+        if ($scope.ProjectDetails.length > 0)
+            data.ID = ProjectID;
+
+        CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/SaveProject", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                $scope.ProjectCreationLoad = false;
+                $('#AddProjectPopUp').modal('hide');
+                LoadProjectData();
+            }
+            else
+                $scope.ProjectCreationLoad = false;
+        });
+    } 
 
 });
 

@@ -90,8 +90,8 @@ ProjectCreationApp.controller('ProjectCreationController', function ($scope, $ht
         //alert(data);
         var data = {
             'ProjectName': $scope.ngtxtProjectName,
-            'StartDate': moment($("#txtProjectStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY"),
-            'EndDate': moment($("#txtProjectEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY"),
+            'StartDate': moment($("#txtProjectStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss"),
+            'EndDate': moment($("#txtProjectEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss"),
             'ClientName': $scope.ngddlClientName,
             'ClientProjectManager': $scope.ngtxtClientProjectManager,
             'Description': $scope.ngtxtDescription,

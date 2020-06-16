@@ -189,6 +189,7 @@
     <Compile Include="BAL\Timesheet\TIM_ProjectTypeMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_StatusMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_SubTaskBal.cs" />
+    <Compile Include="Models\Timesheet\Pagination.cs" />
     <Compile Include="Models\Timesheet\TIM_SubTaskModel.cs" />
     <Compile Include="BAL\Timesheet\TIM_TaskBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_WorkFlowMasterBal.cs" />
@@ -9173,6 +9174,7 @@
     <Content Include="Views\TIM_AddTask\Index.cshtml" />
     <Content Include="Views\TIM_ProjectDashboard\Index.cshtml" />
     <Content Include="Views\TIM_AddSubTask\Index.cshtml" />
+    <Content Include="Views\Partial\TIM_ProjectCreation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

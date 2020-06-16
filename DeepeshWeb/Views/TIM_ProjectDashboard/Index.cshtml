@@ -29,14 +29,49 @@
         text-align: center !important;
         width: 15% !important;
     }
-    #tblProject, .tabs-menu-body{
-        width:100%!important;
+
+    #tblProject, .tabs-menu-body {
+        width: 100% !important;
     }
+
     .fa {
         margin: auto !important;
     }
+
     .erralign {
         text-align: left;
+    }
+
+    .modal.left .modal-dialog {
+        position: fixed;
+        right: 0;
+        margin: auto;
+        height: 100%;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+
+    .modal.left .modal-content {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .modal.right .modal-body {
+        padding: 15px 15px 80px;
+    }
+
+    .modal.right.fade .modal-dialog {
+        left: -320px;
+        -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+        -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+        -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+        transition: opacity 0.3s linear, left 0.3s ease-out;
+    }
+
+    .modal.right.fade.show .modal-dialog {
+        right: 0;
     }
 </style>
 
@@ -60,7 +95,8 @@
                                 <ul class="nav panel-tabs">
                                     <li class=""><a href="#tab1" data-toggle="tab"><i class="fa fa-tasks"></i> View Cards</a></li>
                                     <li><a href="#tab2" data-toggle="tab"><i class="fa fa-cube"></i>View Table</a></li>
-                                    <li><a href="#" ng-click="AddProject()"><i class="fa fa-plus"></i>Add Project</a></li>
+                                    @*<li><a href="#" ng-click="AddProject()"><i class="fa fa-plus"></i>Add Project</a></li>*@
+                                    <li><a href="#" data-toggle="modal" data-target="#AddProjectPopUp"><i class="fa fa-plus"></i>Add Project</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -75,42 +111,44 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab1">
                         <div class="row row-sm">
-                            @foreach (var item in Model)
-                            {
-                                <div class="col-12  col-lg-12 col-xl-4">
+                            @*@foreach (var item in Model)
+                                {*@
+                            <div class="col-12  col-lg-12 col-xl-4" ng-repeat="item in ProjectData">
 
-                                    <div class="card card-purple">
-                                        <div class="card-body">
-                                            <div class="row mb-2">
-                                                <div class="col-md-5">
-                                                    <b>Project Name</b>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <span>@item.ProjectName</span>
-                                                </div>
+                                <div class="card card-purple">
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col-md-5">
+                                                <b>Project Name</b>
                                             </div>
-                                            <div class="row mb-2">
-                                                <div class="col-md-5">
-                                                    <b>Client Name</b>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <span>@item.Client</span>
-                                                </div>
+                                            <div class="col-md-2">
+                                                <span>:</span>
                                             </div>
-                                            <div class="row mb-2">
-                                                <div class="col-md-12">
-                                                    <span class="card-subtitle text-primary">Last Updated On @item.Modified.Value.ToString("MMM dd")</span>
-                                                </div>
-                                            </div><hr />
-                                            <div class="row">
-                                                <div class="col-md-5">
-                                                    @{
+                                            <div class="col-md-5">
+                                                <span>{{item.ProjectName}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-md-5">
+                                                <b>Client Name</b>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span>:</span>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <span>{{item.Client}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-md-12">
+                                                <span class="card-subtitle text-primary">Last Updated On Jun 16</span>
+                                            </div>
+                                        </div><hr />
+                                        <div class="row">
+                                            <div class="col-md-5">
+
+                                                @*@{
+
                                                         var result = string.Empty;
                                                         var diff = (string.Format("{0}", Math.Round(Math.Abs(((DateTime.Now - Convert.ToDateTime(item.EndDate)).TotalDays))).ToString()));
                                                         if (Convert.ToInt32(diff) < 0)
@@ -119,30 +157,37 @@
                                                         }
                                                         else
                                                         {
-                                                            result = diff +" days left";
+                                                            result = diff + " days left";
                                                         }
 
-                                                    }
-                                                    <span></span>
-                                                    <i class="fa">&#xf017; <span class="card-subtitle text-primary">@result</span></i>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <span>
-                                                        <i class="fa fa-edit" title="Edit" ng-click="EditProject(@item.ID)"></i>&nbsp;&nbsp;
-                                                        <i class="fa fa-trash" title="Delete" ng-click="ProjectDeletionAlert(@item.ID)"></i>
-                                                    </span>
-                                                </div>
+                                                    }*@
+                                                <span></span>
+                                                <i class="fa">&#xf017; <span class="card-subtitle text-primary">10 days left</span></i>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span>:</span>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <span>
+                                                    <i class="fa fa-edit" title="Edit" ng-click="EditProject(item.ID)"></i>&nbsp;&nbsp;
+                                                    <i class="fa fa-trash" title="Delete" ng-click="ProjectDeletionAlert(item.ID)"></i>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                            }
+                            @*}*@
 
                         </div>
+                        @*<table id="tblProjectCard">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>*@
                     </div>
                     <div class="tab-pane" id="tab2">
                         <div class="card mg-b-20">
@@ -161,31 +206,35 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @{
-                                                int i = 0;
-                                            }
-                                            @foreach (var item in Model)
+                                            @if (Model.Count > 0)
                                             {
-                                                { i++; }
-                                            <tr>
-                                                <td>@i</td>
-                                                <td class="details-td" id="Milestone@(i)">
-                                                    @if (item.InternalStatus != "ProjectCreated")
-                                                    {
-                                                        <button><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i></button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
-                                                    }
-                                                </td>
-                                                <td>@item.ProjectName</td>
-                                                <td>@item.StartDate.Split(' ')[0]</td>
-                                                <td>@item.EndDate.Split(' ')[0]</td>
-                                                <td>@item.Description</td>
+                                                int i = 0;
 
-                                            </tr>
+                                                foreach (var item in Model)
+                                                {
+
+                                                    { i++; }
+                                                    <tr>
+                                                        <td>@i</td>
+                                                        <td class="details-td" id="Milestone@(i)">
+                                                            @if (item.InternalStatus != "ProjectCreated")
+                                                            {
+                                                                <button><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i></button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
+                                                            }
+                                                        </td>
+                                                        <td>@item.ProjectName</td>
+                                                        <td>@item.StartDate.Split(' ')[0]</td>
+                                                        <td>@item.EndDate.Split(' ')[0]</td>
+                                                        <td>@item.Description</td>
+
+                                                    </tr>
+                                                }
                                             }
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -197,7 +246,7 @@
 
         </div>
 
-            @*<div class="row row-sm">
+        @*<div class="row row-sm">
                 @foreach (var item in Model)
                 {
                     <div class="col-12  col-lg-12 col-xl-4">
@@ -252,11 +301,11 @@
                 }
 
             </div>*@
-            <!-- row closed -->
-            <!--Dashboard Code start-->
-            @*<h4>My Project</h4>
+        <!-- row closed -->
+        <!--Dashboard Code start-->
+        @*<h4>My Project</h4>
             <hr />*@
-            @*<div class="card mg-b-20">
+        @*<div class="card mg-b-20">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="tblProject" class="table key-buttons text-md-nowrap datatable">
@@ -302,8 +351,40 @@
                     </div>
                 </div>
             </div>*@
+    </div>
+    <!-- Container closed -->
+    <!-- modal pop up -->
+    <!-- Full Height Modal Right -->
+    <div class="modal left fade" id="AddProjectPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog" role="document">
+
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title w-100" id="myModalLabel">Add Project </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("~/Views/Partial/TIM_ProjectCreation.cshtml")
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="submit" class="btn btn-primary" id="btnProjectCreation" ng-hide="ProjectCreationLoad">Submit</button>
+                    <button class="btn btn-primary" type="button" ng-show="ProjectCreationLoad" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Please wait...
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
-        <!-- Container closed -->
+    </div>
+    <!-- Full Height Modal Right -->
+    <!-- end modal pop up -->
 </form>
 
 @section scripts
@@ -338,6 +419,8 @@
     <script src="../assets/js/tabs.js"></script>
     <script src="~/assets/plugins/sweet-alert/sweetalert.min.js"></script>
 
+    <!--Internal  Parsley.min js -->
+    <script src="~/assets/plugins/parsleyjs/parsley.min.js"></script>
     <script src="~/Scripts/jquery.cookie.min.js"></script>
     <script src="~/Scripts/Angular/Timesheet/JS/TIM_ProjectDashboard.js"></script>
 
