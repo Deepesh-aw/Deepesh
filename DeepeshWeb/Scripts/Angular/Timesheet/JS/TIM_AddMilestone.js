@@ -5,9 +5,24 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
     $scope.Milestone = [];
 
     $(function () {
-
         $scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
-        'use strict'
+        $scope.MilestoneDetails = $.parseJSON($("#hdnMilestoneData").val());
+        angular.forEach($scope.MilestoneDetails, function (value, key) {
+            var obj = {};
+            obj.Milestone = value.MileStone;
+            obj.Description = value.Description;
+            obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.NoOfDays = value.NoOfDays;
+            obj.Project = $scope.ProjectData.ID;
+            obj.ProjectManager = $scope.ProjectData.ProjectManager;
+            obj.MembersText = $scope.ProjectData.MembersText;
+            obj.Members = $scope.ProjectData.Members;
+            $scope.Milestone.push(obj);
+        }); 
+        $scope.$apply();
         // AmazeUI Datetimepicker
         $('#txtMileStartDate').datetimepicker({
             minView: 2,
@@ -20,7 +35,6 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
             format: 'dd-mm-yyyy',
             autoclose: true
         });
-
         
         $('.date').datetimepicker().on('changeDate', function (e)
         {
@@ -81,6 +95,7 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
                 $(this).next().remove();
             }   
         });
+
     });
 
     $scope.BackToDashboard = function () {
@@ -136,7 +151,6 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
         return rv;
     }
 
-
     $scope.AddMilestone = function () {
         var ValidateStatus = $scope.ValidateRequest();
         if (ValidateStatus) {
@@ -177,7 +191,6 @@ AddMilestoneApp.controller('AddMilestoneController', function ($scope, $http, Co
         $scope.ngtxtMileDays = $scope.Milestone[index].NoOfDays;
         $scope.Milestone.splice(index, 1);
     }
-
 
     $scope.FinalAddMilestone = function () {
         if ($scope.Milestone.length > 0) {

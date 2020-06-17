@@ -22,7 +22,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
                     lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext);
-                    ViewBag.MilestoneData = BalMilestone.GetMilestoneByProjectId(clientContext);
+                    ViewBag.MilestoneData = BalMilestone.GetMilestoneByProjectId(clientContext, 2);
                 }
             }
             catch (Exception ex)

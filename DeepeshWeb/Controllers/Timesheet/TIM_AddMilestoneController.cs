@@ -12,7 +12,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
     {
         TIM_ProjectCreationBal BalProjectCreation = new TIM_ProjectCreationBal();
         TIM_WorkFlowMasterBal BalWorkflow = new TIM_WorkFlowMasterBal();
-        TIM_MilestoneBal BalAddMilestone = new TIM_MilestoneBal();
+        TIM_MilestoneBal BalMilestone = new TIM_MilestoneBal();
 
         // GET: TIM_AddMilestone
         public ActionResult Index()
@@ -25,6 +25,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
                     lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
+                    ViewBag.MilestoneData = BalMilestone.GetMilestoneByProjectId(clientContext, ProjectId);
                 }
             }
             catch(Exception ex)
@@ -66,7 +67,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
                         itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
                     }
-                    returnID = BalAddMilestone.SaveMilestone(clientContext, itemdata);
+                    returnID = BalMilestone.SaveMilestone(clientContext, itemdata);
                     if (Convert.ToInt32(returnID) > 0)
                         i++;
                     

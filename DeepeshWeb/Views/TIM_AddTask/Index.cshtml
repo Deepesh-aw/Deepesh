@@ -221,13 +221,13 @@
                                         <td data-label="Task"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTask" id="txtTask" placeholder="Enter Task" required=""></td>
 
                                         <td data-label="Members">
-                                                <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember">
-                                                    <option value="">Choose One</option>
-                                                    @foreach (var i in ViewBag.EmpData)
-                                                    {
-                                                        <option value="@i.ID">@i.FullName</option>
-                                                    }
-                                                </select>
+                                            <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.EmpData)
+                                                {
+                                                    <option value="@i.ID">@i.FullName</option>
+                                                }
+                                            </select>
                                         </td>
 
                                         <td data-label="Start Date">
@@ -254,13 +254,13 @@
                                         <td data-label="Days" class="wd-10%"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTaskDays" id="txtTaskDays" placeholder="Enter Days" readonly="readonly"></td>
 
                                         <td>
-                                                <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus">
-                                                    <option value="">Choose One</option>
-                                                    @foreach (var i in ViewBag.StatusData)
-                                                    {
-                                                        <option value="@i.ID">@i.StatusName</option>
-                                                    }
-                                                </select>
+                                            <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.StatusData)
+                                                {
+                                                    <option value="@i.ID">@i.StatusName</option>
+                                                }
+                                            </select>
                                         </td>
 
                                         <td data-label="Action">
@@ -353,6 +353,8 @@
     <!-- Container closed -->
     <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
     <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.MilestoneData[0])" id="hdnMilestoneData" />
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TaskData)" id="hdnTaskData" />
+
 </form>
 
 

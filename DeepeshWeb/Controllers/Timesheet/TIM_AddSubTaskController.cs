@@ -26,15 +26,16 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
             try
             {
-                int TaskId = Convert.ToInt32(Request.Cookies["TaskId"].Value);
+                //int TaskId = Convert.ToInt32(Request.Cookies["TaskId"].Value);
                 int ProjectId = Convert.ToInt32(Request.Cookies["ProjectId"].Value);
-                int MilestoneId = Convert.ToInt32(Request.Cookies["MilestoneId"].Value);
+                //int MilestoneId = Convert.ToInt32(Request.Cookies["MilestoneId"].Value);
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
                     lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
-                    ViewBag.MilestoneData = BalMilestone.GetMilestoneByMilestoneId(clientContext, MilestoneId);
-                    ViewBag.TaskData = BalTask.GetTaskByTaskId(clientContext, TaskId);
+                    ViewBag.MilestoneData = BalMilestone.GetMilestoneByProjectId(clientContext, ProjectId);
+                    ViewBag.TaskData = BalTask.GetTaskByProjectId(clientContext, ProjectId);
+                    ViewBag.SubTaskData = BalSubTask.GetSubTaskByProjectId(clientContext, ProjectId);
                     ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
                     ViewBag.EmpData = BalEmp.GetEmp(clientContext);
                 }

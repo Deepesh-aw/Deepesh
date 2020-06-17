@@ -8,7 +8,25 @@ AddTaskApp.controller('AddTaskController', function ($scope, $http, $timeout, Co
 
         $scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
         $scope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
-        'use strict'
+        $scope.TaskData = $.parseJSON($("#hdnTaskData").val());
+        angular.forEach($scope.TaskData, function (value, key) {
+            var obj = {};
+            obj.Task = value.Task;
+            obj.Members = value.Members;
+            obj.MemberTitle = value.MembersName;
+            obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.NoOfDays = value.NoOfDays;
+            obj.TaskStatus = value.TaskStatus;
+            obj.StatusName = value.TaskStatusName;
+            obj.Project = $scope.ProjectData.ID;
+            obj.Milestone = $scope.MilestoneData.ID;
+            $scope.Task.push(obj);
+        });
+        $scope.$apply();
+
         // AmazeUI Datetimepicker
         $('#txtTaskStartDate').datetimepicker({
             minView: 2,

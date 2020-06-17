@@ -12,7 +12,7 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_MilestoneBal
     {
-        public List<TIM_MilestoneModel> GetMilestoneByProjectId(ClientContext clientContext, int Id = 2)
+        public List<TIM_MilestoneModel> GetMilestoneByProjectId(ClientContext clientContext, int Id)
         {
             List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
             string filter = "ProjectId eq " + Id + "";

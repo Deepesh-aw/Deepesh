@@ -30,6 +30,15 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstTask;
         }
 
+        public List<TIM_TaskModel> GetTaskByProjectId(ClientContext clientContext, int ProjectId)
+        {
+            List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
+            string filter = "ProjectId eq " + ProjectId + "";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTask = BindList(jArray);
+            return lstTask;
+        }
+
         public List<TIM_TaskModel> BindList(JArray jArray)
         {
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
@@ -43,15 +52,15 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.EndDate = j["EndDate"] == null ? "" : Convert.ToString(j["EndDate"]);
                 data.NoOfDays = j["NoOfDays"] == null ? 0 : Convert.ToInt32(j["NoOfDays"]);
                 data.InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"]);
-                data.Status = j["Status"]["Id"] == null ? 0 : Convert.ToInt32(j["Status"]["Id"]);
+                data.Status = j["Status"]["ID"] == null ? 0 : Convert.ToInt32(j["Status"]["ID"]);
                 data.StatusName = j["Status"]["StatusName"] == null ? "" : j["Status"]["StatusName"].ToString();
-                data.MileStone = j["MileStone"]["Id"] == null ? 0 : Convert.ToInt32(j["MileStone"]["Id"]);
+                data.MileStone = j["MileStone"]["ID"] == null ? 0 : Convert.ToInt32(j["MileStone"]["ID"]);
                 data.MileStoneName = j["MileStone"]["MileStone"] == null ? "" : Convert.ToString(j["MileStone"]["MileStone"]);
                 data.Project = j["Project"]["Id"] == null ? 0 : Convert.ToInt32(j["Project"]["Id"]);
                 data.ProjectName = j["Project"]["ProjectName"] == null ? "" : j["Project"]["ProjectName"].ToString();
-                data.TaskStatus = j["TaskStatus"]["Id"] == null ? 0 : Convert.ToInt32(j["TaskStatus"]["Id"]);
+                data.TaskStatus = j["TaskStatus"]["ID"] == null ? 0 : Convert.ToInt32(j["TaskStatus"]["ID"]);
                 data.TaskStatusName = j["TaskStatus"]["StatusName"] == null ? "" : j["TaskStatus"]["StatusName"].ToString();
-                data.Members = j["Members"]["Id"] == null ? 0 : Convert.ToInt32(j["Members"]["Id"]);
+                data.Members = j["Members"]["ID"] == null ? 0 : Convert.ToInt32(j["Members"]["ID"]);
                 data.MembersName = j["Members"]["FirstName"] == null ? "" : j["Members"]["FirstName"].ToString() +" "+ j["Members"]["LastName"].ToString();
 
                 lstTask.Add(data);

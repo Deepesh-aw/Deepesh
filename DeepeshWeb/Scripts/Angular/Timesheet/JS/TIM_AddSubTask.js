@@ -9,8 +9,26 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
         $scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
         $scope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
         $scope.TaskData = $.parseJSON($("#hdnTaskData").val());
+        $scope.SubTaskData = $.parseJSON($("#hdnSubTaskData").val());
 
-        'use strict'
+        angular.forEach($scope.SubTaskData, function (value, key) {
+            var obj = {};
+            obj.SubTask = value.SubTask;
+            obj.Members = value.Members;
+            obj.MemberTitle = value.MembersName;
+            obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.NoOfDays = value.NoOfDays;
+            obj.SubTaskStatus = value.SubTaskStatus;
+            obj.StatusName = value.SubTaskStatusName;
+            obj.Project = $scope.ProjectData.ID;
+            obj.Milestone = $scope.MilestoneData.ID;
+            $scope.SubTask.push(obj);
+        });
+        $scope.$apply();
+
         // AmazeUI Datetimepicker
         $('#txtSubTaskStartDate').datetimepicker({
             minView: 2,

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DeepeshWeb.BAL.EmployeeManagement;
 
 namespace DeepeshWeb.Controllers.TimeSheet
 {
@@ -16,23 +17,46 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_TaskBal BalTask = new TIM_TaskBal();
         TIM_SubTaskBal BalSubTask = new TIM_SubTaskBal();
         TIM_WorkFlowMasterBal BalWorkflow = new TIM_WorkFlowMasterBal();
+        TIM_ProjectTypeMasterBal BalProjectType = new TIM_ProjectTypeMasterBal();
+        Emp_ClientMasterDetailsBal BalClient = new Emp_ClientMasterDetailsBal();
+        Emp_BasicInfoBal BalEmp = new Emp_BasicInfoBal();
 
         public ActionResult Index()
         {
-            List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstProjectCreation = BalProjectCreation.GetProjectCreationAllItems(clientContext);
+                    ViewBag.ProjectTypeData = BalProjectType.GetProjectType(clientContext);
+                    ViewBag.ClientData = BalClient.GetClient(clientContext);
+                    ViewBag.EmpData = BalEmp.GetEmp(clientContext);
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
             }
-            return View(lstProjectCreation);
+            return View();
+        }
+
+        [HttpPost]
+        [ActionName("GetProjectData")]
+        public JsonResult GetProjectData()
+        {
+            List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
+            List<object> obj = new List<object>();
+            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            {
+                lstProjectCreation = BalProjectCreation.GetProjectCreationAllItems(clientContext);
+                if (lstProjectCreation.Count > 0)
+                {
+                    obj.Add("OK");
+                    obj.Add(lstProjectCreation);
+                }
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

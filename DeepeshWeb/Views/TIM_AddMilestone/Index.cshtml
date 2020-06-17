@@ -215,7 +215,7 @@
                 </div><!-- bd -->
             </div>
             <!--div-->
-            <div class="col-xl-12" ng-if="Milestone.length>0">
+            <div class="col-xl-12" ng-show="Milestone.length > 0">
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -253,24 +253,24 @@
             </div>
 
             <!--/div-->
-            <div class="col-xl-12" >
+            <div class="col-xl-12">
                 <div class="row row-sm text-center">
-                        <div class="col-sm-3">
-                        </div>
-                        <div class="col-sm-3" ng-hide="Load">
-                            <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">
-                                Submit
-                            </button>&nbsp;
-                        </div>
-                        <div class="col-sm-3" ng-show="Load">
-                            <button class="btn btn-primary btn-block" type="button" disabled>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                Please wait...
-                            </button>
-                        </div>
-                        <div class="col-lg-3">
-                            <button type="button" class="btn btn-secondary btn-block" ng-click="BackToDashboard()">Cancel</button>
-                        </div>
+                    <div class="col-sm-3">
+                    </div>
+                    <div class="col-sm-3" ng-hide="Load">
+                        <button type="button" class="btn btn-primary btn-block" ng-click="FinalAddMilestone()">
+                            Submit
+                        </button>&nbsp;
+                    </div>
+                    <div class="col-sm-3" ng-show="Load">
+                        <button class="btn btn-primary btn-block" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Please wait...
+                        </button>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="button" class="btn btn-secondary btn-block" ng-click="BackToDashboard()">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -292,6 +292,8 @@
     </div>
     <!-- Container closed -->
     <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.MilestoneData)" id="hdnMilestoneData" />
+
 </form>
 <br />
 

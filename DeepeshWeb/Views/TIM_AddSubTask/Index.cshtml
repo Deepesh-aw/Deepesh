@@ -262,13 +262,13 @@
                                         <td data-label="SubTask"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTask" id="txtSubTask" placeholder="Enter SubTask" required=""></td>
 
                                         <td data-label="Members">
-                                                <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember">
-                                                    <option value="">Choose One</option>
-                                                    @foreach (var i in ViewBag.EmpData)
-                                                    {
-                                                        <option value="@i.ID">@i.FullName</option>
-                                                    }
-                                                </select>
+                                            <select required="" class="form-control select2" ng-model="ngddlMember" id="ddlMember">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.EmpData)
+                                                {
+                                                    <option value="@i.ID">@i.FullName</option>
+                                                }
+                                            </select>
                                         </td>
 
                                         <td data-label="Start Date">
@@ -292,17 +292,18 @@
                                             </div>
                                         </td>
 
-                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTaskDays" id="txtSubTaskDays" placeholder="Enter Days" readonly="readonly">
+                                        <td data-label="Days">
+                                            <input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTaskDays" id="txtSubTaskDays" placeholder="Enter Days" readonly="readonly">
                                         </td>
 
                                         <td>
-                                                <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus">
-                                                    <option value="">Choose One</option>
-                                                    @foreach (var i in ViewBag.StatusData)
-                                                    {
-                                                        <option value="@i.ID">@i.StatusName</option>
-                                                    }
-                                                </select>
+                                            <select required="" class="form-control select2" ng-model="ngddlStatus" id="ddlStatus">
+                                                <option value="">Choose One</option>
+                                                @foreach (var i in ViewBag.StatusData)
+                                                {
+                                                    <option value="@i.ID">@i.StatusName</option>
+                                                }
+                                            </select>
                                         </td>
 
                                         <td data-label="Action">
@@ -393,9 +394,11 @@
         </div>
     </div>
     <!-- Container closed -->
-        <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
-        <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.MilestoneData[0])" id="hdnMilestoneData" />
-        <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TaskData[0])" id="hdnTaskData" />
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" id="hdnProjectData" />
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.MilestoneData[0])" id="hdnMilestoneData" />
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TaskData[0])" id="hdnTaskData" />
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SubTaskData)" id="hdnSubTaskData" />
+
 </form>
 
 @section scripts

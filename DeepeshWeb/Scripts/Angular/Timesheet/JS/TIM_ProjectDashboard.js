@@ -9,21 +9,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     var ProjectID;
     $(function () {
         LoadProjectData();
-        setTimeout(function () {
-            table = $('#tblProject').DataTable({
-                lengthChange: true,
-                responsive: true,
-                bDestroy: true,
-                language: {
-                    searchPlaceholder: 'Search...',
-                    sSearch: '',
-                    lengthMenu: '_MENU_ ',
-                }
-            });
-            table.buttons().container()
-                .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
-        }, 20);
-
         // AmazeUI Datetimepicker
         $('#txtProjectStartDate').datetimepicker({
             minView: 2,
@@ -54,6 +39,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
         });
 
+        $('#AddProjectPopUp').on('hide.bs.modal', function () {
+            $("#frmProjectDashboard")[0].reset();
+        });
+
         $('#frmProjectDashboard').parsley().on('field:validated', function () {
             var ok = $('.parsley-error').length === 0;
             $('.bs-callout-info').toggleClass('hidden', !ok);
@@ -64,12 +53,29 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 return false;
             });
 
+        $('.main-toggle').on('click', function () {
+            $(this).toggleClass('on');
+        })
     })
 
     function LoadProjectData() {
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectData", "").then(function (response) {
             if (response.data[0] == "OK") {
                 $scope.ProjectData = response.data[1];
+                setTimeout(function () {
+                    table = $('#tblProject').DataTable({
+                        lengthChange: true,
+                        responsive: true,
+                        bDestroy: true,
+                        language: {
+                            searchPlaceholder: 'Search...',
+                            sSearch: '',
+                            lengthMenu: '_MENU_ ',
+                        }
+                    });
+                    table.buttons().container()
+                        .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
+                }, 20);
                 //for (var i = 0; i < $scope.ProjectData.length; i++) {
                 //    var Today = moment();
                 //    var EndDate = moment($scope.ProjectData[i].EndDate.split(' ')[0]);
@@ -86,16 +92,16 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     }
 
     $scope.ShowMilestone = function (index, ProjectId) {
-        $("#Milestone" + index).find('i').removeClass('fa fa-plus');
+        $("#Milestone" + index).find('i').removeClass('si si si-plus');
         $("#Milestone" + index).find('i').addClass('spinner-border spinner-border-sm');
 
         var tr = $("#Milestone"+index).closest('tr');
         var row = table.row(tr);
 
         if (row.child.isShown()) {
-            $("#Milestone" + index).find('i').removeClass('fa fa-minus');
+            $("#Milestone" + index).find('i').removeClass('si-minus si');
             $("#Milestone" + index).find('i').removeClass('spinner-border spinner-border-sm');
-            $("#Milestone" + index).find('i').addClass('fa fa-plus');
+            $("#Milestone" + index).find('i').addClass('si si si-plus');
             row.child.hide();
         }
         else {
@@ -104,25 +110,26 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetMilestone", data).then(function (response) {
                 if (response.data[0] == "OK") {
-                    var Html = '<div><table class="mg-b-0 text-md-nowrap tableCss dataTable" id = "tblMilestone" ><thead><tr><th>Sr.No.</th><th></th><th scope="col">Milestone</th><th scope="col">Description</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
+                    var Html = '<div><table class="mg-b-0 text-md-nowrap tableCss dataTable" id = "tblMilestone" ><thead><tr><th>Sr.No.</th><th></th><th scope="col">Milestone</th><th scope="col">Description</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th><th scope="col">Action</th></tr></thead> <tbody>';
                     angular.forEach(response.data[1], function (value, key) {
                         //this.push(key + ': ' + value);
                         var i = key + 1;
                         Html += '<tr><td>' + i + '</td><td class = "details-td" id = "Task' + key + '">';
                         if (value.InternalStatus != "MilestoneCreated") {
-                            Html += '<span><button><i class="fa fa-plus" ng-click = "ShowTask(' + key + ', ' + value.ID + ', ' + ProjectId + ')"  aria-hidden="true"></i></button></span>';
+                            Html += '<span><i class="si si si-plus" ng-click = "ShowTask(' + key + ', ' + value.ID + ', ' + ProjectId + ')"  aria-hidden="true"></i></span>';
                         }
-                        else
+
+                        Html += '</td ><td data-label="Milestone">' + value.MileStone + '</td> <td data-label="Description">' + value.Description + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td>';
+
+                        if (value.InternalStatus == "MilestoneCreated")
                             Html += '<button class="btn btn-info" type="button" ng-click="AddTask(' + value.ID + ', ' + ProjectId + ')">Add Task</button>'
 
-                        Html += '</td ><td data-label="Milestone">' + value.MileStone + '</td> <td data-label="Description">' + value.Description + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td></tr > ';
                     });
-                    Html += '</tbody></table></div>';
+                    Html += '</td></tr ></tbody></table></div>';
                     row.child(Html).show();
 
 
                     setTimeout(function () {
-                        //row.child($(".MileDiv").html()).show();
                         MilestoneTable = $('#tblMilestone').DataTable({
                             "paging": false,
                             "ordering": false,
@@ -142,14 +149,14 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                         MilestoneTable.buttons().container()
                             .appendTo('#tblTask_wrapper .col-md-6:eq(0)');
                         $("#Milestone" + index).find('i').removeClass('spinner-border spinner-border-sm');
-                        $("#Milestone" + index).find('i').addClass('fa fa-minus');
+                        $("#Milestone" + index).find('i').addClass('si-minus si');
 
                     }, 2);
 
                 }
                 else {
                     $("#Milestone" + index).find('i').removeClass('spinner-border spinner-border-sm');
-                    $("#Milestone" + index).find('i').addClass('fa fa-minus');
+                    $("#Milestone" + index).find('i').addClass('si si si-plus');
                 }
                    
 
@@ -158,16 +165,16 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     }
 
     $scope.ShowTask = function (index, MilestoneId, ProjectId) {
-        $("#Task" + index).find('i').removeClass('fa fa-plus');
+        $("#Task" + index).find('i').removeClass('si si si-plus');
         $("#Task" + index).find('i').addClass('spinner-border spinner-border-sm');
 
         var tr = $("#Task" + index).closest('tr');
         var row = MilestoneTable.row(tr);
 
         if (row.child.isShown()) {
-            $("#Task" + index).find('i').removeClass('fa fa-minus');
+            $("#Task" + index).find('i').removeClass('si-minus si');
             $("#Task" + index).find('i').removeClass('spinner-border spinner-border-sm');
-            $("#Task" + index).find('i').addClass('fa fa-plus');
+            $("#Task" + index).find('i').addClass('si si si-plus');
             row.child.hide();
         }
         else {
@@ -176,18 +183,20 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
-                    var Html = '<div><table class="table key-buttons text-md-nowrap" id = "tblTask" ><thead><tr><th>Sr.No.</th><th></th><th scope="col">Task</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
+                    var Html = '<div><table class="table key-buttons text-md-nowrap" id = "tblTask" ><thead><tr><th>Sr.No.</th><th></th><th scope="col">Task</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th><th scope="col">Action</th></tr></thead> <tbody>';
                     angular.forEach(response.data[1], function (value, key) {
                         var i = key + 1;
                         Html += '<tr><td>' + i + '</td><td class = "details-td" id = "SubTask' + key + '">';
                         if (value.InternalStatus != "TaskCreated")
-                            Html += '<span><button><i class="fa fa-plus" ng-click = "ShowSubTask(' + key + ', ' + value.ID + ')"  aria-hidden="true"></i></button></span>';
-                        else
-                            Html += '<button class="btn btn-info" type="button" ng-click="AddSubTask(' + value.ID + ', ' + MilestoneId + ', ' + ProjectId + ')">Add SubTask</button>'
+                            Html += '<span><i class="si si si-plus" ng-click = "ShowSubTask(' + key + ', ' + value.ID + ')"  aria-hidden="true"></i></span>';
 
-                        Html += '</td ><td data-label="Milestone">' + value.Task + '</td> <td data-label="Description">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td></tr > ';
+                        Html += '</td ><td data-label="Milestone">' + value.Task + '</td> <td data-label="Description">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td> ';
+
+                        if (value.InternalStatus == "TaskCreated")
+                            Html += '<button class="btn btn-info" type="button" ng-click="AddSubTask(' + value.ID + ', ' + MilestoneId + ', ' + ProjectId + ')">Add SubTask</button>';
+
                     });
-                    Html += '</tbody></table></div>';
+                    Html += '</td></tr></tbody></table></div>';
                     row.child(Html).show();
 
                     setTimeout(function () {
@@ -210,29 +219,29 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                         TaskTable.buttons().container()
                             .appendTo('#tblTask_wrapper .col-md-6:eq(0)');
                         $("#Task" + index).find('i').removeClass('spinner-border spinner-border-sm');
-                        $("#Task" + index).find('i').addClass('fa fa-minus');
+                        $("#Task" + index).find('i').addClass('si-minus si');
                     }, 2);
 
                 }
                 else {
                     $("#Task" + index).find('i').removeClass('spinner-border spinner-border-sm');
-                    $("#Task" + index).find('i').addClass('fa fa-minus');
+                    $("#Task" + index).find('i').addClass('si-minus si');
                 }
             });
         }
     }
 
     $scope.ShowSubTask = function (index, TaskId) {
-        $("#SubTask" + index).find('i').removeClass('fa fa-plus');
+        $("#SubTask" + index).find('i').removeClass('si si si-plus');
         $("#SubTask" + index).find('i').addClass('spinner-border spinner-border-sm');
 
         var tr = $("#SubTask" + index).closest('tr');
         var row = TaskTable.row(tr);
 
         if (row.child.isShown()) {
-            $("#SubTask" + index).find('i').removeClass('fa fa-minus');
+            $("#SubTask" + index).find('i').removeClass('si-minus si');
             $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
-            $("#SubTask" + index).find('i').addClass('fa fa-plus');
+            $("#SubTask" + index).find('i').addClass('si si si-plus');
             row.child.hide();
         }
         else {
@@ -269,13 +278,13 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                             }
                         });
                         $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
-                        $("#SubTask" + index).find('i').addClass('fa fa-minus');
+                        $("#SubTask" + index).find('i').addClass('si-minus si');
                     }, 2);
 
                 }
                 else {
                     $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
-                    $("#SubTask" + index).find('i').addClass('fa fa-minus');
+                    $("#SubTask" + index).find('i').addClass('si-minus si');
                 }
             });
         }
@@ -290,7 +299,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     $scope.AddTask = function (MilestoneId, ProjectId) {
         $.cookie('ProjectId', ProjectId);
-        $.cookie('MilestoneId', MilestoneId);
+        //$.cookie('MilestoneId', MilestoneId);
         var spsite = getUrlVars()["SPHostUrl"];
         Url = '/TIM_AddTask' + "?SPHostUrl=" + spsite;
         window.location.href = Url;
@@ -406,6 +415,27 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 $scope.ProjectCreationLoad = false;
         });
     } 
+
+    $scope.GoToMilestone = function (ProjectId) {
+        $.cookie('ProjectId', ProjectId);
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_AddMilestone' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
+    }
+
+    $scope.GoToTask = function (ProjectId) {
+        $.cookie('ProjectId', ProjectId);
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_AddTask' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
+    }
+
+    $scope.GoToSubTask = function (ProjectId) {
+        $.cookie('ProjectId', ProjectId);
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_AddSubTask' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
+    }
 
 });
 
