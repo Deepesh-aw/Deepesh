@@ -69,6 +69,34 @@
     .modal.right.fade.show .modal-dialog {
         right: 0;
     }
+
+    .figure {
+        color: #3d3f4e;
+        padding: 1rem;
+        background-color: white;
+    }
+
+    .nav-link.html-code.active {
+        border-color: black;
+        background-color: white;
+        color: black;
+    }
+
+    .fontclass {
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: #031b4e;
+    }
+
+    i {
+        cursor: pointer;
+    }
+
+    .tabs-style-1 .main-nav-line .nav-link.active {
+        border-color: #e0e6ed #e0e6ed #ecf0fa;
+    }
+    
 </style>
 
 
@@ -84,7 +112,7 @@
             </div>
             <div class="my-auto">
                 <div class="d-flex">
-                    <a href="#" data-toggle="modal" data-target="#AddProjectPopUp"><i class="fa fa-plus"></i>Add Project</a>
+                    <a href="#" class="btn btn-primary float-right" data-toggle="modal" data-target="#AddProjectPopUp">Add Project</a>
                 </div>
             </div>
             @*<div class="my-auto">
@@ -110,294 +138,305 @@
                 <div class="d-flex">
                 </div>
             </div>
-            <div class="my-auto">
+            <div class="my-auto wd-100p">
                 <div class="d-flex">
-                    <ul class="nav nav-tabs html-source" id="html-source-code5" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link mr-1 html-code active show" id="js-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="default-tab" aria-selected="true"><i class="fa fa-tasks"></i>View Cards</a>
-                            <a class="nav-link mr-1 html-code" id="js-tab2" data-toggle="tab" href="#tab2" role="tab" aria-controls="default-tab2" aria-selected="false"><i class="fa fa-cube"></i>View Table</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- breadcrumb -->
-        <!-- row -->
-        <div class="row row-sm">
-            <div class="tab-content wd-100p">
-                <div class="tab-pane active show" id="tab1" role="tabpanel" aria-labelledby="html-tab">
-                    <!---Prism Pre code-->
-                    <figure class="highlight mb-0 wd-100p" style="color: #3d3f4e;padding: 1rem;background-color:black">
-                        <code class="language-markup">
-                            <div class="row row-sm">
-                                <div class="col-12  col-lg-12 col-xl-4" ng-repeat="item in ProjectData">
 
-                                    <div class="card card-purple">
-                                        <div class="card-body">
-                                            <div class="row mb-2">
-                                                <div class="col-md-5">
-                                                    <b>Project Name</b>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <span>{{item.ProjectName}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col-md-5">
-                                                    <b>Client Name</b>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <span>{{item.Client}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated'">
-                                                <div class="col-md-5">
-                                                    <b>Milestone Created</b>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <a href="#" ng-click="GoToMilestone(item.ID)">View Milestone</a>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated'">
-                                                <div class="col-md-5">
-                                                    <b>Task Created</b>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <a href="#" ng-click="GoToTask(item.ID)">View Task</a>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated' && item.InternalStatus != 'TaskCreated'">
-                                                <div class="col-md-5">
-                                                    <b>SubTask Created</b>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <a href="#" ng-click="GoToSubTask(item.ID)">View SubTask</a>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col-md-12">
-                                                    <span class="card-subtitle text-primary">Last Updated On Jun 16</span>
-                                                </div>
-                                            </div><hr />
+                    @*<ul class="nav nav-tabs html-source" id="html-source-code5" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link mr-1 html-code active show" id="js-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="default-tab" aria-selected="true"><i class="fa fa-tasks"></i>View Cards</a>
+                                <a class="nav-link mr-1 html-code" id="js-tab2" data-toggle="tab" href="#tab2" role="tab" aria-controls="default-tab2" aria-selected="false"><i class="fa fa-cube"></i>View Table</a>
+                            </li>
+                        </ul>*@
+                    <div class="panel panel-primary tabs-style-1 wd-100p">
+                        <div class=" tab-menu-heading">
+                            <div class="tabs-menu1">
 
-                                            <div class="row">
-                                                <div class="col-md-5">
-                                                    <span></span>
-                                                    <i class="fa">&#xf017; <span class="card-subtitle text-primary">10 days left</span></i>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <span>:</span>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <span>
-                                                        <i class="fa fa-edit" title="Edit" ng-click="EditProject(item.ID)"></i>
-                                                    </span>
+                                <ul class="nav panel-tabs main-nav-line">
+                                    <li class="nav-item"><a href="#tab1" class="nav-link active" data-toggle="tab"><i class="fa fa-tasks"></i>View Cards</a></li>
+                                    <li class="nav-item"><a href="#tab2" class="nav-link" data-toggle="tab"><i class="fa fa-cube"></i>View Table</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body tabs-menu-body main-content-body-right border-top-0 border">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab1">
+                                    <div class="row row-sm fontclass">
+                                        <div class="col-12  col-lg-12 col-xl-4" ng-repeat="item in ProjectData">
+
+                                            <div class="card card-purple">
+                                                <div class="card-body">
+                                                    <div class="row mb-2">
+                                                        <div class="col-md-5">
+                                                            <b>Project Name</b>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <span>:</span>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <span>{{item.ProjectName}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-md-5">
+                                                            <b>Client Name</b>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <span>:</span>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <span>{{item.Client}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated'">
+                                                        <div class="col-md-5">
+                                                            <b>Milestone Created</b>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <span>:</span>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <a href="#" ng-click="GoToMilestone(item.ID)">View Milestone</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated'">
+                                                        <div class="col-md-5">
+                                                            <b>Task Created</b>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <span>:</span>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <a href="#" ng-click="GoToTask(item.ID)">View Task</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated' && item.InternalStatus != 'TaskCreated'">
+                                                        <div class="col-md-5">
+                                                            <b>SubTask Created</b>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <span>:</span>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <a href="#" ng-click="GoToSubTask(item.ID)">View SubTask</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-md-12">
+                                                            <span class="card-subtitle text-primary">Last Updated On 1 June</span>
+                                                        </div>
+                                                    </div><hr />
+
+                                                    <div class="row">
+                                                        <div class="col-md-5">
+                                                            <span></span>
+                                                            <i class="fa">&#xf017; <span class="card-subtitle text-primary">10 days left</span></i>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <span>:</span>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <div class="btn-icon-list">
+                                                                <i class="si si-pencil text-primary mr-2" data-placement="top" data-toggle="tooltip" title="Edit" ng-click="EditProject(item.ID)"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </code>
-                    </figure>
-                </div>
-                <div class="tab-pane" id="tab2" role="tabpanel" aria-labelledby="js-tab1">
-                    <!---Prism Pre code-->
-                    <figure class="highlight mb-0 wd-100p" style="color: #3d3f4e;padding: 1rem;background-color:black">
-                        <code class="language-markup">
-                            <div class="card mg-b-20">
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table id="tblProject" class="table key-buttons text-md-nowrap">
-                                            <thead>
-                                                <tr>
-                                                    <th class="border-bottom-0">Sr.no.</th>
-                                                    <th class="border-bottom-0"></th>
-                                                    <th class="border-bottom-0">Project Name</th>
-                                                    <th class="border-bottom-0">Start Date</th>
-                                                    <th class="border-bottom-0">End Date</th>
-                                                    <th class="border-bottom-0">Description</th>
-                                                    <th class="border-bottom-0">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-repeat="item in ProjectData">
-                                                    <td>{{$index+1}}</td>
-                                                    <td class="details-td" id="Milestone{{$index}}">
-                                                        <span ng-if="item.InternalStatus != 'ProjectCreated'">
-                                                            <i class="si si si-plus" aria-hidden="true" ng-click="ShowMilestone($index, item.ID)"></i>
-                                                        </span>
-                                                    </td>
-                                                    <td>{{item.ProjectName}}</td>
-                                                    <td>{{item.StartDate | date : 'dd-Mm-yyyy'}}</td>
-                                                    <td>{{item.EndDate | date : 'dd-Mm-yyyy'}}</td>
-                                                    <td>{{item.Description}}</td>
-                                                    <td>
-                                                        <span ng-if="item.InternalStatus == 'ProjectCreated'">
-                                                            <button class="btn btn-info" type="button" ng-click="AddMilestone(item.ID)">Add Milestone</button>
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                                @*@if (Model.Count > 0)
-                                                {
-                                                    int i = 0;
-
-                                                    foreach (var item in Model)
-                                                    {
-
-                                                        { i++; }
+                                <div class="tab-pane" id="tab2">
+                                    <div class="card mg-b-20">
+                                        <div class="card-body">
+                                            <div class="table-responsive fontclass">
+                                                <table id="tblProject" class="table key-buttons text-md-nowrap">
+                                                    <thead>
                                                         <tr>
-                                                            <td>@i</td>
-                                                            <td class="details-td" id="Milestone@(i)">
-                                                                @if (item.InternalStatus != "ProjectCreated")
-                                                                {
-                                                                    <i class="si si si-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i>
-                                                                }
-
-                                                            </td>
-                                                            <td>@item.ProjectName</td>
-                                                            <td>@item.StartDate.Split(' ')[0]</td>
-                                                            <td>@item.EndDate.Split(' ')[0]</td>
-                                                            <td>@item.Description</td>
-                                                            <td>
-                                                                @if (item.InternalStatus == "ProjectCreated")
-                                                                {
-                                                                    <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
-                                                                }
-                                                            </td>
-
+                                                            <th class="border-bottom-0">Sr.no.</th>
+                                                            <th class="border-bottom-0">Project Name</th>
+                                                            <th class="border-bottom-0">Start Date</th>
+                                                            <th class="border-bottom-0">End Date</th>
+                                                            <th class="border-bottom-0">Description</th>
+                                                            <th class="border-bottom-0">Action</th>
                                                         </tr>
-                                                    }
-                                                }*@
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="item in ProjectData">
+                                                            <td>{{$index+1}}</td>
+                                                            <td>
+                                                                <span class="details-td" id="Milestone{{$index}}">
+                                                                    <span ng-if="item.InternalStatus != 'ProjectCreated'">
+                                                                        <i class="si si si-plus" aria-hidden="true" ng-click="ShowMilestone($index, item.ID)"></i>
+                                                                        &nbsp;
+                                                                    </span>
+                                                                </span>
+                                                                <span class="details-td" id="Milestone{{$index}}">
+                                                                    <span ng-if="item.InternalStatus == 'ProjectCreated'">
+                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    </span>
+                                                                </span>
+                                                                {{item.ProjectName}}
+                                                            </td>
+                                                            <td>{{DateFormat(item.StartDate)}}</td>
+                                                            <td>{{DateFormat(item.EndDate)}}</td>
+                                                            <td>{{item.Description}}</td>
+                                                            <td>
+                                                                <span ng-if="item.InternalStatus == 'ProjectCreated'">
+                                                                    <button class="btn btn-info" type="button" ng-click="AddMilestone(item.ID)">Add Milestone</button>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </code>
-                    </figure>
-                </div>
-            </div>
-        </div>
-
-        @*<div class="row row-sm">
-                @foreach (var item in Model)
-                {
-                    <div class="col-12  col-lg-12 col-xl-4">
-
-                        <div class="card card-purple">
-                            <div class="card-body">
-                                <div class="row mb-2">
-                                    <div class="col-md-5">
-                                        <b>Project Name</b>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span>:</span>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <span>@item.ProjectName</span>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-md-5">
-                                        <b>Client Name</b>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span>:</span>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <span>@item.Client</span>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-md-12">
-                                        <span class="card-subtitle text-primary">Last Updated On Jan 01</span>
-                                    </div>
-                                </div><hr />
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <i class="fa">&#xf017; <span class="card-subtitle text-primary">9 days left</span></i>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span>:</span>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <span>
-                                            <i class="fa fa-edit" title="Edit" ng-click="EditProject(@item.ID)"></i>&nbsp;&nbsp;
-                                            <i class="fa fa-trash" title="Delete" ng-click="ProjectDeletionAlert(@item.ID)"></i>
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <!-- breadcrumb -->
+        <!-- row -->
+        @*<div class="row row-sm">
+                <div class="tab-content wd-100p">
+                    <div class="tab-pane active show" id="tab1" role="tabpanel" aria-labelledby="html-tab">
+                        <figure class="highlight mb-0 wd-100p figure">
+                            <code class="language-markup">
+                                <div class="row row-sm fontclass">
+                                    <div class="col-12  col-lg-12 col-xl-4" ng-repeat="item in ProjectData">
 
-                }
+                                        <div class="card card-purple">
+                                            <div class="card-body">
+                                                <div class="row mb-2">
+                                                    <div class="col-md-5">
+                                                        <b>Project Name</b>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <span>:</span>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <span>{{item.ProjectName}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-5">
+                                                        <b>Client Name</b>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <span>:</span>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <span>{{item.Client}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated'">
+                                                    <div class="col-md-5">
+                                                        <b>Milestone Created</b>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <span>:</span>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <a href="#" ng-click="GoToMilestone(item.ID)">View Milestone</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated'">
+                                                    <div class="col-md-5">
+                                                        <b>Task Created</b>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <span>:</span>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <a href="#" ng-click="GoToTask(item.ID)">View Task</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated' && item.InternalStatus != 'TaskCreated'">
+                                                    <div class="col-md-5">
+                                                        <b>SubTask Created</b>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <span>:</span>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <a href="#" ng-click="GoToSubTask(item.ID)">View SubTask</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-12">
+                                                        <span class="card-subtitle text-primary">Last Updated On Jun 16</span>
+                                                    </div>
+                                                </div><hr />
 
-            </div>*@
-        <!-- row closed -->
-        <!--Dashboard Code start-->
-        @*<h4>My Project</h4>
-            <hr />*@
-        @*<div class="card mg-b-20">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="tblProject" class="table key-buttons text-md-nowrap datatable">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th class="border-bottom-0">Sr.no.</th>
-                                    <th class="border-bottom-0">Project Name</th>
-                                    <th class="border-bottom-0">Start Date</th>
-                                    <th class="border-bottom-0">End Date</th>
-                                    <th class="border-bottom-0">Description</th>
-                                    <th class="border-bottom-0">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{
-                                    int i = 0;
-                                }
-                                @foreach (var item in Model)
-                                {
-                                    { i++; }
-                                    <tr>
-                                        <td class="details-td" id="Milestone@(i)">
-                                            @if (item.InternalStatus != "ProjectCreated")
-                                            {
-                                                <button><i class="fa fa-plus" aria-hidden="true" ng-click="ShowMilestone(@i, @item.ID)"></i></button>
-                                            }
-                                            else
-                                            {
-                                                <button class="btn btn-info" type="button" ng-click="AddMilestone(@item.ID)">Add Milestone</button>
-                                            }
-                                        </td>
-                                        <td>@i</td>
-                                        <td>@item.ProjectName</td>
-                                        <td>@item.StartDate.Split(' ')[0]</td>
-                                        <td>@item.EndDate.Split(' ')[0]</td>
-                                        <td>@item.Description</td>
-
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                                                <div class="row">
+                                                    <div class="col-md-5">
+                                                        <span></span>
+                                                        <i class="fa">&#xf017; <span class="card-subtitle text-primary">10 days left</span></i>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <span>:</span>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <div class="btn-icon-list">
+                                                            <i class="si si-pencil text-primary mr-2" data-placement="top" data-toggle="tooltip" title="Edit" ng-click="EditProject(item.ID)"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </code>
+                        </figure>
+                    </div>
+                    <div class="tab-pane" id="tab2" role="tabpanel" aria-labelledby="js-tab1">
+                        -Prism Pre code
+                        <figure class="highlight mb-0 wd-100p figure">
+                            <code class="language-markup">
+                                <div class="card mg-b-20">
+                                    <div class="card-body">
+                                        <div class="table-responsive fontclass">
+                                            <table id="tblProject" class="table key-buttons text-md-nowrap">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="border-bottom-0">Sr.no.</th>
+                                                        <th class="border-bottom-0"></th>
+                                                        <th class="border-bottom-0">Project Name</th>
+                                                        <th class="border-bottom-0">Start Date</th>
+                                                        <th class="border-bottom-0">End Date</th>
+                                                        <th class="border-bottom-0">Description</th>
+                                                        <th class="border-bottom-0">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in ProjectData">
+                                                        <td>{{$index+1}}</td>
+                                                        <td class="details-td" id="Milestone{{$index}}">
+                                                            <span ng-if="item.InternalStatus != 'ProjectCreated'">
+                                                                <i class="si si si-plus" aria-hidden="true" ng-click="ShowMilestone($index, item.ID)"></i>
+                                                            </span>
+                                                        </td>
+                                                        <td>{{item.ProjectName}}</td>
+                                                        <td>{{item.StartDate | date : 'dd-Mm-yyyy'}}</td>
+                                                        <td>{{item.EndDate | date : 'dd-Mm-yyyy'}}</td>
+                                                        <td>{{item.Description}}</td>
+                                                        <td>
+                                                            <span ng-if="item.InternalStatus == 'ProjectCreated'">
+                                                                <button class="btn btn-info" type="button" ng-click="AddMilestone(item.ID)">Add Milestone</button>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </code>
+                        </figure>
                     </div>
                 </div>
             </div>*@

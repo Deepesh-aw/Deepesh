@@ -212,7 +212,10 @@ $(function() {
 	});
 	
 	 // ___________TOOLTIP	
-	$('[data-toggle="tooltip"]').tooltip();
+	//$('[data-toggle="tooltip"]').tooltip();
+	$('body').tooltip({
+		selector: '[data-toggle="tooltip"]'
+	});
 	// colored tooltip
 	$('[data-toggle="tooltip-primary"]').tooltip({
 		template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"><\/div><div class="tooltip-inner"><\/div><\/div>'
