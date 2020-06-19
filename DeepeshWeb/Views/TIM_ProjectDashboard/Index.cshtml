@@ -21,6 +21,9 @@
 }
 
 <style>
+    .tableCss{
+        width:82%!important;
+    }
     .details-td {
         text-align: center !important;
         width: 15% !important;
@@ -76,11 +79,11 @@
         background-color: white;
     }
 
-    .nav-link.html-code.active {
+    /*.nav-link.html-code.active {
         border-color: black;
         background-color: white;
         color: black;
-    }
+    }*/
 
     .fontclass {
         font-family: 'Poppins', sans-serif;
@@ -94,7 +97,15 @@
     }
 
     .tabs-style-1 .main-nav-line .nav-link.active {
-        border-color: #e0e6ed #e0e6ed #ecf0fa;
+        /*border-color: #e0e6ed #e0e6ed #ecf0fa;*/
+        border: ghostwhite;
+        background-color: ghostwhite;
+    }
+    .border{
+        background-color: ghostwhite;
+    }
+    .CardColor{
+        background-color:linen;
     }
     
 </style>
@@ -112,7 +123,8 @@
             </div>
             <div class="my-auto">
                 <div class="d-flex">
-                    <a href="#" class="btn btn-primary float-right" data-toggle="modal" data-target="#AddProjectPopUp">Add Project</a>
+                    @*<a href="#" class="btn btn-primary float-right" data-toggle="modal" data-target="#AddProjectPopUp">Add Project</a>*@
+                    <a href="#" class="btn btn-primary float-right" ng-click="OpenAddProjectPop()">Add Project</a>
                 </div>
             </div>
             @*<div class="my-auto">
@@ -152,8 +164,8 @@
                             <div class="tabs-menu1">
 
                                 <ul class="nav panel-tabs main-nav-line">
-                                    <li class="nav-item"><a href="#tab1" class="nav-link active" data-toggle="tab"><i class="fa fa-tasks"></i>View Cards</a></li>
-                                    <li class="nav-item"><a href="#tab2" class="nav-link" data-toggle="tab"><i class="fa fa-cube"></i>View Table</a></li>
+                                    <li class="nav-item"><a href="#tab1" class="nav-link active" data-toggle="tab">Cards</a></li>
+                                    <li class="nav-item"><a href="#tab2" class="nav-link" data-toggle="tab">Table</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -164,30 +176,32 @@
                                         <div class="col-12  col-lg-12 col-xl-4" ng-repeat="item in ProjectData">
 
                                             <div class="card card-purple">
-                                                <div class="card-body">
+                                                <div class="card-body CardColor">
+                                                    <div class="row">
+                                                        <div class="col-md-11">
+
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <i class="si si-pencil text-primary mr-2" data-placement="top" data-toggle="tooltip" title="Edit" ng-click="EditProject(item.ID)"></i>
+                                                        </div>
+                                                    </div>
                                                     <div class="row mb-2">
-                                                        <div class="col-md-5">
+                                                        <div class="col-md-6">
                                                             <b>Project Name</b>
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            <span>:</span>
-                                                        </div>
-                                                        <div class="col-md-5">
+                                                        <div class="col-md-6">
                                                             <span>{{item.ProjectName}}</span>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-2">
-                                                        <div class="col-md-5">
+                                                        <div class="col-md-6">
                                                             <b>Client Name</b>
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            <span>:</span>
-                                                        </div>
-                                                        <div class="col-md-5">
+                                                        <div class="col-md-6">
                                                             <span>{{item.Client}}</span>
                                                         </div>
                                                     </div>
-                                                    <div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated'">
+                                                    @*<div class="row mb-2" ng-show="item.InternalStatus != 'ProjectCreated'">
                                                         <div class="col-md-5">
                                                             <b>Milestone Created</b>
                                                         </div>
@@ -219,25 +233,27 @@
                                                         <div class="col-md-5">
                                                             <a href="#" ng-click="GoToSubTask(item.ID)">View SubTask</a>
                                                         </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-md-12">
-                                                            <span class="card-subtitle text-primary">Last Updated On 1 June</span>
-                                                        </div>
-                                                    </div><hr />
+                                                    </div>*@
+                                                    <hr />
 
-                                                    <div class="row">
-                                                        <div class="col-md-5">
-                                                            <span></span>
-                                                            <i class="fa">&#xf017; <span class="card-subtitle text-primary">10 days left</span></i>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <span>:</span>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <div class="btn-icon-list">
-                                                                <i class="si si-pencil text-primary mr-2" data-placement="top" data-toggle="tooltip" title="Edit" ng-click="EditProject(item.ID)"></i>
-                                                            </div>
+                                                    <div class="row pd-l-15">
+                                                        <div ng-show="item.InternalStatus != 'ProjectCreated'">
+                                                            <a class="badge badge-success" href="#" ng-click="GoToMilestone(item.ID)">View Milestone</a>
+                                                        </div>&nbsp;
+                                                        <div ng-show="item.InternalStatus == 'ProjectCreated'">
+                                                            <a class="badge badge-success" href="#" ng-click="GoToMilestone(item.ID)">Add Milestone</a>
+                                                        </div>&nbsp;
+                                                        <div ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated'">
+                                                            <a class="badge badge-dark" href="#" ng-click="GoToTask(item.ID)">View Task</a>
+                                                        </div>&nbsp;
+                                                        <div ng-show="item.InternalStatus == 'MilestoneCreated'">
+                                                            <a class="badge badge-dark" href="#" ng-click="GoToTask(item.ID)">Add Task</a>
+                                                        </div>&nbsp;
+                                                        <div ng-show="item.InternalStatus != 'ProjectCreated' && item.InternalStatus != 'MilestoneCreated' && item.InternalStatus != 'TaskCreated'">
+                                                            <a class="badge badge-warning" href="#" ng-click="GoToSubTask(item.ID)">View Subtask</a>
+                                                        </div>&nbsp;
+                                                        <div ng-show="item.InternalStatus == 'TaskCreated'">
+                                                            <a class="badge badge-warning" href="#" ng-click="GoToSubTask(item.ID)">Add Subtask</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -282,7 +298,7 @@
                                                             <td>{{item.Description}}</td>
                                                             <td>
                                                                 <span ng-if="item.InternalStatus == 'ProjectCreated'">
-                                                                    <button class="btn btn-info" type="button" ng-click="AddMilestone(item.ID)">Add Milestone</button>
+                                                                    <button class="badge badge-primary" type="button" ng-click="AddMilestone(item.ID)">Add Milestone</button>
                                                                 </span>
                                                             </td>
                                                         </tr>
