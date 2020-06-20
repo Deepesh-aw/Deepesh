@@ -3,17 +3,17 @@
 ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, $timeout, CommonAppUtilityService) {
     var table;
     $scope.ProjectData = [];
+    $scope.ProjectDetails = [];
     var ProjectID;
     var AllDataTableId = {};
     $(function () {
-
         LoadProjectData();
         // AmazeUI Datetimepicker
         $('#txtProjectStartDate').datetimepicker({
             minView: 2,
             format: 'dd-mm-yyyy',
             autoclose: true
-        });
+        })
 
         $('#txtProjectEndDate').datetimepicker({
             minView: 2,
@@ -39,15 +39,12 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         });
 
         $('#AddProjectPopUp').on('hide.bs.modal', function () {
-            //$("#frmProjectDashboard")[0].reset();
-            $("#ddlClientName").val(null).trigger('change.select2');
-            $("#ddlProjectType").val(null).trigger('change.select2');
-            $("#ddlMembers").val(null).trigger('change.select2');
-            $("#ddlProjectManager").val(null).trigger('change.select2');
+            setTimeout(function () {
+                $("#ddlMembers").val(' ').trigger('change');
+            },20);
             Array.from(document.getElementsByClassName('parsley-success')).forEach(function (el) {
                 el.classList.remove('parsley-success');
             });
-            //$scope.$apply();
         });
 
         $('#frmProjectDashboard').parsley().on('field:validated', function () {
@@ -64,12 +61,15 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //    $(this).toggleClass('on');
         //})
     })
-
     $scope.OpenAddProjectPop = function () {
         $("#frmProjectDashboard")[0].reset();
         $scope.ProjectStatus = false;
         $("#myModalLabel").html('Add Project');
         $("#btnProjectCreation").text("Submit");
+        $("#ddlClientName").val(null).trigger('change.select2');
+        $("#ddlProjectType").val(null).trigger('change.select2');
+        //$("#ddlMembers").val(' ').trigger('change');
+        $("#ddlProjectManager").val(null).trigger('change.select2');
         $("#AddProjectPopUp").modal("show");
 
     }
@@ -92,17 +92,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     table.buttons().container()
                         .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
                 }, 20);
-                //for (var i = 0; i < $scope.ProjectData.length; i++) {
-                //    var Today = moment();
-                //    var EndDate = moment($scope.ProjectData[i].EndDate.split(' ')[0]);
-                //    $scope.timeDiff = Number(EndDate.diff(Today, 'days')) + 1;
-                //    if ($scope.timeDiff < 0)
-                //        $scope.ProjectData[i].LeftDays = "Date Exceeded";
-                //    else
-                //        $scope.ProjectData[i].LeftDays = $scope.timeDiff + " days left";
-                //}
-
-                //console.log($scope.ProjectData);
             }
         });
     }
@@ -477,13 +466,12 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         return d.split(' ')[0];
     }
 
-    $scope.UpdateDate = function (d) {
-        var dt = new Date(d);
-        var dtm = dt.getMonth();
-        var dty = dt.getFullYear();
-        return dtm + "/" + dty
+    $scope.GoToLanding = function (ProjectId) {
+        $.cookie('ProjectId', ProjectId);
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = '/TIM_DashboardLanding' + "?SPHostUrl=" + spsite;
+        window.location.href = Url;
     }
-
 });
 
 

@@ -1,0 +1,140 @@
+﻿
+@using DeepeshWeb.Models.Timesheet
+@model TIM_ProjectCreationModel
+
+@section style
+{
+    <!-- Internal Select2 css -->
+    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
+
+    <!--Internal  Datetimepicker-slider css -->
+    <link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
+
+    <!-- Internal Data table css -->
+    <link href="~/assets/plugins/datatable/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatable/css/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/datatable/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatable/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/datatable/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/sweet-alert/sweetalert.css" rel="stylesheet" />
+
+}
+<style>
+     i {
+        cursor: pointer;
+    }
+</style>
+
+<form id="frmDashboardLanding" autocomplete="off" ng-app="AddDashboardLanding" ng-controller="AddDashboardLanding">
+    <!-- container opened -->
+    <div class="container">
+
+        <!-- breadcrumb -->
+        <div class="breadcrumb-header justify-content-between">
+            <div class="my-auto">
+                <div class="d-flex">
+                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Project Details</span>
+                </div>
+            </div>
+        </div>
+        <!-- breadcrumb -->
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+
+                <!--Entry Code start-->
+                @Html.Partial("~/Views/Partial/TIM_ViewProjectData.cshtml", Model)
+                <!--Entry Code End-->
+            </div>
+        </div>
+        <!-- row -->
+        <div class="row row-sm">
+            <div class="col-xl-12">
+                <div class="card mg-b-20">
+                    <div class="card-body">
+                        <div class="table-responsive fontclass">
+                            <table id="tblMilestone" class="table key-buttons text-md-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th class="border-bottom-0">Sr.no.</th>
+                                        <th class="border-bottom-0" style="padding-left: 35px;">Milestone</th>
+                                        <th class="border-bottom-0">Description</th>
+                                        <th class="border-bottom-0">Start Date</th>
+                                        <th class="border-bottom-0">End Date</th>
+                                        <th class="border-bottom-0">No Of Days</th>
+                                        <th class="border-bottom-0">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in MilestoneData">
+                                        <td>{{$index+1}}</td>
+                                        <td>
+                                            <span class="details-td" id="Task{{item.ID}}">
+                                                <span ng-if="item.InternalStatus != 'MilestoneCreated'">
+                                                    <i class="si si si-plus" aria-hidden="true" ng-click="ShowTask($index, item.ID, @Model.ID)"></i>
+                                                    &nbsp;
+                                                </span>
+                                            </span>
+                                            <span class="details-td" id="Task{{item.ID}}">
+                                                <span ng-if="item.InternalStatus == 'MilestoneCreated'">
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                </span>
+                                            </span>
+                                            {{item.MileStone}}
+                                        </td>
+                                        <td>{{item.Description}}</td>
+                                        <td>{{DateFormat(item.StartDate)}}</td>
+                                        <td>{{DateFormat(item.EndDate)}}</td>
+                                        <td>{{item.NoOfDays}}</td>
+                                        <td>
+                                            <span ng-if="item.InternalStatus == 'MilestoneCreated'">
+                                                <button class="badge badge-primary" type="button" ng-click="AddTask(item.ID)">Add Task</button>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- row closed -->
+    </div>
+    <!-- Modal alert message Success -->
+    <!-- Container closed -->
+</form>
+
+
+@section scripts
+{
+    <!-- Internal Select2.min js -->
+    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/assets/js/select2.js"></script>
+
+    <!--Internal  jquery-simple-datetimepicker js -->
+    <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
+    <script src="~/assets/js/datePicker.js"></script>
+    <script src="~/Scripts/jquery.cookie.min.js"></script>
+
+    <!-- Internal Data tables -->
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/responsive.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.bootstrap4.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/pdfmake.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/vfs_fonts.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/responsive.bootstrap4.min.js"></script>
+
+
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_DashboardLanding.js"></script>
+
+}
+

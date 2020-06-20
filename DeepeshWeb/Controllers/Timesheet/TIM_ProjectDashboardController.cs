@@ -44,17 +44,24 @@ namespace DeepeshWeb.Controllers.TimeSheet
         [ActionName("GetProjectData")]
         public JsonResult GetProjectData()
         {
-            List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
             List<object> obj = new List<object>();
-            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            try
             {
-                lstProjectCreation = BalProjectCreation.GetProjectCreationAllItems(clientContext);
-                if (lstProjectCreation.Count > 0)
+                List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    obj.Add("OK");
-                    obj.Add(lstProjectCreation);
+                    lstProjectCreation = BalProjectCreation.GetProjectCreationAllItems(clientContext);
+                    if (lstProjectCreation.Count > 0)
+                    {
+                        obj.Add("OK");
+                        obj.Add(lstProjectCreation);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }

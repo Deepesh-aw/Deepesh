@@ -17,19 +17,19 @@
             margin-right: -5px;
         }
 
-        .main-toggle{
-            width:90px;
+        .main-toggle {
+            width: 90px;
         }
+
     </style>
-    <form>
         <div class="row row-sm">
-            <div class="col-lg-6">
+        <div class="col-lg-6">
                 <div class="form-group">
                     <label for="First_Name">Project Name</label>
                     <input required="" name="ProjectName" type="text" class="form-control" ng-model="ngtxtProjectName" id="txtProjectName" placeholder="Enter Project Name">
                 </div>
             </div>
-            <div class="col-lg-6">
+        <div class="col-lg-6">
                 <div class="form-group">
                     <label for="ddlProjectType">Type</label>
                     <div id="slType" class="parsley-select">
@@ -42,7 +42,6 @@
                         </select>
                     </div>
                     <div id="slTypeError"></div>
-                    @*@Html.DropDownList("ddlProjectType", new SelectList(ViewBag.ProjectTypeData, "Id", "TypeName"), "Choose One", new { @class = "form-control select2", @onchange = "GetType()" })*@
                 </div>
             </div>
         </div>
@@ -60,7 +59,6 @@
                         </select>
                     </div>
                     <div id="slClientError"></div>
-                    @*@Html.DropDownList("ddlClientName", new SelectList(ViewBag.ClientData, "Id", "ClientName"), "Choose One", new { @class = "form-control select2" })*@
                 </div>
             </div>
             <div class="col-lg-6">
@@ -118,7 +116,6 @@
                         </select>
                     </div>
                     <div id="slProjectManagerError"></div>
-                    @*@Html.DropDownList("ProjectManager", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @name = "ProjectManager" })*@
                 </div>
             </div>
         </div>
@@ -127,8 +124,7 @@
                 <div class="form-group">
                     <label for="ddlMembers">Members</label>
                     <div id="slMembers">
-                        <select required="" class="form-control select2" ng-model="ngddlMembers" id="ddlMembers" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError" multiple="multiple" data-parsley-mincheck="1">
-                            <option value="">Choose One</option>
+                        <select required="" class="form-control select2" ng-model="ngddlMembers" id="ddlMembers" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError" multiple="multiple">
                             @foreach (var i in ViewBag.EmpData)
                             {
                                 <option value="@i.ID" id="@i.EmpCode">@i.FullName</option>
@@ -136,7 +132,6 @@
                         </select>
                     </div>
                     <div id="slMembersError"></div>
-                    @*@Html.DropDownList("ddlMembers", new SelectList(ViewBag.EmpData, "Id", "FullName"), "Choose One", new { @class = "form-control select2", @multiple = "multiple", @onchange = "MakeMembersText()" })*@
                 </div>
             </div>
             <div class="col-lg-6">
@@ -146,7 +141,6 @@
                 </div>
             </div>
         </div>
-
         <div class="row row-sm" ng-show="ProjectStatus">
             <div class="col-lg-6">
                 <div class="form-group">
@@ -158,5 +152,4 @@
             </div>
         </div>
 
-    </form>
 

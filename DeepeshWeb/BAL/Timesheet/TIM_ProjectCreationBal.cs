@@ -81,6 +81,7 @@ namespace DeepeshWeb.BAL.Timesheet
             rESTOption.filter = filter;
             rESTOption.select = "ID,ClientProjectManager,Modified,ProjectName,StartDate,EndDate,Description,Status/StatusName,InternalStatus,NoOfDays,ProjectType/TypeName,ProjectType/ID,ClientName/ClientName,ClientName/ID,MembersText,Members/ID,Members/FirstName,Members/LastName,ProjectManager/FirstName,ProjectManager/LastName,ProjectManager/Id";
             rESTOption.expand = "ProjectType,ClientName,Members,ProjectManager,Status";
+            rESTOption.orderby = "ID desc";
             rESTOption.top = "5000";
 
 
