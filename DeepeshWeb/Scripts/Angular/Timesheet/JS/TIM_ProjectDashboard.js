@@ -1,13 +1,19 @@
 ﻿var ProjectDashboardApp = angular.module('ProjectDashboardApp', ['CommonAppUtility'])
 
-ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, $timeout, CommonAppUtilityService) {
+
+
+ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, $timeout, $rootScope, DashboardLoadService, CommonAppUtilityService) {
     var table;
-    $scope.ProjectData = [];
+    $scope.ProjectPopData = [];
     $scope.ProjectDetails = [];
+    $scope.ProjectData = [];
     var ProjectID;
     var AllDataTableId = {};
+
+
+    DashboardLoadService.test();
+
     $(function () {
-        LoadProjectData();
         // AmazeUI Datetimepicker
         $('#txtProjectStartDate').datetimepicker({
             minView: 2,
@@ -62,6 +68,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //})
     })
     $scope.OpenAddProjectPop = function () {
+        //$('#testPop1').addClass('active');
         $("#frmProjectDashboard")[0].reset();
         $scope.ProjectStatus = false;
         $("#myModalLabel").html('Add Project');
@@ -74,7 +81,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     }
 
-    function LoadProjectData() {
+    $scope.LoadProjectData = function() {
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectData", "").then(function (response) {
             if (response.data[0] == "OK") {
                 $scope.ProjectData = response.data[1];
@@ -95,6 +102,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
         });
     }
+
 
     $scope.ShowMilestone = function (index, ProjectId) {
         $("#Milestone" + index).find('i').removeClass('si si si-plus');
@@ -313,11 +321,15 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         }
     }
 
-    $scope.AddMilestone = function (ProjectId) {
-        $.cookie('ProjectId', ProjectId);
-        var spsite = getUrlVars()["SPHostUrl"];
-        Url = '/TIM_AddMilestone' + "?SPHostUrl=" + spsite;
-        window.location.href = Url;
+    $scope.AddMilestonePopUp = function (Project) {
+        //$.cookie('ProjectId', ProjectId);
+        //var spsite = getUrlVars()["SPHostUrl"];
+        //Url = '/TIM_AddMilestone' + "?SPHostUrl=" + spsite;
+        //window.location.href = Url;
+        $scope.ProjectPopData = Project;
+        $rootScope.test = Project;
+        $("#AddMilestonePopUp").modal("show");
+
     }
 
     $scope.AddTask = function (MilestoneId, ProjectId) {
@@ -401,7 +413,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/DeleteProject", "").then(function (response) {
             if (response.data[0] == "OK") {
                 swal("Project deleted successfully.");
-                LoadProjectData();
+                $scope.LoadProjectData();
             }
         });
     }
@@ -434,7 +446,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             if (response.data[0] == "OK") {
                 $scope.ProjectCreationLoad = false;
                 $('#AddProjectPopUp').modal('hide');
-                LoadProjectData();
+                $scope.LoadProjectData();
             }
             else
                 $scope.ProjectCreationLoad = false;
@@ -463,7 +475,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     }
 
     $scope.DateFormat = function (d) {
-        return d.split(' ')[0];
+        if (d != undefined || d != null) {
+            return d.split(' ')[0];
+        }
     }
 
     $scope.GoToLanding = function (ProjectId) {
@@ -474,5 +488,245 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     }
 });
 
+ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http, $rootScope, CommonAppUtilityService) {
+
+    $scope.Milestone = [];
+
+    $scope.OnLoadMilestone = function () {
+        $('#txtMileStartDate').datetimepicker({
+            minView: 2,
+            format: 'dd-mm-yyyy',
+            autoclose: true
+        });
+
+        $('#txtMileEndDate').datetimepicker({
+            minView: 2,
+            format: 'dd-mm-yyyy',
+            autoclose: true
+        });
+
+        $('.date').datetimepicker().on('changeDate', function (e) {
+
+            var start = moment($("#txtMileStartDate").val(), 'DD/MM/YYYY');
+            var end = moment($("#txtMileEndDate").val(), 'DD/MM/YYYY');
+            var days = end.diff(start, 'days');
+
+            var ProjectSdate = moment($scope.ProjectPopData.StartDate.split(' ')[0], 'DD/MM/YYYY');
+            var ProjectEdate = moment($scope.ProjectPopData.EndDate.split(' ')[0], 'DD/MM/YYYY');
+
+            //check start and end date is between project dates
+            var sdate = moment(ProjectSdate).format('YYYY/MM/DD');
+            var edate = moment(ProjectEdate).format('YYYY/MM/DD');
+
+            if (!moment(start.format('YYYY/MM/DD')).isBetween(sdate, edate, undefined, '[]')) {
+                alert("Milestone date range should be within the Project date range");
+                $("#" + this.id).val('');
+                $scope.ngtxtMileStartDate = "";
+                return false;
+            }
+
+            if (!moment(end.format('YYYY/MM/DD')).isBetween(sdate, edate, undefined, '[]')) {
+                alert("Milestone date range should be within the Project date range");
+                $("#" + this.id).val('');
+                $scope.ngtxtMileEndDate = "";
+                return false;
+            }
+
+            //check end date should not be less than start date				
+            if ($('#txtMileStartDate').val() != "" && $('#txtMileEndDate').val() != "") {
+                if (days <= 0) {
+                    alert("End date shuold be less from start date");
+                    $("#txtMileEndDate").val('');
+                    $("#txtMileDays").val('');
+                    $scope.ngtxtMileDays = '';
+                    return false;
+                }
+                $scope.ngtxtMileDays = days;
+                $("#txtMileDays").val(days);
+                if ($("#txtMileDays").hasClass("parsley-error")) {
+                    $("#txtMileDays").removeClass("parsley-error");
+                    $("#txtMileDays").addClass("parsley-success");
+                    $("#txtMileDays").next().remove();
+                }
+            }
+            if ($(this).hasClass("parsley-error")) {
+                $(this).removeClass("parsley-error");
+                $(this).addClass("parsley-success");
+                $(this).next().remove();
+            }
+        });
+
+        $('input,select,textarea').keypress(function () {
+            if ($(this).hasClass("parsley-error")) {
+                $(this).removeClass("parsley-error");
+                $(this).addClass("parsley-success");
+                $(this).next().remove();
+            }
+        });
+
+    }
+    $(function () {
+        //$scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
+        //$scope.MilestoneDetails = $.parseJSON($("#hdnMilestoneData").val());
+        //angular.forEach($scope.MilestoneDetails, function (value, key) {
+        //    var obj = {};
+        //    obj.Milestone = value.MileStone;
+        //    obj.Description = value.Description;
+        //    obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+        //    obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+        //    obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+        //    obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+        //    obj.NoOfDays = value.NoOfDays;
+        //    obj.Project = $scope.ProjectData.ID;
+        //    obj.ProjectManager = $scope.ProjectData.ProjectManager;
+        //    obj.MembersText = $scope.ProjectData.MembersText;
+        //    obj.Members = $scope.ProjectData.Members;
+        //    $scope.Milestone.push(obj);
+        //});
+        //$scope.$apply();
+        // AmazeUI Datetimepicker
+        
 
 
+    });
+
+    $scope.LoadProjectData = function () {
+        alert("hi");
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectData", "").then(function (response) {
+            if (response.data[0] == "OK") {
+                $scope.ProjectData = response.data[1];
+                setTimeout(function () {
+                    table = $('#tblProject').DataTable({
+                        lengthChange: true,
+                        responsive: true,
+                        bDestroy: true,
+                        language: {
+                            searchPlaceholder: 'Search...',
+                            sSearch: '',
+                            lengthMenu: '_MENU_ ',
+                        }
+                    });
+                    table.buttons().container()
+                        .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
+                }, 20);
+            }
+        });
+    }
+
+    $scope.DeleteMilestone = function (index) {
+        $scope.Milestone.splice(index, 1);
+    }
+
+    function clearErrorClass() {
+        $('input').removeClass("parsley-success");
+        $('input').removeClass("parsley-error");
+        $(".parsley-errors-list").remove();
+    }
+
+    $scope.ValidateRequest = function () {
+        clearErrorClass();
+        var rv = true;
+        if ($scope.ngtxtMilestone == "" || $scope.ngtxtMilestone == undefined || $scope.ngtxtMilestone == null) {
+            $("#txtMilestone").addClass("parsley-error");
+            $("#txtMilestone").parent().append("<li class='parsley-required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
+        if ($scope.ngtxtMileDescription == "" || $scope.ngtxtMileDescription == undefined || $scope.ngtxtMileDescription == null) {
+            $("#txtMileDescription").addClass("parsley-error");
+            $("#txtMileDescription").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
+        if ($scope.ngtxtMileStartDate == "" || $scope.ngtxtMileStartDate == undefined || $scope.ngtxtMileStartDate == null) {
+            $("#txtMileStartDate").addClass("parsley-error");
+            $("#txtMileStartDate").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
+        if ($scope.ngtxtMileEndDate == "" || $scope.ngtxtMileEndDate == undefined || $scope.ngtxtMileEndDate == null) {
+            $("#txtMileEndDate").addClass("parsley-error");
+            $("#txtMileEndDate").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
+        if ($scope.ngtxtMileDays == "" || $scope.ngtxtMileDays == undefined || $scope.ngtxtMileDays == null) {
+            $("#txtMileDays").addClass("parsley-error");
+            $("#txtMileDays").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+            rv = false;
+        }
+
+        return rv;
+    }
+
+    $scope.AddMilestone = function () {
+        console.log('$rootScope.test');
+        console.log($rootScope.test);
+        var ValidateStatus = $scope.ValidateRequest();
+        if (ValidateStatus) {
+
+            var obj = {};
+            obj.Milestone = $scope.ngtxtMilestone;
+            obj.Description = $scope.ngtxtMileDescription;
+            obj.StartDateView = moment($("#txtMileStartDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.EndDateView = moment($("#txtMileEndDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
+            obj.StartDate = moment($("#txtMileStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.EndDate = moment($("#txtMileEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+            obj.NoOfDays = $scope.ngtxtMileDays;
+            obj.Project = $scope.ProjectPopData.ID;
+            obj.ProjectManager = $scope.ProjectPopData.ProjectManager;
+            obj.MembersText = $scope.ProjectPopData.MembersText;
+            obj.Members = $scope.ProjectPopData.Members;
+            $scope.Milestone.push(obj);
+
+            //clear all the fields
+            $scope.ngtxtMilestone = "";
+            $scope.ngtxtMileDescription = "";
+            $("#txtMileStartDate").val('');
+            $scope.ngtxtMileStartDate = "";
+            $("#txtMileEndDate").val('');
+            $scope.ngtxtMileEndDate = "";
+            $("#txtMileDays").val('');
+            $scope.ngtxtMileDays = '';
+        }
+    }
+
+    $scope.EditMilestone = function (index) {
+        $scope.ngtxtMilestone = $scope.Milestone[index].Milestone;
+        $scope.ngtxtMileDescription = $scope.Milestone[index].Description;
+        $scope.ngtxtMileStartDate = $scope.Milestone[index].StartDateView;
+        $("#txtMileStartDate").val($scope.Milestone[index].StartDateView);
+        $scope.ngtxtMileEndDate = $scope.Milestone[index].EndDateView;
+        $("#txtMileEndDate").val($scope.Milestone[index].EndDateView);
+        $scope.ngtxtMileDays = $scope.Milestone[index].NoOfDays;
+        $scope.Milestone.splice(index, 1);
+    }
+
+    $scope.FinalAddMilestone = function () {
+        if ($scope.Milestone.length > 0) {
+            $scope.Load = true;
+            var AddMilestone = new Array();
+            AddMilestone = $scope.Milestone;
+
+            CommonAppUtilityService.CreateItem("/TIM_AddMilestone/AddMilestone", AddMilestone).then(function (response) {
+                if (response.data[0] == "OK") {
+                    $scope.Load = false;
+                    //$('#SuccessModelMilestone').modal('show');
+                    $("#AddMilestonePopUp").modal("hide");
+                    $scope.LoadProjectData();
+
+                }
+                else
+                    $scope.Load = false;
+            });
+        }
+        else {
+            $scope.ValidateRequest();
+        }
+    }
+});
+
+ProjectDashboardApp.service('DashboardLoadService', function () {
+    this.test = function () {
+    }
+});

@@ -9178,6 +9178,7 @@
     <Content Include="Views\TIM_AddSubTask\Index.cshtml" />
     <Content Include="Views\Partial\TIM_ProjectCreation.cshtml" />
     <Content Include="Views\TIM_DashboardLanding\Index.cshtml" />
+    <Content Include="Views\Partial\TIM_AddMilestone.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

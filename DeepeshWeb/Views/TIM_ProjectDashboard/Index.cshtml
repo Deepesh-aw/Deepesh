@@ -19,12 +19,36 @@
     <link href="~/assets/plugins/datatable/css/responsive.dataTables.min.css" rel="stylesheet">
     <link href="~/assets/plugins/sweet-alert/sweetalert.css" rel="stylesheet" />
 }
-
 <style>
-    .tableCss {
-        width: 82% !important;
+    #testPop1 {
+        width: 30%;
+        transition: 1s;
+        margin-right: -40%;
     }
+    .active {
+        margin-right: 0%!important;
+    }
+    .overlay1 {
+    position: fixed;
+    box-shadow: -6px 3px 15px -1px rgba(0,0,0,0.36);
+    background: #fff;
+    height: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    /*padding: 25px;*/
+    overflow: hidden;
+    margin:0%;
+    border-radius:6px;
+}
 
+
+</style>
+<style>
+    .modal-lg, .modal-xl {
+        max-width: 1140px;
+    }
     .details-td {
         text-align: center !important;
         width: 15% !important;
@@ -58,7 +82,7 @@
         overflow-y: auto;
     }
 
-    .modal.right .modal-body {
+    /*.modal.right .modal-body {
         padding: 15px 15px 80px;
     }
 
@@ -72,7 +96,7 @@
 
     .modal.right.fade.show .modal-dialog {
         right: 0;
-    }
+    }*/
 
     .figure {
         color: #3d3f4e;
@@ -117,7 +141,7 @@
 </style>
 
 
-<form id="frmProjectDashboard" ng-app="ProjectDashboardApp" ng-controller="ProjectDashboardController" autocomplete="off">
+<form id="frmProjectDashboard" ng-app="ProjectDashboardApp" ng-controller="ProjectDashboardController" ng-init="LoadProjectData()" autocomplete="off">
     <!-- container opened -->
     <div class="container">
         <!-- breadcrumb -->
@@ -245,7 +269,7 @@
                                                             <td>{{item.Description}}</td>
                                                             <td>
                                                                 <span ng-if="item.InternalStatus == 'ProjectCreated'">
-                                                                    <button class="badge badge-primary" type="button" ng-click="AddMilestone(item.ID)">Add Milestone</button>
+                                                                    <button class="badge badge-primary" type="button" ng-click="AddMilestonePopUp(item)">Add Milestone</button>
                                                                 </span>
                                                             </td>
                                                         </tr>
@@ -295,7 +319,30 @@
         </div>
         <!-- Full Height Modal Right -->
         <!-- end modal pop up -->
+        <div ng-controller="AddMilestoneController" class="modal left fade" id="AddMilestonePopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            @Html.Partial("~/Views/Partial/TIM_AddMilestone.cshtml");
+        </div>
+    </div>
+    <div class="overlay1" id="testPop1">
+        <div class="overlay-content">
+            <div class="closeOverlay" id="closeOverlay1">
+                <a href="#"><i class="fa fa-times"></i></a>
+            </div>
+            <div class="">
+                <div class="divInner">
+                    <!--<div class="buttons text-center">
+                        <button type="button" class="btn btn-primary closeOver" ng-click="showLookupFieldForDispal()">Save</button>
+                        <button type="button" class="btn btn-warning closeOver" id="testPop1Cancel" ng-click="cancelFilterValues()">cancel</button>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
+
+
+
 
 @section scripts
 {

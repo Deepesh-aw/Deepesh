@@ -1,0 +1,269 @@
+﻿
+
+<style>
+    
+    .tableCss {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+        .tableCss caption {
+            font-size: 1.5em;
+            margin: .5em 0 .75em;
+        }
+
+        .tableCss tr {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: .35em;
+        }
+
+        .tableCss th,
+        .tableCss td {
+            padding: .625em;
+            text-align: center;
+        }
+
+        .tableCss th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .tableCss thead th {
+            padding: 12px !important;
+        }
+
+    .fa {
+        margin: auto !important;
+    }
+
+    @@media screen and (max-width: 600px) {
+        .datetimepicker table {
+            background: none;
+        }
+
+        .datetimepicker {
+            width: auto;
+        }
+
+        .tableCss {
+            border: 0;
+        }
+
+            .tableCss caption {
+                font-size: 1.3em;
+            }
+
+            .tableCss thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            .tableCss tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            .tableCss td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: .8em;
+                text-align: right;
+            }
+
+        input {
+            border-radius: 4px;
+        }
+
+        .input {
+            border-radius: 4px;
+        }
+
+        .tableCss td::before {
+            /*
+        * aria-label has no advantage, it won't be read inside a table
+        content: attr(aria-label);
+        */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tableCss td:last-child {
+            border-bottom: 0;
+        }
+        /*table td input {
+            padding: .625em;
+            text-align: center;
+            width: 50% !important;
+            margin-left: auto !important;
+        }*/
+        .responsivetablediv {
+            margin-top: 25px !important;
+        }
+    }
+
+    .erralign {
+        text-align: left;
+    }
+</style>
+
+
+<div class="modal-dialog modal-lg " role="document" ng-init="OnLoadMilestone()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title w-100" id="MilestoneTitle">Add Milestone </h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="page-container">
+                <form id="frmAddMilestone" autocomplete="off">
+                    <!-- container opened -->
+                    <div class="container">
+
+                        <!-- breadcrumb -->
+                        <!-- breadcrumb -->
+                        <!-- row -->
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12">
+
+                                <!--Entry Code start-->
+                                @Html.Partial("~/Views/Partial/TIM_ViewProjectData.cshtml")
+                                <!--Entry Code End-->
+                            </div>
+                        </div>
+                        <!-- row closed -->
+                        <!-- row -->
+                        <div class="row row-sm">
+                            <!--div-->
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="mg-b-0 text-md-nowrap tableCss">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Milestone</th>
+                                                        <th scope="col">Description</th>
+                                                        <th scope="col">Start Date</th>
+                                                        <th scope="col">Estimated End Date</th>
+                                                        <th scope="col">Days</th>
+                                                        <th scope="col">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td data-label="Milestone"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestone" id="txtMilestone" placeholder="Enter Milestone" required=""></td>
+
+                                                        <td data-label="Description"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDescription" id="txtMileDescription" placeholder="Enter Description" required=""></td>
+
+                                                        <td data-label="Start Date">
+                                                            <div class="input-group responsivetablediv">
+                                                                <div class="input-group-prepend">
+                                                                    <div class="input-group-text">
+                                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <input required="" type="text" class="form-control date" ng-model="ngtxtMileStartDate" id="txtMileStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
+                                                            </div>
+                                                            <div id="slMilestoneStartDateError"></div>
+                                                        </td>
+
+                                                        <td data-label="Estimated End Date">
+                                                            <div class="input-group responsivetablediv" id="slMilestoneEndDate">
+                                                                <div class="input-group-prepend">
+                                                                    <div class="input-group-text">
+                                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                                    </div>
+                                                                </div><input class="form-control date" type="text" ng-model="ngtxtMileEndDate" id="txtMileEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
+                                                            </div>
+                                                            <div id="slMilestoneEndDateError"></div>
+                                                        </td>
+
+                                                        <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDays" id="txtMileDays" placeholder="Enter Days" readonly="readonly"></td>
+
+                                                        <td data-label="Action">
+                                                            <div class="btn-icon-list responsivetablediv">
+                                                                <button type="button" class="fa fa-plus" title="Add" ng-click="AddMilestone()"></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- bd -->
+                                    </div><!-- bd -->
+                                </div><!-- bd -->
+                            </div>
+                            <!--div-->
+                            <div class="col-xl-12" ng-show="Milestone.length > 0">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+
+                                            <table class="tableCss">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Sr.No.</th>
+                                                        <th scope="col">Milestone</th>
+                                                        <th scope="col">Description</th>
+                                                        <th scope="col">Start Date</th>
+                                                        <th scope="col">Estimated End Date</th>
+                                                        <th scope="col">Days</th>
+                                                        <th scope="col">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="m in Milestone">
+                                                        <td data-label="Sr.No.">{{$index+1}}</td>
+                                                        <td data-label="Milestone">{{m.Milestone}}</td>
+                                                        <td data-label="Description">{{m.Description}}</td>
+                                                        <td data-label="Start Date">{{m.StartDateView}}</td>
+                                                        <td data-label="Estimated End Date">{{m.EndDateView}}</td>
+                                                        <td data-label="Days">{{m.NoOfDays}}</td>
+                                                        <td data-label="Action">
+                                                            <i class="fa fa-edit" ng-click="EditMilestone($index)"></i>&nbsp;
+                                                            <i class="fa fa-trash" ng-click="DeleteMilestone($index)"></i>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- bd -->
+                                    </div><!-- bd -->
+                                </div><!-- bd -->
+                            </div>
+
+                            <!--/div-->
+                        </div>
+                        <!-- row closed -->
+                    </div>
+                    <!-- Container closed -->
+                </form>
+
+            </div>
+        </div>
+        <div class="modal-footer justify-content-center">
+            <button type="submit" class="btn btn-primary" id="btnMilestoneCreation" ng-hide="MilestoneCreationLoad" ng-click="FinalAddMilestone()">Submit</button>
+            <button class="btn btn-primary" type="button" ng-show="MilestoneCreationLoad" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Please wait...
+            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+

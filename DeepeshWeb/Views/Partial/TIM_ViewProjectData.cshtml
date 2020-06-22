@@ -1,6 +1,4 @@
-﻿@model DeepeshWeb.Models.Timesheet.TIM_ProjectCreationModel
-
-
+﻿
 <div class="card custom-card">
     <div class="card-body">
 
@@ -14,7 +12,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.ProjectName
+                            {{test.ProjectName}}
                         </div>
                     </div>
                     <div class="col-lg-3">
@@ -24,7 +22,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.ProjectTypeName
+                            {{ProjectPopData.ProjectTypeName}}
                         </div>
                     </div>
                 </div>
@@ -36,7 +34,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.Client
+                            {{ProjectPopData.Client}}
                         </div>
                     </div>
                     <div class="col-lg-3">
@@ -46,7 +44,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.ClientProjectManager
+                            {{ProjectPopData.ClientProjectManager}}
                         </div>
                     </div>
                 </div>
@@ -58,7 +56,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.StartDate.Split(' ')[0]
+                            {{DateFormat(ProjectPopData.StartDate)}}
                         </div>
                     </div>
                     <div class="col-lg-3">
@@ -68,7 +66,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.EndDate.Split(' ')[0]
+                            {{DateFormat(ProjectPopData.EndDate)}}
                         </div>
                     </div>
                 </div>
@@ -80,7 +78,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.NoOfDays
+                            {{ProjectPopData.NoOfDays}}
                         </div>
                     </div>
                     <div class="col-lg-3">
@@ -90,7 +88,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            @Model.ProjectManagerName
+                            {{ProjectPopData.ProjectManagerName}}
                         </div>
                     </div>
                 </div>
@@ -103,15 +101,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            <ul class="list-group">
-                                @{
-                                    var Members = Model.MembersText.Split(',');
-                                    foreach(var i in Members){
-                                        <li>@i </li>
-                                    }
-                                }
-
-                            </ul>
+                            {{ProjectPopData.MembersText}}
                         </div>
                     </div>
                     <div class="col-lg-3">
@@ -121,7 +111,7 @@
                     </div>
                     <div class="col-lg-3">
                         <div class="form-group">
-                            Project development and deployment
+                            {{ProjectPopData.Description}}
                         </div>
                     </div>
                 </div>
