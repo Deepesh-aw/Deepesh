@@ -17,6 +17,9 @@ namespace DeepeshWeb.Controllers.TimeSheet
         Emp_ClientMasterDetailsBal BalClient = new Emp_ClientMasterDetailsBal();
         Emp_BasicInfoBal BalEmp = new Emp_BasicInfoBal();
         TIM_WorkFlowMasterBal BalWorkflow = new TIM_WorkFlowMasterBal();
+        TIM_MilestoneBal BalMilestone = new TIM_MilestoneBal();
+        TIM_TaskBal BalTask = new TIM_TaskBal();
+        TIM_SubTaskBal BalSubTask = new TIM_SubTaskBal();
 
         // GET: ProjectCreation
         public ActionResult Index()
@@ -110,7 +113,81 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 {
                     returnID = BalProjectCreation.UpdateProject(clientContext, itemdata, Project.ID.ToString());
                     if (returnID == "Update")
-                        obj.Add("OK");
+                    {
+                        if(Project.InternalStatus == "ProjectDeleted")
+                        {
+                            List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
+                            lstWorkFlow = BalWorkflow.GetWorkFlowForProjectDeletion(clientContext);
+                            if (lstWorkFlow.Count > 0)
+                            {
+                                string projectdata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                                projectdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                                returnID = BalProjectCreation.UpdateProject(clientContext, projectdata, Project.ID.ToString());
+                                if (returnID == "Update")
+                                {
+                                    List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
+                                    lstMilestone = BalMilestone.GetMilestoneByProjectId(clientContext, Project.ID);
+                                    if (lstMilestone.Count > 0)
+                                    {
+                                        int mile = 0;
+                                        foreach (var item in lstMilestone)
+                                        {
+                                            mile++;
+                                            BalMilestone.UpdateMilestone(clientContext, projectdata, item.ID.ToString());
+                                        }
+                                        if (mile == lstMilestone.Count)
+                                        {
+                                            List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
+                                            lstTask = BalTask.GetTaskByProjectId(clientContext, Project.ID);
+                                            if (lstTask.Count > 0)
+                                            {
+                                                int task = 0;
+                                                foreach (var item in lstMilestone)
+                                                {
+                                                    task++;
+                                                    BalTask.UpdateTask(clientContext, projectdata, item.ID.ToString());
+                                                }
+                                                if (task == lstTask.Count)
+                                                {
+                                                    List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+                                                    lstSubTask = BalSubTask.GetSubTaskByProjectId(clientContext, Project.ID);
+                                                    if (lstSubTask.Count > 0)
+                                                    {
+                                                        int subtask = 0;
+                                                        foreach (var item in lstSubTask)
+                                                        {
+                                                            subtask++;
+                                                            BalSubTask.UpdateSubTask(clientContext, projectdata, item.ID.ToString());
+                                                        }
+                                                        if (subtask == lstSubTask.Count)
+                                                        {
+                                                            obj.Add("OK");
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        obj.Add("OK");
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                obj.Add("OK");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        obj.Add("OK");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            obj.Add("OK");
+                        }
+                    }
                 }
 
             }

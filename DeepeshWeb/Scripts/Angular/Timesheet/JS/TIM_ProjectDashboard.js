@@ -1,20 +1,23 @@
 ﻿var ProjectDashboardApp = angular.module('ProjectDashboardApp', ['CommonAppUtility'])
 
-
-
-ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, $timeout, $rootScope, DashboardLoadService, CommonAppUtilityService) {
+ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, $timeout, $rootScope,  CommonAppUtilityService) {
     var table;
-    $scope.ProjectPopData = [];
+    $rootScope.ProjectPopData = [];
     $scope.ProjectDetails = [];
-    $scope.ProjectData = [];
+    $rootScope.ProjectData = [];
     var ProjectID;
     var AllDataTableId = {};
 
-
-    DashboardLoadService.test();
-
     $(function () {
         // AmazeUI Datetimepicker
+        $('.main-toggle').on('click', function () {
+            $(this).toggleClass('on');
+            if ($(this).hasClass("main-toggle on"))
+                $scope.ngProjectDelete = false;
+            else
+                $scope.ngProjectDelete = true;
+        })
+
         $('#txtProjectStartDate').datetimepicker({
             minView: 2,
             format: 'dd-mm-yyyy',
@@ -45,6 +48,12 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         });
 
         $('#AddProjectPopUp').on('hide.bs.modal', function () {
+            $scope.ngtxtProjectName = "";
+            $scope.ngtxtClientProjectManager = "";
+            $scope.ngtxtProjectStartDate = "";
+            $scope.ngtxtProjectEndDate = "";
+            $scope.ngtxtNoOfDays = "";
+            $scope.ngtxtDescription = "";
             setTimeout(function () {
                 $("#ddlMembers").val(' ').trigger('change');
             },20);
@@ -69,6 +78,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     })
     $scope.OpenAddProjectPop = function () {
         //$('#testPop1').addClass('active');
+        $(".parsley-required").remove();
         $("#frmProjectDashboard")[0].reset();
         $scope.ProjectStatus = false;
         $("#myModalLabel").html('Add Project');
@@ -81,10 +91,11 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     }
 
-    $scope.LoadProjectData = function() {
+    $rootScope.LoadProjectData = function () {
+        $('#tblProject').DataTable().clear().destroy();
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectData", "").then(function (response) {
             if (response.data[0] == "OK") {
-                $scope.ProjectData = response.data[1];
+                $rootScope.ProjectData = response.data[1];
                 setTimeout(function () {
                     table = $('#tblProject').DataTable({
                         lengthChange: true,
@@ -102,7 +113,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
         });
     }
-
 
     $scope.ShowMilestone = function (index, ProjectId) {
         $("#Milestone" + index).find('i').removeClass('si si si-plus');
@@ -326,8 +336,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //var spsite = getUrlVars()["SPHostUrl"];
         //Url = '/TIM_AddMilestone' + "?SPHostUrl=" + spsite;
         //window.location.href = Url;
-        $scope.ProjectPopData = Project;
-        $rootScope.test = Project;
+        $rootScope.ProjectPopData = Project;
         $("#AddMilestonePopUp").modal("show");
 
     }
@@ -356,6 +365,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     //}
 
     $scope.EditProject = function (ProjectId) {
+        $(".parsley-required").remove();
         $("#myModalLabel").html('Update Project');
         $scope.ProjectStatus = true;
         $.cookie('ProjectId', ProjectId);
@@ -365,7 +375,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         ////window.location.href = Url;
         CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/GetEditProject", "").then(function (response) {
             if (response.data[0] == "OK") {
-
                 $scope.ProjectDetails = response.data[1];
                 $scope.ngtxtProjectName = $scope.ProjectDetails[0].ProjectName;
                 $scope.ngtxtClientProjectManager = $scope.ProjectDetails[0].ClientProjectManager;
@@ -442,6 +451,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         if ($scope.ProjectDetails.length > 0)
             data.ID = ProjectID;
 
+        if ($scope.ngProjectDelete == true)
+            data.InternalStatus = "ProjectDeleted";
+
         CommonAppUtilityService.CreateItem("/TIM_ProjectCreation/SaveProject", data).then(function (response) {
             if (response.data[0] == "OK") {
                 $scope.ProjectCreationLoad = false;
@@ -480,12 +492,12 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         }
     }
 
-    $scope.GoToLanding = function (ProjectId) {
-        $.cookie('ProjectId', ProjectId);
-        var spsite = getUrlVars()["SPHostUrl"];
-        Url = '/TIM_DashboardLanding' + "?SPHostUrl=" + spsite;
-        window.location.href = Url;
-    }
+    //$scope.GoToLanding = function (ProjectId) {
+    //    $.cookie('ProjectId', ProjectId);
+    //    var spsite = getUrlVars()["SPHostUrl"];
+    //    Url = '/TIM_DashboardLanding' + "?SPHostUrl=" + spsite;
+    //    window.location.href = Url;
+    //}
 });
 
 ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http, $rootScope, CommonAppUtilityService) {
@@ -660,8 +672,6 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
     }
 
     $scope.AddMilestone = function () {
-        console.log('$rootScope.test');
-        console.log($rootScope.test);
         var ValidateStatus = $scope.ValidateRequest();
         if (ValidateStatus) {
 
@@ -673,10 +683,10 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
             obj.StartDate = moment($("#txtMileStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
             obj.EndDate = moment($("#txtMileEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
             obj.NoOfDays = $scope.ngtxtMileDays;
-            obj.Project = $scope.ProjectPopData.ID;
-            obj.ProjectManager = $scope.ProjectPopData.ProjectManager;
-            obj.MembersText = $scope.ProjectPopData.MembersText;
-            obj.Members = $scope.ProjectPopData.Members;
+            obj.Project = $rootScope.ProjectPopData.ID;
+            obj.ProjectManager = $rootScope.ProjectPopData.ProjectManager;
+            obj.MembersText = $rootScope.ProjectPopData.MembersText;
+            obj.Members = $rootScope.ProjectPopData.Members;
             $scope.Milestone.push(obj);
 
             //clear all the fields
@@ -704,20 +714,18 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
 
     $scope.FinalAddMilestone = function () {
         if ($scope.Milestone.length > 0) {
-            $scope.Load = true;
+            $scope.MilestoneCreationLoad = true;
             var AddMilestone = new Array();
             AddMilestone = $scope.Milestone;
 
             CommonAppUtilityService.CreateItem("/TIM_AddMilestone/AddMilestone", AddMilestone).then(function (response) {
                 if (response.data[0] == "OK") {
-                    $scope.Load = false;
-                    //$('#SuccessModelMilestone').modal('show');
+                    $scope.MilestoneCreationLoad = false;
                     $("#AddMilestonePopUp").modal("hide");
-                    $scope.LoadProjectData();
-
+                    $rootScope.LoadProjectData();
                 }
                 else
-                    $scope.Load = false;
+                    $scope.MilestoneCreationLoad = false;
             });
         }
         else {
@@ -726,7 +734,3 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
     }
 });
 
-ProjectDashboardApp.service('DashboardLoadService', function () {
-    this.test = function () {
-    }
-});

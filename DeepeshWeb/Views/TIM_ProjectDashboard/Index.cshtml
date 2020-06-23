@@ -141,7 +141,7 @@
 </style>
 
 
-<form id="frmProjectDashboard" ng-app="ProjectDashboardApp" ng-controller="ProjectDashboardController" ng-init="LoadProjectData()" autocomplete="off">
+<form id="frmProjectDashboard" name="frmDashboard" ng-app="ProjectDashboardApp" ng-controller="ProjectDashboardController" ng-init="LoadProjectData()" autocomplete="off">
     <!-- container opened -->
     <div class="container">
         <!-- breadcrumb -->
@@ -307,7 +307,7 @@
                         @Html.Partial("~/Views/Partial/TIM_ProjectCreation.cshtml")
                     </div>
                     <div class="modal-footer justify-content-center">
-                        <button type="submit" class="btn btn-primary" id="btnProjectCreation" ng-hide="ProjectCreationLoad">Submit</button>
+                        <button type="submit"  class="btn btn-primary" id="btnProjectCreation" ng-hide="ProjectCreationLoad">Submit</button>
                         <button class="btn btn-primary" type="button" ng-show="ProjectCreationLoad" disabled>
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             Please wait...

@@ -168,9 +168,9 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td data-label="Milestone"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestone" id="txtMilestone" placeholder="Enter Milestone" required=""></td>
+                                                        <td data-label="Milestone"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMilestone" id="txtMilestone" placeholder="Enter Milestone"></td>
 
-                                                        <td data-label="Description"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDescription" id="txtMileDescription" placeholder="Enter Description" required=""></td>
+                                                        <td data-label="Description"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDescription" id="txtMileDescription" placeholder="Enter Description"></td>
 
                                                         <td data-label="Start Date">
                                                             <div class="input-group responsivetablediv">
@@ -179,7 +179,7 @@
                                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                                     </div>
                                                                 </div>
-                                                                <input required="" type="text" class="form-control date" ng-model="ngtxtMileStartDate" id="txtMileStartDate" data-parsley-errors-container="#slMilestoneStartDateError">
+                                                              <input  type="text" class="form-control date" ng-model="ngtxtMileStartDate" id="txtMileStartDate" >
                                                             </div>
                                                             <div id="slMilestoneStartDateError"></div>
                                                         </td>
@@ -190,7 +190,7 @@
                                                                     <div class="input-group-text">
                                                                         <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                                     </div>
-                                                                </div><input class="form-control date" type="text" ng-model="ngtxtMileEndDate" id="txtMileEndDate" data-parsley-errors-container="#slMilestoneEndDateError" required="">
+                                                                </div><input class="form-control date" type="text" ng-model="ngtxtMileEndDate" id="txtMileEndDate">
                                                             </div>
                                                             <div id="slMilestoneEndDateError"></div>
                                                         </td>
@@ -257,7 +257,7 @@
             </div>
         </div>
         <div class="modal-footer justify-content-center">
-            <button type="submit" class="btn btn-primary" id="btnMilestoneCreation" ng-hide="MilestoneCreationLoad" ng-click="FinalAddMilestone()">Submit</button>
+            <button type="button" class="btn btn-primary" id="btnMilestoneCreation" ng-hide="MilestoneCreationLoad" ng-click="FinalAddMilestone()">Submit</button>
             <button class="btn btn-primary" type="button" ng-show="MilestoneCreationLoad" disabled>
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 Please wait...
