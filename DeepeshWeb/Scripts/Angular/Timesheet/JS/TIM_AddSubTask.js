@@ -4,6 +4,7 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
 
     $scope.SubTask = [];
 
+
     $(function () {
 
         $scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
@@ -29,6 +30,9 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
         });
         $scope.$apply();
 
+    });
+
+    $scope.LoadSubTask = function () {
         // AmazeUI Datetimepicker
         $('#txtSubTaskStartDate').datetimepicker({
             minView: 2,
@@ -151,7 +155,8 @@ AddSubTaskApp.controller('AddSubTaskController', function ($scope, $http, $timeo
                 $(this).siblings("li").remove();
             }
         });
-    });
+
+    }
 
     $scope.BackToDashboard = function () {
         $.removeCookie('ProjectId');

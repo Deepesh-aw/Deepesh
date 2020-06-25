@@ -1,0 +1,239 @@
+﻿
+
+<div class="modal-dialog modal-lg " role="document" ng-init="LoadSubTask()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title w-100" id="MilestoneTitle">Add Sub Task </h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+
+                <!-- breadcrumb -->
+                <!-- breadcrumb -->
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12">
+
+                        <!--Entry Code start-->
+                        @Html.Partial("~/Views/Partial/TIM_ViewProjectData.cshtml")
+                        <!--Entry Code End-->
+                    </div>
+                </div>
+                <!-- row -->
+                <div class="row row-sm">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header pb-0">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="card-title mg-b-0">Milestone</h4>
+                                </div>
+                            </div><hr />
+                            <div class="card-body">
+                                <div class="table-responsive">
+
+                                    <table class="tableCss">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Milestone</th>
+                                                <th scope="col">Description</th>
+                                                <th scope="col">Start Date</th>
+                                                <th scope="col">Estimated End Date</th>
+                                                <th scope="col">Days</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td data-label="Milestone">{{MilestonePopData.MileStone}}</td>
+                                                <td data-label="Description">{{MilestonePopData.Description}}</td>
+                                                <td data-label="Start Date">{{DateFormat(MilestonePopData.StartDate)}}</td>
+                                                <td data-label="Estimated End Date">{{DateFormat(MilestonePopData.EndDate)}}</td>
+                                                <td data-label="Days">{{MilestonePopData.NoOfDays}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- bd -->
+                            </div><!-- bd -->
+                        </div><!-- bd -->
+                    </div>
+                </div>
+
+                <div class="row row-sm">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header pb-0">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="card-title mg-b-0">Task</h4>
+                                </div>
+                            </div><hr />
+                            <div class="card-body">
+                                <div class="table-responsive">
+
+                                    <table class="tableCss">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Task</th>
+                                                <th scope="col">Member</th>
+                                                <th scope="col">Start Date</th>
+                                                <th scope="col">Estimated End Date</th>
+                                                <th scope="col">Days</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td data-label="Task">{{TaskPopData.Task}}</td>
+                                                <td data-label="Description">{{TaskPopData.MembersName}}</td>
+                                                <td data-label="Start Date">{{DateFormat(TaskPopData.StartDate)}}</td>
+                                                <td data-label="Estimated End Date">{{DateFormat(TaskPopData.EndDate)}}</td>
+                                                <td data-label="Days">{{TaskPopData.NoOfDays}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- bd -->
+                            </div><!-- bd -->
+                        </div><!-- bd -->
+                    </div>
+                </div>
+
+
+                <div class="row row-sm">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header pb-0">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="card-title mg-b-0">SubTask</h4>
+                                </div>
+                            </div><hr />
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="tableCss">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">SubTask</th>
+                                                <th scope="col">Members</th>
+                                                <th scope="col">Start Date</th>
+                                                <th scope="col">Estimated End Date</th>
+                                                <th scope="col">Days</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td data-label="SubTask"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTask" id="txtSubTask" placeholder="Enter SubTask" required=""></td>
+
+                                                <td data-label="Members">
+                                                    <select required="" class="form-control SubTaskSelect2" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember">
+                                                        <option value="">Choose One</option>
+                                                        @foreach (var i in ViewBag.EmpData)
+                                                        {
+                                                            <option value="@i.ID">@i.FullName</option>
+                                                        }
+                                                    </select>
+                                                </td>
+
+                                                <td data-label="Start Date">
+                                                    <div class="input-group responsivetablediv">
+                                                        <div class="input-group-prepend">
+                                                            <div class="input-group-text">
+                                                                <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                            </div>
+                                                        </div>
+                                                        <input required="" type="text" class="form-control SubTaskdate" ng-model="ngtxtSubTaskStartDate" id="txtSubTaskStartDate">
+                                                    </div>
+                                                </td>
+
+                                                <td data-label="Estimated End Date">
+                                                    <div class="input-group responsivetablediv" id="slMilestoneEndDate">
+                                                        <div class="input-group-prepend">
+                                                            <div class="input-group-text">
+                                                                <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                            </div>
+                                                        </div><input class="form-control SubTaskdate" type="text" ng-model="ngtxtSubTaskEndDate" id="txtSubTaskEndDate">
+                                                    </div>
+                                                </td>
+
+                                                <td data-label="Days">
+                                                    <input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTaskDays" id="txtSubTaskDays" placeholder="Enter Days" readonly="readonly">
+                                                </td>
+
+                                                <td>
+                                                    <select required="" class="form-control SubTaskSelect2" ng-model="ngddlSubTaskStatus" id="ddlSubTaskStatus">
+                                                        <option value="">Choose One</option>
+                                                        @foreach (var i in ViewBag.StatusData)
+                                                        {
+                                                            <option value="@i.ID">@i.StatusName</option>
+                                                        }
+                                                    </select>
+                                                </td>
+
+                                                <td data-label="Action">
+                                                    <div class="btn-icon-list responsivetablediv">
+                                                        <button type="button" class="fa fa-plus" title="Add" ng-click="AddSubTask()"></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- bd -->
+                            </div><!-- bd -->
+                        </div><!-- bd -->
+                    </div>
+
+                </div>
+
+                <div class="row row-sm">
+                    <div class="col-xl-12" ng-if="SubTask.length>0">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+
+                                    <table class="tableCss">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Sr.No.</th>
+                                                <th scope="col">SubTask</th>
+                                                <th scope="col">Members</th>
+                                                <th scope="col">Start Date</th>
+                                                <th scope="col">Estimated End Date</th>
+                                                <th scope="col">Days</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="t in SubTask">
+                                                <td data-label="Sr.No.">{{$index+1}}</td>
+                                                <td data-label="SubTask">{{t.SubTask}}</td>
+                                                <td data-label="Members">{{t.MemberTitle}}</td>
+                                                <td data-label="Start Date">{{t.StartDateView}}</td>
+                                                <td data-label="Estimated End Date">{{t.EndDateView}}</td>
+                                                <td data-label="Days">{{t.NoOfDays}}</td>
+                                                <td data-label="Status">{{t.StatusName}}</td>
+                                                <td data-label="Action">
+                                                    <i class="fa fa-edit" ng-click="EditSubTask($index)"></i>&nbsp;
+                                                    <i class="fa fa-trash" ng-click="DeleteSubTask($index)"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- bd -->
+                            </div><!-- bd -->
+                        </div><!-- bd -->
+                    </div>
+                </div>
+                <!-- row closed -->
+            </div>
+
+        </div>
+        <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-primary" id="btnSubTaskCreation" ng-hide="SubTaskLoad" ng-click="FinalAddSubTask()">Submit</button>
+            <button class="btn btn-primary" type="button" ng-show="SubTaskLoad" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Please wait...
+            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

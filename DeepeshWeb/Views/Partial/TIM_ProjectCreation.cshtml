@@ -33,7 +33,7 @@
                 <div class="form-group">
                     <label for="ddlProjectType">Type</label>
                     <div id="slType" class="parsley-select">
-                        <select required="" class="form-control select2" name="ProjectType" id="ddlProjectType" ng-model="ngddlProjectType" data-parsley-class-handler="#slType" data-parsley-errors-container="#slTypeError">
+                        <select required="" class="form-control AddProjectSelect2" name="ProjectType" id="ddlProjectType" ng-model="ngddlProjectType" data-parsley-class-handler="#slType" data-parsley-errors-container="#slTypeError">
                             <option value="">Choose One</option>
                             @foreach (var i in ViewBag.ProjectTypeData)
                             {
@@ -50,7 +50,7 @@
                 <div class="form-group">
                     <label for="txtClientName">Client Name</label>
                     <div id="slClient" class="parsley-select">
-                        <select required="" class="form-control select2" name="ClientName" ng-model="ngddlClientName" id="ddlClientName" data-parsley-class-handler="#slClient" data-parsley-errors-container="#slClientError">
+                        <select required="" class="form-control AddProjectSelect2" name="ClientName" ng-model="ngddlClientName" id="ddlClientName" data-parsley-class-handler="#slClient" data-parsley-errors-container="#slClientError">
                             <option value="">Choose One</option>
                             @foreach (var i in ViewBag.ClientData)
                             {
@@ -77,7 +77,7 @@
                             <div class="input-group-text">
                                 <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                             </div>
-                        </div><input required="" name="StartDate" class="form-control date" type="text" data-parsley-class-handler="#slStartDate" data-parsley-errors-container="#slStartDateError" ng-model="ngtxtProjectStartDate" id="txtProjectStartDate">
+                        </div><input required="" name="StartDate" class="form-control AddProjectDate" type="text" data-parsley-class-handler="#slStartDate" data-parsley-errors-container="#slStartDateError" ng-model="ngtxtProjectStartDate" id="txtProjectStartDate">
                     </div>
                     <div id="slStartDateError"></div>
                 </div>
@@ -90,7 +90,7 @@
                             <div class="input-group-text">
                                 <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                             </div>
-                        </div><input required="" data-parsley-class-handler="#slEndDate" data-parsley-errors-container="#slEndDateError" name="EndDate" class="form-control date" type="text" ng-model="ngtxtProjectEndDate" id="txtProjectEndDate">
+                        </div><input required="" data-parsley-class-handler="#slEndDate" data-parsley-errors-container="#slEndDateError" name="EndDate" class="form-control AddProjectDate" type="text" ng-model="ngtxtProjectEndDate" id="txtProjectEndDate">
                     </div>
                     <div id="slEndDateError"></div>
                 </div>
@@ -107,7 +107,7 @@
                 <div class="form-group">
                     <label for="ddlProjectManager">Project Manager</label>
                     <div id="slProjectManager" class="parsley-select">
-                        <select class="form-control select2" name="ProjectManager" ng-model="ngddlProjectManager" required="" data-parsley-class-handler="#slProjectManager" data-parsley-errors-container="#slProjectManagerError" id="ddlProjectManager">
+                        <select class="form-control AddProjectSelect2" name="ProjectManager" ng-model="ngddlProjectManager" required="" data-parsley-class-handler="#slProjectManager" data-parsley-errors-container="#slProjectManagerError" id="ddlProjectManager">
                             <option value="">Choose One</option>
                             @foreach (var i in ViewBag.EmpData)
                             {
@@ -124,7 +124,7 @@
                 <div class="form-group">
                     <label for="ddlMembers">Members</label>
                     <div id="slMembers">
-                        <select required="" class="form-control select2" ng-model="ngddlMembers" id="ddlMembers" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError" multiple="multiple">
+                        <select required="" class="form-control AddProjectSelect2" ng-model="ngddlMembers" id="ddlMembers" data-parsley-class-handler="#slMembers" data-parsley-errors-container="#slMembersError" multiple="multiple">
                             @foreach (var i in ViewBag.EmpData)
                             {
                                 <option value="@i.ID" id="@i.EmpCode">@i.FullName</option>
