@@ -121,10 +121,10 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td data-label="SubTask"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTask" id="txtSubTask" placeholder="Enter SubTask" required=""></td>
+                                                <td data-label="SubTask"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTask" id="txtSubTask" placeholder="Enter SubTask" ></td>
 
                                                 <td data-label="Members">
-                                                    <select required="" class="form-control SubTaskSelect2" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember">
+                                                    <select  class="form-control SubTaskSelect2" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember">
                                                         <option value="">Choose One</option>
                                                         @foreach (var i in ViewBag.EmpData)
                                                         {
@@ -140,7 +140,7 @@
                                                                 <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                             </div>
                                                         </div>
-                                                        <input required="" type="text" class="form-control SubTaskdate" ng-model="ngtxtSubTaskStartDate" id="txtSubTaskStartDate">
+                                                        <input type="text" class="form-control SubTaskdate" ng-model="ngtxtSubTaskStartDate" id="txtSubTaskStartDate">
                                                     </div>
                                                 </td>
 
@@ -159,7 +159,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <select required="" class="form-control SubTaskSelect2" ng-model="ngddlSubTaskStatus" id="ddlSubTaskStatus">
+                                                    <select  class="form-control SubTaskSelect2" ng-model="ngddlSubTaskStatus" id="ddlSubTaskStatus">
                                                         <option value="">Choose One</option>
                                                         @foreach (var i in ViewBag.StatusData)
                                                         {

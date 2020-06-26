@@ -271,6 +271,12 @@
             @Html.Partial("~/Views/Partial/TIM_AddSubTask.cshtml");
         </div>
 
+        <div ng-controller="AddMilestoneController" class="modal left fade" id="AddMilestonePopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            @Html.Partial("~/Views/Partial/TIM_AddMilestone.cshtml");
+        </div>
+
+
         <!-- breadcrumb -->
         <div class="breadcrumb-header mg-b-0 justify-content-between">
             <div class="my-auto">
@@ -446,10 +452,6 @@
         </div>
         <!-- Full Height Modal Right -->
         <!-- end modal pop up -->
-        <div ng-controller="AddMilestoneController" class="modal left fade" id="AddMilestonePopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-             aria-hidden="true">
-            @Html.Partial("~/Views/Partial/TIM_AddMilestone.cshtml");
-        </div>
     </div>
     @*<div class="overlay1" id="testPop1">
             <div class="overlay-content">

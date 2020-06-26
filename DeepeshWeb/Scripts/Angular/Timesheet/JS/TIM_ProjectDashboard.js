@@ -9,7 +9,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     var AllDataTableId = {};
 
     $(function () {
-
+       
         $(".AddProjectSelect2").select2({
             placeholder: 'Choose one',
             searchInputPlaceholder: 'Search',
@@ -40,7 +40,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 $scope.ngProjectDelete = true;
         })
 
-        
 
         $('.AddProjectDate').datetimepicker().on('changeDate', function (e) {
             if ($('#txtProjectStartDate').val() != "" && $('#txtProjectEndDate').val() != "") {
@@ -57,9 +56,18 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 $scope.ngtxtNoOfDays = days;
                 $("#txtNoOfDays").val(days);
             }
+        }).on('hide', function (event) {
+            return false;
         });
 
         $('#AddProjectPopUp').on('hide.bs.modal', function () {
+            $scope.ngtxtProjectName = "";
+            $scope.ngtxtClientProjectManager = "";
+            $scope.ngtxtProjectStartDate = "";
+            $scope.ngtxtProjectEndDate = "";
+            $scope.ngtxtNoOfDays = "";
+            $scope.ngtxtDescription = "";
+
             Array.from(document.getElementsByClassName('parsley-success')).forEach(function (el) {
                 el.classList.remove('parsley-success');
             });
@@ -80,14 +88,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //})
     })
 
+
     $scope.OpenAddProjectPop = function () {
         //$('#testPop1').addClass('active');
-        $scope.ngtxtProjectName = "";
-        $scope.ngtxtClientProjectManager = "";
-        $scope.ngtxtProjectStartDate = "";
-        $scope.ngtxtProjectEndDate = "";
-        $scope.ngtxtNoOfDays = "";
-        $scope.ngtxtDescription = "";
         setTimeout(function () {
             $("#ddlMembers").val(' ').trigger('change');
         }, 20);
@@ -142,7 +145,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     });
                     table.buttons().container()
                         .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
-                }, 20);
+                }, 2);
             }
         });
     }
@@ -385,8 +388,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //var spsite = getUrlVars()["SPHostUrl"];
         //Url = '/TIM_AddMilestone' + "?SPHostUrl=" + spsite;
         //window.location.href = Url;
+        //$("#frmProjectDashboard")[0].reset();
         $rootScope.ProjectPopData = Project;
         $("#AddMilestonePopUp").modal("show");
+
 
     }
 
@@ -568,6 +573,16 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
     $scope.Milestone = [];
 
     $scope.OnLoadMilestone = function () {
+
+            // do something
+        $('#AddMilestonePopUp').on('hide.bs.modal', function () {
+             $scope.ngtxtMileDays = "";
+            $("#frmProjectDashboard")[0].reset();
+            $scope.Milestone.length = 0;
+         });
+
+       
+
         $('#txtMileStartDate').datetimepicker({
             minView: 2,
             format: 'dd-mm-yyyy',
@@ -580,7 +595,7 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
             autoclose: true
         });
 
-        $('.date').datetimepicker().on('changeDate', function (e) {
+        $('.Miledate').datetimepicker().on('changeDate', function (e) {
 
             var start = moment($("#txtMileStartDate").val(), 'DD/MM/YYYY');
             var end = moment($("#txtMileEndDate").val(), 'DD/MM/YYYY');
@@ -629,6 +644,8 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
                 $(this).addClass("parsley-success");
                 $(this).next().remove();
             }
+        }).on('hide', function (event) {
+            return false;
         });
 
         $('input,select,textarea').keypress(function () {
@@ -780,6 +797,13 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
 
     $scope.OnLoadTask = function () {
 
+        $('#AddTaskPopUp').on('hide.bs.modal', function () {
+            $("#frmProjectDashboard")[0].reset();
+            $("#ddlMember").val(null).trigger('change.select2');
+            $("#ddlStatus").val(null).trigger('change.select2');
+            $scope.Task.length = 0;
+        });
+
         $('#txtTaskStartDate').datetimepicker({
             minView: 2,
             format: 'dd-mm-yyyy',
@@ -872,6 +896,8 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
                     $(this).next().remove();
                 }
             }
+        }).on('hide', function (event) {
+            return false;
         });
 
         $('input,textarea').keypress(function () {
@@ -1065,6 +1091,13 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
 
     $scope.LoadSubTask = function () {
 
+        $('#AddSubTaskPopUp').on('hide.bs.modal', function () {
+            $("#frmProjectDashboard")[0].reset();
+            $("#ddlSubTaskMember").val(null).trigger('change.select2');
+            $("#ddlSubTaskStatus").val(null).trigger('change.select2');
+            $scope.SubTask.length = 0;
+        });
+
         $('#txtSubTaskStartDate').datetimepicker({
             minView: 2,
             format: 'dd-mm-yyyy',
@@ -1169,6 +1202,8 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
                 $(this).addClass("parsley-success");
                 $(this).next().remove();
             }
+        }).on('hide', function (event) {
+            return false;
         });
 
         $('input,select,textarea').keypress(function () {
@@ -1188,6 +1223,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
         });
 
     }
+
     $(function () {
 
         //$scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
