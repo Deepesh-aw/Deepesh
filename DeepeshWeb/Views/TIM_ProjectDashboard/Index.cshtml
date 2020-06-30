@@ -44,6 +44,9 @@
 }
 </style>
 <style>
+    .tooltip {
+    z-index: 100000000!important;
+}
     .modal-lg, .modal-xl {
         max-width: 1140px;
     }
@@ -402,7 +405,12 @@
                                                             <td>{{item.Description}}</td>
                                                             <td>
                                                                 <span ng-if="item.InternalStatus == 'ProjectCreated'">
-                                                                    <button class="badge badge-primary" type="button" ng-click="AddMilestonePopUp(item)">Add Milestone</button>
+                                                                     <i class="fa fa-plus text-primary mr-2" ng-click="AddMilestonePopUp(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Milestone"></i>
+                                                                </span>
+                                                                <span ng-if="item.InternalStatus != 'ProjectCreated'">
+                                                                    <i class="si si-pencil text-primary mr-2" ng-click="EditMilestonePopUp(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Edit Milestone"></i>
+                                                                    <i class="si si-trash text-danger mr-2" ng-click="DeleteMilestone(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Delete Milestone"></i>
+
                                                                 </span>
                                                             </td>
                                                         </tr>

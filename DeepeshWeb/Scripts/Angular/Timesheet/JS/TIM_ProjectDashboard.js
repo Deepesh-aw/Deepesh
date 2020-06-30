@@ -5,6 +5,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     $rootScope.ProjectPopData = [];
     $scope.ProjectDetails = [];
     $rootScope.ProjectData = [];
+    $rootScope.Milestone = [];
+    $rootScope.EditMilestone = [];
     var ProjectID;
     var AllDataTableId = {};
 
@@ -204,8 +206,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             Html += '</span >' + value.MileStone + '</td><td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td>';
 
             if (value.InternalStatus == "MilestoneCreated")
-                Html += '<button class="badge badge-primary" type="button" ng-click="OpenAddTaskPop(Mile' + value.ID + ', Project, MileRow)">Add Task</button>'
-
+                Html += '<i class="fa fa-plus text-primary mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Task"  ng-click="OpenAddTaskPop(Mile' + value.ID + ', Project, MileRow)"></i>';
+            else
+                Html += '<i class="si si-pencil text-primary mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Edit Task" ng-click="OpenEditTaskPop(Mile' + value.ID + ', Project, MileRow)"></i>';
         });
         Html += '</td></tr ></tbody></table></span>';
         row.child(Html).show();
@@ -288,7 +291,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             Html += '</span >' + value.Task + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td> ';
 
             if (value.InternalStatus == "TaskCreated")
-                Html += '<button class="badge badge-primary" type="button" ng-click="OpenAddSubTaskPop(Task' + value.ID + ', TaskMilestone, TaskProjectData, TaskRow)">Add SubTask</button>';
+                Html += '<i class="fa fa-plus text-primary mr-2" type="button" ng-click="OpenAddSubTaskPop(Task' + value.ID + ', TaskMilestone, TaskProjectData, TaskRow)"></i>';
 
         });
         Html += '</td></tr></tbody></table></div>';
@@ -506,7 +509,64 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         });
     }
 
+    $scope.EditMilestonePopUp = function (Project) {
+        $rootScope.ProjectPopData = Project;
+        var data = {
+            'ProjectId': Project.ID
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetMilestone", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                $rootScope.EditMilestone = response.data[1];
+                console.log($rootScope.EditMilestone);
+                angular.forEach($rootScope.EditMilestone, function (value, key) {
+                    var obj = {};
+                    obj.ID = value.ID;
+                    obj.Milestone = value.MileStone;
+                    obj.Description = value.Description;
+                    obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+                    obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+                    obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+                    obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+                    obj.NoOfDays = value.NoOfDays;
+                    obj.Project = $scope.ProjectPopData.ID;
+                    obj.ProjectManager = $rootScope.ProjectPopData.ProjectManager;
+                    obj.MembersText = $rootScope.ProjectPopData.MembersText;
+                    obj.Members = $rootScope.ProjectPopData.Members;
+                    obj.InternalStatus = value.InternalStatus;
+                    obj.Status = value.Status;
+                    obj.Delete = "No";
+                    $rootScope.Milestone.push(obj);
+                });
+                $("#btnMilestoneCreation").text("Update");
+                $("#AddMilestonePopUp").modal("show");
+                //$scope.$apply();
+            }
+            else {
+            }
+        });
 
+    }
+
+    $scope.DeleteMilestone = function (Project) {
+        swal({
+            title: "Milestone Deletion",
+            text: "Are you sure do you really want to delete this project milestone?",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+                var data = {
+                    'ProjectId': Project.ID
+                }
+                CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/DeleteAllMilestone", data).then(function (response) {
+                    if (response.data[0] == "OK") {
+                        swal("Milestone deleted successfully.");
+                        $rootScope.LoadProjectData();
+                    }
+                });
+        });
+    }
     //$scope.AddProject = function () {
     //    var spsite = getUrlVars()["SPHostUrl"];
     //    Url = '/TIM_ProjectCreation' + "?SPHostUrl=" + spsite;
@@ -570,7 +630,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
 ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http, $rootScope, $timeout, CommonAppUtilityService) {
 
-    $scope.Milestone = [];
 
     $scope.OnLoadMilestone = function () {
 
@@ -578,7 +637,9 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
         $('#AddMilestonePopUp').on('hide.bs.modal', function () {
              $scope.ngtxtMileDays = "";
             $("#frmProjectDashboard")[0].reset();
-            $scope.Milestone.length = 0;
+            $rootScope.Milestone.length = 0;
+            $rootScope.EditMilestone.length = 0;
+            $("#btnMilestoneCreation").text("Submit");
          });
 
        
@@ -657,33 +718,9 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
         });
 
     }
-    $(function () {
-        //$scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
-        //$scope.MilestoneDetails = $.parseJSON($("#hdnMilestoneData").val());
-        //angular.forEach($scope.MilestoneDetails, function (value, key) {
-        //    var obj = {};
-        //    obj.Milestone = value.MileStone;
-        //    obj.Description = value.Description;
-        //    obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
-        //    obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
-        //    obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
-        //    obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
-        //    obj.NoOfDays = value.NoOfDays;
-        //    obj.Project = $scope.ProjectData.ID;
-        //    obj.ProjectManager = $scope.ProjectData.ProjectManager;
-        //    obj.MembersText = $scope.ProjectData.MembersText;
-        //    obj.Members = $scope.ProjectData.Members;
-        //    $scope.Milestone.push(obj);
-        //});
-        //$scope.$apply();
-        // AmazeUI Datetimepicker
-
-
-
-    });
 
     $scope.DeleteMilestone = function (index) {
-        $scope.Milestone.splice(index, 1);
+        $rootScope.Milestone.splice(index, 1);
     }
 
     function clearErrorClass() {
@@ -733,6 +770,7 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
         if (ValidateStatus) {
 
             var obj = {};
+            obj.ID = $("#divAddMile").attr("data-id");
             obj.Milestone = $scope.ngtxtMilestone;
             obj.Description = $scope.ngtxtMileDescription;
             obj.StartDateView = moment($("#txtMileStartDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
@@ -744,9 +782,21 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
             obj.ProjectManager = $rootScope.ProjectPopData.ProjectManager;
             obj.MembersText = $rootScope.ProjectPopData.MembersText;
             obj.Members = $rootScope.ProjectPopData.Members;
-            $scope.Milestone.push(obj);
+            if ($("#divAddMile").attr("data-id") > 0) {
+                obj.InternalStatus = $("#divAddMile").attr("data-internalstatus");
+                obj.Status = $("#divAddMile").attr("data-statusid");
+            }
+            else {
+                obj.InternalStatus = "";
+                obj.Status = "0";
+            }
+            $rootScope.Milestone.push(obj);
 
             //clear all the fields
+            $("#divAddMile").attr("data-id", 0);
+            $("#divAddMile").attr("data-internalstatus", "");
+            $("#divAddMile").attr("data-statusid", "0");
+
             $scope.ngtxtMilestone = "";
             $scope.ngtxtMileDescription = "";
             $("#txtMileStartDate").val('');
@@ -759,23 +809,41 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
     }
 
     $scope.EditMilestone = function (index) {
-        $scope.ngtxtMilestone = $scope.Milestone[index].Milestone;
-        $scope.ngtxtMileDescription = $scope.Milestone[index].Description;
-        $scope.ngtxtMileStartDate = $scope.Milestone[index].StartDateView;
-        $("#txtMileStartDate").val($scope.Milestone[index].StartDateView);
-        $scope.ngtxtMileEndDate = $scope.Milestone[index].EndDateView;
-        $("#txtMileEndDate").val($scope.Milestone[index].EndDateView);
-        $scope.ngtxtMileDays = $scope.Milestone[index].NoOfDays;
-        $scope.Milestone.splice(index, 1);
+
+        $scope.ngtxtMilestone = $rootScope.Milestone[index].Milestone;
+        $scope.ngtxtMileDescription = $rootScope.Milestone[index].Description;
+        $scope.ngtxtMileStartDate = $rootScope.Milestone[index].StartDateView;
+        $("#txtMileStartDate").val($rootScope.Milestone[index].StartDateView);
+        $scope.ngtxtMileEndDate = $rootScope.Milestone[index].EndDateView;
+        $("#txtMileEndDate").val($rootScope.Milestone[index].EndDateView);
+        $scope.ngtxtMileDays = $rootScope.Milestone[index].NoOfDays;
+
+        $("#divAddMile").attr("data-internalstatus", $rootScope.Milestone[index].InternalStatus);
+        $("#divAddMile").attr("data-statusid", $rootScope.Milestone[index].Status);
+        $("#divAddMile").attr("data-id", $rootScope.Milestone[index].ID);
+        $rootScope.Milestone.splice(index, 1);
     }
 
     $scope.FinalAddMilestone = function () {
-        if ($scope.Milestone.length > 0) {
+        if ($rootScope.Milestone.length > 0) {
             $scope.MilestoneCreationLoad = true;
-            var AddMilestone = new Array();
-            AddMilestone = $scope.Milestone;
+            if ($rootScope.EditMilestone.length > 0) {
+                var data = {
+                    'AddMilestone': $rootScope.Milestone,
+                    'Action': "Update"
+                }
+            }
+            else {
+                var data = {
+                    'AddMilestone': $rootScope.Milestone,
+                    'Action': "Insert"
+                }
+            }
+            
+            //var AddMilestone = new Array();
+            //AddMilestone = $rootScope.Milestone;
 
-            CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddMilestone", AddMilestone).then(function (response) {
+            CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddMilestone", data).then(function (response) {
                 if (response.data[0] == "OK") {
                     $scope.MilestoneCreationLoad = false;
                     $("#AddMilestonePopUp").modal("hide");
@@ -788,6 +856,15 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
         else {
             $scope.ValidateRequest();
         }
+    }
+
+    $scope.ClearPrevMilestone = function () {
+        var ClearMilestone = new Array();
+        ClearMilestone = $rootScope.EditMilestone;
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/ClearPrevMilestone", ClearMilestone).then(function (response) {
+            if (response.data[0] == "OK") {
+            }
+        });
     }
 });
 
@@ -847,8 +924,8 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             }
 
             //check start and end date is between milestone dates
-            var MilestoneSdate = moment($scope.MilestonePopData.StartDate.split(' ')[0], 'DD/MM/YYYY');
-            var MilestoneEdate = moment($scope.MilestonePopData.EndDate.split(' ')[0], 'DD/MM/YYYY');
+            var MilestoneSdate = moment($rootScope.MilestonePopData.StartDate.split(' ')[0], 'DD/MM/YYYY');
+            var MilestoneEdate = moment($rootScope.MilestonePopData.EndDate.split(' ')[0], 'DD/MM/YYYY');
 
             var msdate = moment(MilestoneSdate).format('YYYY/MM/DD');
             var medate = moment(MilestoneEdate).format('YYYY/MM/DD');
@@ -920,7 +997,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
     $(function () {
 
         //$scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
-        //$scope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
+        //$rootScope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
         //$scope.TaskData = $.parseJSON($("#hdnTaskData").val());
         //angular.forEach($scope.TaskData, function (value, key) {
         //    var obj = {};
@@ -935,7 +1012,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
         //    obj.TaskStatus = value.TaskStatus;
         //    obj.StatusName = value.TaskStatusName;
         //    obj.Project = $scope.ProjectData.ID;
-        //    obj.Milestone = $scope.MilestoneData.ID;
+        //    obj.Milestone = $rootScope.MilestoneData.ID;
         //    $scope.Task.push(obj);
         //});
         //$scope.$apply();
@@ -1015,7 +1092,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             obj.TaskStatus = $scope.ngddlStatus;
             obj.StatusName = $("#ddlStatus option:selected").text();
             obj.Project = $scope.ProjectPopData.ID;
-            obj.Milestone = $scope.MilestonePopData.ID;
+            obj.Milestone = $rootScope.MilestonePopData.ID;
             $scope.Task.push(obj);
 
             //clear all the fields
@@ -1139,8 +1216,8 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             }
 
             //check start and end date is between milestone dates
-            var MilestoneSdate = moment($scope.MilestonePopData.StartDate.split(' ')[0], 'DD/MM/YYYY');
-            var MilestoneEdate = moment($scope.MilestonePopData.EndDate.split(' ')[0], 'DD/MM/YYYY');
+            var MilestoneSdate = moment($rootScope.MilestonePopData.StartDate.split(' ')[0], 'DD/MM/YYYY');
+            var MilestoneEdate = moment($rootScope.MilestonePopData.EndDate.split(' ')[0], 'DD/MM/YYYY');
 
             var msdate = moment(MilestoneSdate).format('YYYY/MM/DD');
             var medate = moment(MilestoneEdate).format('YYYY/MM/DD');
@@ -1227,7 +1304,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
     $(function () {
 
         //$scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
-        //$scope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
+        //$rootScope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
         //$scope.TaskData = $.parseJSON($("#hdnTaskData").val());
         //$scope.SubTaskData = $.parseJSON($("#hdnSubTaskData").val());
 
@@ -1244,7 +1321,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
         //    obj.SubTaskStatus = value.SubTaskStatus;
         //    obj.StatusName = value.SubTaskStatusName;
         //    obj.Project = $scope.ProjectData.ID;
-        //    obj.Milestone = $scope.MilestoneData.ID;
+        //    obj.Milestone = $rootScope.MilestoneData.ID;
         //    $scope.SubTask.push(obj);
         //});
         //$scope.$apply();
@@ -1323,7 +1400,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             obj.SubTaskStatus = $scope.ngddlSubTaskStatus;
             obj.StatusName = $("#ddlSubTaskStatus option:selected").text();
             obj.Project = $scope.ProjectPopData.ID;
-            obj.Milestone = $scope.MilestonePopData.ID;
+            obj.Milestone = $rootScope.MilestonePopData.ID;
             obj.Task = $scope.TaskPopData.ID;
             $scope.SubTask.push(obj);
 

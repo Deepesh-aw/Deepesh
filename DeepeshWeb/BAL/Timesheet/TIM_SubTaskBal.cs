@@ -102,7 +102,7 @@ namespace DeepeshWeb.BAL.Timesheet
         {
             RestService restService = new RestService();
 
-            return restService.UpdateItem(clientContext, "TIM_ProjectCreation", ItemData, ID);
+            return restService.UpdateItem(clientContext, "TIM_SubTask", ItemData, ID);
         }
     }
 }

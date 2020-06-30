@@ -75,7 +75,7 @@
                                                         <td data-label="Days"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtMileDays" id="txtMileDays" placeholder="Enter Days" readonly="readonly"></td>
 
                                                         <td data-label="Action">
-                                                            <div class="btn-icon-list responsivetablediv">
+                                                            <div class="btn-icon-list responsivetablediv" id="divAddMile" data-internalstatus="" data-statusid="0" data-id="0">
                                                                 <i data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2"  ng-click="AddMilestone()"></i>
                                                             </div>
                                                         </td>
@@ -114,7 +114,7 @@
                                                         <td data-label="Days">{{m.NoOfDays}}</td>
                                                         <td data-label="Action">
                                                             <i class="si si-pencil text-primary mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Edit" ng-click="EditMilestone($index)"></i>&nbsp;
-                                                            <i class="si si-trash text-danger mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Delete" ng-click="DeleteMilestone($index)"></i>
+                                                            <i class="si si-trash text-danger mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Delete" ng-click="DeleteMilestone($index)" ng-hide="m.Delete == 'No'"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>

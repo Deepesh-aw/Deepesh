@@ -327,6 +327,79 @@ namespace DeepeshWeb.DAL
                 throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ""));
             }
         }
+
+        public string DeleteItem(ClientContext ctx, string ListName, string ID)
+        {
+            var responseText = "";
+            try
+            {
+
+                RetrieveAccessToken(ctx);
+                XmlNamespaceManager xmlnspm = AddXmlNameSpaces();
+                var formDigestNode = GetFormDigest(ctx.Url, xmlnspm);
+                string formDigest = formDigestNode.InnerXml;
+
+                string listUrl = RestUrlList(ListName);
+
+                var Url = ctx.Url + "/_api/web/lists/getByTitle('" + ListName + "')/items(" + ID + ")";
+                HttpWebRequest ItemRequest;
+                ItemRequest = (HttpWebRequest)HttpWebRequest.Create(Url);
+                ItemRequest.Method = "POST";
+                ItemRequest.Headers.Add("X-HTTP-Method", "DELETE");
+                ItemRequest.Headers.Add("IF-MATCH", "*");
+                ItemRequest.Headers.Add("Authorization", accessToken);
+                ItemRequest.Headers.Add("X-RequestDigest", formDigest);
+                using (Stream itemRequestStream = ItemRequest.GetRequestStream())
+                {
+                    itemRequestStream.Close();
+                }
+                using (HttpWebResponse itemResponse = (HttpWebResponse)ItemRequest.GetResponse()) ;
+
+                return responseText;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ex.ToString()));
+            }
+        }
+
+        public XmlNode GetFormDigest(string siteUrl, XmlNamespaceManager xmlnspm)
+        {
+            try
+            {
+                var formDigestXML = new XmlDocument();
+                HttpWebRequest contextinfoRequest =
+                    (HttpWebRequest)HttpWebRequest.Create(siteUrl + "/_api/contextinfo");
+                //System.Threading.Thread.Sleep(10000);
+                contextinfoRequest.Method = "POST";
+                contextinfoRequest.ContentType = "application/json;odata=verbose;charset=utf-8";
+                contextinfoRequest.ContentLength = 0;
+
+                contextinfoRequest.Headers.Set(HttpRequestHeader.AcceptLanguage, "en-US");
+                contextinfoRequest.Headers.Add("Authorization", accessToken);
+                CredentialCache myCache = new CredentialCache();
+
+                contextinfoRequest.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                HttpWebResponse contextinfoResponse = (HttpWebResponse)contextinfoRequest.GetResponse();
+
+                using (StreamReader contextinfoReader = new StreamReader(contextinfoResponse.GetResponseStream(), System.Text.Encoding.UTF8))
+                {
+                    formDigestXML.LoadXml(contextinfoReader.ReadToEnd());
+                }
+                //contextinfoRequest.KeepAlive = false;
+                var formDigestNode = formDigestXML.SelectSingleNode("//d:FormDigestValue", xmlnspm);
+                return formDigestNode;
+            }
+            catch (WebException ex)
+            {
+
+                throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ex.ToString()));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ex.ToString()));
+            }
+        }
     }
 
 }

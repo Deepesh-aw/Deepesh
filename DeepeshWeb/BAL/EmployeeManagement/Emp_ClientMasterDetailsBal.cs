@@ -114,7 +114,7 @@ namespace DeepeshWeb.BAL.EmployeeManagement
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "ID,ClientName,ClientAddress,ClientContact,ClientMailID,ClientDesignation,ClientGSTNO,ClientPanCardNo,ClientState,ClientCity,ClientRemark,ClientCountry/ID,ClientCountry/CountryName";
+            rESTOption.select = "ID,ClientName,ClientAddress,ClientContact,ClientMailID,ClientGSTNO,ClientPanCardNo,ClientCity,ClientRemark,ClientCountry/ID,ClientCountry/CountryName";
             rESTOption.expand = "ClientCountry";
             rESTOption.top = "5000";
             jArray = restService.GetAllItemFromList(clientContext, "Emp_ClientMasterDetails", rESTOption);

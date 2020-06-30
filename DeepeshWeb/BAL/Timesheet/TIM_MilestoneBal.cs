@@ -45,7 +45,7 @@ namespace DeepeshWeb.BAL.Timesheet
                 }
                 data.ID = j["ID"] == null ? 0 : Convert.ToInt32(j["ID"]);
                 data.Project = j["Project"]["Id"] == null ? 0 : Convert.ToInt32(j["Project"]["Id"]);
-                data.Status = j["Status"]["Id"] == null ? 0 : Convert.ToInt32(j["Status"]["Id"]);
+                data.Status = j["Status"]["ID"] == null ? 0 : Convert.ToInt32(j["Status"]["ID"]);
                 data.ProjectManager = j["ProjectManager"]["Id"] == null ? 0 : Convert.ToInt32(j["ProjectManager"]["Id"]);
                 data.MembersText = j["MembersText"] == null ? "" : Convert.ToString(j["MembersText"]);
                 data.InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"]);
@@ -76,7 +76,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "ID,MileStone,Description,StartDate,EndDate,Status/StatusName,InternalStatus,NoOfDays,MembersText,Members/ID,Members/FirstName,Members/LastName,ProjectManager/FirstName,ProjectManager/LastName,ProjectManager/Id,Project/Id,Project/ProjectName";
+            rESTOption.select = "ID,MileStone,Description,StartDate,EndDate,Status/ID,Status/StatusName,InternalStatus,NoOfDays,MembersText,Members/ID,Members/FirstName,Members/LastName,ProjectManager/FirstName,ProjectManager/LastName,ProjectManager/Id,Project/Id,Project/ProjectName";
             rESTOption.expand = "Project,Members,ProjectManager,Status";
             rESTOption.top = "5000";
 
@@ -100,11 +100,24 @@ namespace DeepeshWeb.BAL.Timesheet
             return response;
         }
 
+        public string DeleteMilestone(ClientContext clientContext, string ID)
+        {
+            string response = RESTDelete(clientContext, ID);
+
+            return response;
+        }
         private string RESTUpdate(ClientContext clientContext, string ItemData, string ID)
         {
             RestService restService = new RestService();
 
             return restService.UpdateItem(clientContext, "TIM_MileStone", ItemData, ID);
+        }
+
+        private string RESTDelete(ClientContext clientContext, string ID)
+        {
+            RestService restService = new RestService();
+
+            return restService.DeleteItem(clientContext, "TIM_MileStone", ID);
         }
 
     }
