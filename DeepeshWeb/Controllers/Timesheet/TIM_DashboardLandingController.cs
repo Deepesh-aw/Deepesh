@@ -16,20 +16,26 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_MilestoneBal BalMilestone = new TIM_MilestoneBal();
         TIM_StatusMasterBal BalStatus = new TIM_StatusMasterBal();
         Emp_BasicInfoBal BalEmp = new Emp_BasicInfoBal();
+        TIM_ProjectTypeMasterBal BalProjectType = new TIM_ProjectTypeMasterBal();
 
         public ActionResult Index()
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
             try
             {
-                int ProjectId = Convert.ToInt32(Request.Cookies["ProjectId"].Value);
+                List<TIM_ProjectTypeMasterModel> lstProjectType = new List<TIM_ProjectTypeMasterModel>();
+                List<TIM_StatusMasterModel> lstStatus = new List<TIM_StatusMasterModel>();
+                //int ProjectId = Convert.ToInt32(Request.Cookies["ProjectId"].Value);
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
-                    ViewBag.MilestoneData = BalMilestone.GetMilestoneByProjectId(clientContext, ProjectId);
-                    ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
-                    ViewBag.EmpData = BalEmp.GetEmp(clientContext);
+
+                    //lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
+                    //ViewBag.MilestoneData = BalMilestone.GetMilestoneByProjectId(clientContext, ProjectId);
+                    lstStatus = BalStatus.GetStatusForAction(clientContext);
+                    lstProjectType = BalProjectType.GetProjectType(clientContext);
+                    //var allProductsWithNoDuplicates = lstStatus.Union(lstProjectType).DistinctBy(x => x.ID);
+                    //ViewBag.EmpData = BalEmp.GetEmp(clientContext);
                 }
             }
             catch (Exception ex)

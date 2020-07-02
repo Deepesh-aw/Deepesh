@@ -16,7 +16,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_ProjectCreationModel> GetProjectCreationById(ClientContext clientContext, int ProjectId = 2)
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
-            string filter = "ID eq "+ ProjectId + "";
+            string filter = "ID eq "+ ProjectId + " and InternalStatus ne 'ProjectDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstProjectCreation = GetProjectCreationListItems(jArray);
             return lstProjectCreation;

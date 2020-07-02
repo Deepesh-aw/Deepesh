@@ -344,42 +344,106 @@ namespace DeepeshWeb.Controllers.TimeSheet
         }
 
         [HttpPost]
-        [ActionName("ClearPrevMilestone")]
-        public JsonResult ClearPrevMilestone(List<TIM_MilestoneModel> ClearMilestone)
-        {
-            List<object> obj = new List<object>();
-            int i = DeleteMilestone(ClearMilestone);
-            if (i == ClearMilestone.Count)
-                        obj.Add("OK");
-            return Json(obj, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
         [ActionName("DeleteAllMilestone")]
         public JsonResult DeleteAllMilestone(int ProjectId)
         {
             List<object> obj = new List<object>();
             try
             {
-                List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
+                    List<TIM_WorkFlowMasterModel> lstWorkFlowProject = new List<TIM_WorkFlowMasterModel>();
+                    lstWorkFlowProject = BalWorkflow.GetWorkFlowForProjectCreation(clientContext);
+                    string projectdata = "'StatusId': '" + lstWorkFlowProject[0].ToStatusID + "'";
+                    projectdata += " ,'InternalStatus': '" + lstWorkFlowProject[0].InternalStatus + "'";
+
+
+                    List<TIM_WorkFlowMasterModel> lstWorkFlowMile = new List<TIM_WorkFlowMasterModel>();
+                    lstWorkFlowMile = BalWorkflow.GetWorkFlowForMilestoneDeletion(clientContext);
+                    string miledata = "'StatusId': '" + lstWorkFlowMile[0].ToStatusID + "'";
+                    miledata += " ,'InternalStatus': '" + lstWorkFlowMile[0].InternalStatus + "'";
+
+                    List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
                     lstMilestone = BalMilestone.GetMilestoneByProjectId(clientContext, ProjectId);
-                    int i = DeleteMilestone(lstMilestone);
-                    if (i == lstMilestone.Count)
+                    if (lstMilestone.Count > 0)
                     {
-                        List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
-                        lstWorkFlow = BalWorkflow.GetWorkFlowForProjectCreation(clientContext);
-                        if (lstWorkFlow.Count > 0)
+                        int mile = 0;
+                        foreach (var item in lstMilestone)
                         {
-                            string itemdata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
-                            itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
-                            string returnID = BalProjectCreation.UpdateProject(clientContext, itemdata, ProjectId.ToString());
-                            if (returnID == "Update")
-                                obj.Add("OK");
+                            mile++;
+                            BalMilestone.UpdateMilestone(clientContext, miledata ,item.ID.ToString());
                         }
+                        if(mile == lstMilestone.Count)
+                        {
+                            List<TIM_WorkFlowMasterModel> lstWorkFlowForTask = new List<TIM_WorkFlowMasterModel>();
+                            lstWorkFlowForTask = BalWorkflow.GetWorkFlowForTaskDeletion(clientContext);
+                            if (lstWorkFlowForTask.Count > 0)
+                            {
+                                string itemdata = "'StatusId': '" + lstWorkFlowForTask[0].ToStatusID + "'";
+                                itemdata += " ,'InternalStatus': '" + lstWorkFlowForTask[0].InternalStatus + "'";
+
+                                List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
+                                lstTask = BalTask.GetTaskByProjectId(clientContext, ProjectId);
+                                if (lstTask.Count > 0)
+                                {
+                                    int task = 0;
+                                    foreach (var item in lstTask)
+                                    {
+                                        task++;
+                                        BalTask.UpdateTask(clientContext, itemdata, item.ID.ToString());
+                                    }
+                                    if (task == lstTask.Count)
+                                    {
+
+                                        List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+                                        lstSubTask = BalSubTask.GetSubTaskByProjectId(clientContext, ProjectId);
+                                        if (lstSubTask.Count > 0)
+                                        {
+                                            List<TIM_WorkFlowMasterModel> lstWorkFlowForSubTask = new List<TIM_WorkFlowMasterModel>();
+                                            lstWorkFlowForSubTask = BalWorkflow.GetWorkFlowForSubTaskDeletion(clientContext);
+
+                                            if (lstWorkFlowForSubTask.Count > 0)
+                                            {
+                                                string itemsubdata = "'StatusId': '" + lstWorkFlowForSubTask[0].ToStatusID + "'";
+                                                itemsubdata += " ,'InternalStatus': '" + lstWorkFlowForSubTask[0].InternalStatus + "'";
+
+                                                int subtask = 0;
+                                                foreach (var item in lstSubTask)
+                                                {
+                                                    subtask++;
+                                                    BalSubTask.UpdateSubTask(clientContext, itemsubdata, item.ID.ToString());
+                                                }
+                                                if (subtask == lstSubTask.Count)
+                                                {
+                                                    string returnID = BalProjectCreation.UpdateProject(clientContext, projectdata, ProjectId.ToString());
+                                                    if (returnID == "Update")
+                                                        obj.Add("OK");
+                                                }
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            string returnID = BalProjectCreation.UpdateProject(clientContext, projectdata, ProjectId.ToString());
+                                            if (returnID == "Update")
+                                                obj.Add("OK");
+
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    string returnID = BalProjectCreation.UpdateProject(clientContext, projectdata, ProjectId.ToString());
+                                    if (returnID == "Update")
+                                        obj.Add("OK");
+                                }
+
+                            }
+                        }
+
                     }
+                    
                 }
             }
             catch (Exception ex)
@@ -390,39 +454,18 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        public int DeleteMilestone(List<TIM_MilestoneModel> DeleteMilestone)
-        {
-            int i = 0;
-            try
-            {
-                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-                using (var clientContext = spContext.CreateUserClientContextForSPHost())
-                {
-                    foreach (var item in DeleteMilestone)
-                    {
-                        i++;
-                        BalMilestone.DeleteMilestone(clientContext, item.ID.ToString());
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
-            }
-            
-            return i;
-        }
-
 
         [HttpPost]
         [ActionName("AddTask")]
-        public JsonResult AddTask(List<TIM_TaskModel> AddTask)
+        public JsonResult AddTask(List<TIM_TaskModel> AddTask, string Action)
         {
             List<object> obj = new List<object>();
             int i = 0;
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
+                List<TIM_StatusMasterModel> lstPendingStatus = new List<TIM_StatusMasterModel>();
+                lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
                 List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                 lstWorkFlow = BalWorkflow.GetWorkFlowForAddTask(clientContext);
                 string returnID = "0";
@@ -435,19 +478,44 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'NoOfDays': '" + item.NoOfDays + "'";
                     itemdata += " ,'ProjectId': '" + item.Project + "'";
                     itemdata += " ,'Task': '" + item.Task + "'";
-                    itemdata += " ,'TaskStatusId': '" + item.TaskStatus + "'";
+                    itemdata += " ,'TaskStatusId': '" + lstPendingStatus[0].ID + "'";
 
-                    if (lstWorkFlow.Count > 0)
+                    //if (lstWorkFlow.Count > 0)
+                    //{
+                    //    itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
+                    //    itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                    //}
+
+                    if (item.Status == 0)
                     {
                         itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
                         itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
                     }
-                    returnID = BalTask.SaveTask(clientContext, itemdata);
-                    if (Convert.ToInt32(returnID) > 0)
-                        i++;
+                    else
+                    {
+                        itemdata += " ,'StatusId': '" + item.Status + "'";
+                        itemdata += " ,'InternalStatus': '" + item.InternalStatus + "'";
+                    }
+
+                    if (item.ID > 0)
+                    {
+                        returnID = BalTask.UpdateTask(clientContext, itemdata, item.ID.ToString());
+                        if (returnID == "Update")
+                            i++;
+                    }
+                    else
+                    {
+                        returnID = BalTask.SaveTask(clientContext, itemdata);
+                        if (Convert.ToInt32(returnID) > 0)
+                            i++;
+                    }
+
+                    //returnID = BalTask.SaveTask(clientContext, itemdata);
+                    //if (Convert.ToInt32(returnID) > 0)
+                    //    i++;
 
                 }
-                if (i == AddTask.Count)
+                if (i == AddTask.Count && Action == "Insert")
                 {
                     string milestonedata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
                     milestonedata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
@@ -461,7 +529,92 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             obj.Add("OK");
                     }
                 }
+                else if (i == AddTask.Count)
+                    obj.Add("OK");
             }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ActionName("DeleteAllTask")]
+        public JsonResult DeleteAllTask(int ProjectId, int MilestoneId)
+        {
+            List<object> obj = new List<object>();
+            try
+            {
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    List<TIM_WorkFlowMasterModel> lstWorkFlowForMilestone = new List<TIM_WorkFlowMasterModel>();
+                    lstWorkFlowForMilestone = BalWorkflow.GetWorkFlowForAddMilestone(clientContext);
+                    string miledata = "'StatusId': '" + lstWorkFlowForMilestone[0].ToStatusID + "'";
+                    miledata += " ,'InternalStatus': '" + lstWorkFlowForMilestone[0].InternalStatus + "'";
+
+                    List<TIM_WorkFlowMasterModel> lstWorkFlowForTask = new List<TIM_WorkFlowMasterModel>();
+                    lstWorkFlowForTask = BalWorkflow.GetWorkFlowForTaskDeletion(clientContext);
+                    if (lstWorkFlowForTask.Count > 0)
+                    {
+                        string itemdata = "'StatusId': '" + lstWorkFlowForTask[0].ToStatusID + "'";
+                        itemdata += " ,'InternalStatus': '" + lstWorkFlowForTask[0].InternalStatus + "'";
+
+                        List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
+                        lstTask = BalTask.GetTaskByProjectId(clientContext, ProjectId);
+                        if (lstTask.Count > 0)
+                        {
+                            int task = 0;
+                            foreach (var item in lstTask)
+                            {
+                                task++;
+                                BalTask.UpdateTask(clientContext, itemdata, item.ID.ToString());
+                            }
+                            if (task == lstTask.Count)
+                            {
+
+                                List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+                                lstSubTask = BalSubTask.GetSubTaskByProjectId(clientContext, ProjectId);
+                                if (lstSubTask.Count > 0)
+                                {
+                                    List<TIM_WorkFlowMasterModel> lstWorkFlowForSubTask = new List<TIM_WorkFlowMasterModel>();
+                                    lstWorkFlowForSubTask = BalWorkflow.GetWorkFlowForSubTaskDeletion(clientContext);
+
+                                    if (lstWorkFlowForSubTask.Count > 0)
+                                    {
+                                        string itemsubdata = "'StatusId': '" + lstWorkFlowForSubTask[0].ToStatusID + "'";
+                                        itemsubdata += " ,'InternalStatus': '" + lstWorkFlowForSubTask[0].InternalStatus + "'";
+
+                                        int subtask = 0;
+                                        foreach (var item in lstSubTask)
+                                        {
+                                            subtask++;
+                                            BalSubTask.UpdateSubTask(clientContext, itemsubdata, item.ID.ToString());
+                                        }
+                                        if (subtask == lstSubTask.Count)
+                                        {
+                                            string returnID = BalMilestone.UpdateMilestone(clientContext, miledata, MilestoneId.ToString());
+                                            if (returnID == "Update")
+                                                obj.Add("OK");
+                                        }
+                                    }
+                                    
+                                }
+                                else
+                                {
+                                    string returnID = BalMilestone.UpdateMilestone(clientContext, miledata, MilestoneId.ToString());
+                                    if (returnID == "Update")
+                                        obj.Add("OK");
+
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
@@ -490,11 +643,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'SubTask': '" + item.SubTask + "'";
                     itemdata += " ,'SubTaskStatusId': '" + item.SubTaskStatus + "'";
 
+
                     if (lstWorkFlow.Count > 0)
                     {
                         itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
                         itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
                     }
+
                     returnID = BalSubTask.SaveSubTask(clientContext, itemdata);
                     if (Convert.ToInt32(returnID) > 0)
                         i++;

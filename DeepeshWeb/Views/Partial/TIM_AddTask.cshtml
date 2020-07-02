@@ -76,7 +76,7 @@
                                                 <th scope="col">Start Date</th>
                                                 <th scope="col">Estimated End Date</th>
                                                 <th scope="col">Days</th>
-                                                <th scope="col">Status</th>
+                                                @*<th scope="col">Status</th>*@
                                                 <th scope="col">Action</th>
                                             </tr>
                                         </thead>
@@ -117,7 +117,7 @@
 
                                                 <td data-label="Days" class="wd-10%"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTaskDays" id="txtTaskDays" placeholder="Enter Days" readonly="readonly"></td>
 
-                                                <td>
+                                                @*<td>
                                                     <select  class="form-control TaskSelect2" ng-model="ngddlStatus" id="ddlStatus">
                                                         <option value="">Choose One</option>
                                                         @foreach (var i in ViewBag.StatusData)
@@ -125,11 +125,11 @@
                                                             <option value="@i.ID">@i.StatusName</option>
                                                         }
                                                     </select>
-                                                </td>
+                                                </td>*@
 
                                                 <td data-label="Action">
-                                                    <div class="btn-icon-list responsivetablediv">
-                                                        <button type="button" class="fa fa-plus" title="Add" ng-click="AddTask()"></button>
+                                                    <div class="btn-icon-list responsivetablediv" id="divAddTask" data-internalstatus="" data-statusid="0" data-id="0" data-enddate="">
+                                                        <i data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2" ng-click="AddTask()"></i>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -157,7 +157,7 @@
                                                 <th scope="col">Start Date</th>
                                                 <th scope="col">Estimated End Date</th>
                                                 <th scope="col">Days</th>
-                                                <th scope="col">Status</th>
+                                                @*<th scope="col">Status</th>*@
                                                 <th scope="col">Action</th>
                                             </tr>
                                         </thead>
@@ -169,10 +169,10 @@
                                                 <td data-label="Start Date">{{t.StartDateView}}</td>
                                                 <td data-label="Estimated End Date">{{t.EndDateView}}</td>
                                                 <td data-label="Days">{{t.NoOfDays}}</td>
-                                                <td data-label="Status">{{t.StatusName}}</td>
+                                                @*<td data-label="Status">{{t.StatusName}}</td>*@
                                                 <td data-label="Action">
-                                                    <i class="fa fa-edit" ng-click="EditTask($index)"></i>&nbsp;
-                                                    <i class="fa fa-trash" ng-click="DeleteTask($index)"></i>
+                                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Edit" ng-click="EditTask($index)"></i>&nbsp;
+                                                    <i class="si si-trash text-danger mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Delete" ng-click="DeleteTask($index)" ng-hide="t.Delete == 'No'"></i>
                                                 </td>
                                             </tr>
                                         </tbody>

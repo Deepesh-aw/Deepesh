@@ -39,5 +39,22 @@ namespace DeepeshWeb.BAL.Timesheet
             }
             return lstStatus;
         }
+
+        public List<TIM_StatusMasterModel> GetPendingStatus(ClientContext clientContext)
+        {
+            List<TIM_StatusMasterModel> lstStatus = new List<TIM_StatusMasterModel>();
+            string filter = "(StatusName eq 'Pending')";
+            JArray jArray = RESTGet(clientContext, filter);
+            foreach (JObject j in jArray)
+            {
+                lstStatus.Add(new TIM_StatusMasterModel
+                {
+                    ID = Convert.ToInt32(j["Id"]),
+                    StatusName = j["StatusName"].ToString(),
+                }); ;
+            }
+            return lstStatus;
+        }
+
     }
 }

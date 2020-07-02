@@ -15,7 +15,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_TaskModel> GetTaskByMilestoneId(ClientContext clientContext, int MilestoneId)
         {
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
-            string filter = "MileStoneId eq " + MilestoneId + "";
+            string filter = "MileStoneId eq " + MilestoneId + " and InternalStatus ne 'TaskDeleted' and InternalStatus ne 'ProjectDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTask = BindList(jArray);
             return lstTask;
@@ -24,7 +24,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_TaskModel> GetTaskByTaskId(ClientContext clientContext, int TaskId)
         {
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
-            string filter = "ID eq " + TaskId + "";
+            string filter = "ID eq " + TaskId + " and InternalStatus ne 'TaskDeleted' and InternalStatus ne 'ProjectDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTask = BindList(jArray);
             return lstTask;
@@ -33,7 +33,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_TaskModel> GetTaskByProjectId(ClientContext clientContext, int ProjectId)
         {
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
-            string filter = "ProjectId eq " + ProjectId + "";
+            string filter = "ProjectId eq " + ProjectId + " and InternalStatus ne 'TaskDeleted' and InternalStatus ne 'ProjectDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTask = BindList(jArray);
             return lstTask;
