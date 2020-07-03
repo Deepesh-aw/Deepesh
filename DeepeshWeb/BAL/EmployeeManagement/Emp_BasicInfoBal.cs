@@ -39,6 +39,43 @@ namespace DeepeshWeb.BAL.EmployeeManagement
             return lstEmp;
         }
 
+        public int GetEmpByLogIn(ClientContext clientContext)
+        {
+            List<Emp_BasicInfoModel> lstEmp = new List<Emp_BasicInfoModel>();
+            int UserId = Convert.ToInt32(HttpContext.Current.Session["UserID"]);
+            string filter = "User_NameId eq " + UserId;
+            JArray jArray = RESTGet(clientContext, filter);
+            foreach (JObject j in jArray)
+            {
+                lstEmp.Add(new Emp_BasicInfoModel
+                {
+                    ID = Convert.ToInt32(j["Id"]),
+                    EmpCode = j["EmpCode"].ToString(),
+                    FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
+                }); ; ;
+            }
+            return lstEmp[0].ID;
+        }
+
+        public string GetEmpCodeByLogIn(ClientContext clientContext)
+        {
+            List<Emp_BasicInfoModel> lstEmp = new List<Emp_BasicInfoModel>();
+            int UserId = Convert.ToInt32(HttpContext.Current.Session["UserID"]);
+            string filter = "User_NameId eq " + UserId;
+            JArray jArray = RESTGet(clientContext, filter);
+            foreach (JObject j in jArray)
+            {
+                lstEmp.Add(new Emp_BasicInfoModel
+                {
+                    ID = Convert.ToInt32(j["Id"]),
+                    EmpCode = j["EmpCode"].ToString(),
+                    FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
+                }); ; ;
+            }
+            return lstEmp[0].EmpCode;
+        }
+
+
 
         public List<Emp_BasicInfoModel> GetAllEmployee(ClientContext clientContext)
         {

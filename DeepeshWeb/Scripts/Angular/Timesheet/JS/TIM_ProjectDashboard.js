@@ -2,13 +2,16 @@
 
 ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $http, $compile, $timeout, $rootScope, CommonAppUtilityService) {
     var table;
+    var TaskTable;
     $rootScope.ProjectPopData = [];
     $scope.ProjectDetails = [];
     $rootScope.ProjectData = [];
     $rootScope.Milestone = [];
     $rootScope.Task = [];
+    $rootScope.SubTask = [];
     $rootScope.EditMilestone = [];
     $rootScope.EditTask = [];
+    $rootScope.EditSubTask = [];
 
     var ProjectID;
     var AllDataTableId = {};
@@ -134,9 +137,11 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     $rootScope.LoadProjectData = function () {
         $('#tblProject').DataTable().clear().destroy();
+        $('#tblTask').DataTable().clear().destroy();
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectData", "").then(function (response) {
             if (response.data[0] == "OK") {
                 $rootScope.ProjectData = response.data[1];
+                $rootScope.TaskData = response.data[2];
                 setTimeout(function () {
                     table = $('#tblProject').DataTable({
                         lengthChange: true,
@@ -149,6 +154,19 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                         }
                     });
                     table.buttons().container()
+                        .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
+
+                    TaskTable = $('#tblTask').DataTable({
+                        lengthChange: true,
+                        responsive: true,
+                        bDestroy: true,
+                        language: {
+                            searchPlaceholder: 'Search...',
+                            sSearch: '',
+                            lengthMenu: '_MENU_ ',
+                        }
+                    });
+                    TaskTable.buttons().container()
                         .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
                 }, 2);
             }
@@ -355,40 +373,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetSubTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
-                    var SubTaskID = response.data[1][0].ID;
-                    var Html = '<div><table class="mg-b-0 text-md-nowrap" style="width:82%" id = "tblSubTask' + SubTaskID + '" ><thead><tr><th scope="col">SubTask</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
-                    angular.forEach(response.data[1], function (value, key) {
-                        var i = key + 1;
-                        //Html += '<tr><td  >' + i + '';
-                        Html += '<tr><td data-label="SubTask" id = "SubTask' + key + '">' + value.SubTask + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td></tr > ';
-                    });
-                    Html += '</tbody></table></div>';
-                    row.child(Html).show();
-
-                    setTimeout(function () {
-                        var SubTaskTable = $('#tblSubTask' + SubTaskID).DataTable({
-                            "paging": false,
-                            "ordering": false,
-                            "info": false,
-                            "lengthChange": true,
-                            responsive: true,
-                            bDestroy: true,
-                            "bFilter": false,
-                            "createdRow": function (row, data, index) {
-                                $compile(row)($scope); //add this to compile the DOM
-                            },
-                            language: {
-                                searchPlaceholder: 'Search...',
-                                sSearch: '',
-                                lengthMenu: '_MENU_ ',
-                            }
-                        });
-                        SubTaskTable.buttons().container()
-                            .appendTo('#tblTask_wrapper .col-md-6:eq(0)');
-                        $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
-                        $("#SubTask" + index).find('i').addClass('si-minus si');
-                    }, 2);
-
+                    $scope.BindSubTask(response, row);
+                    $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
+                    $("#SubTask" + index).find('i').addClass('si-minus si');
                 }
                 else {
                     $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
@@ -396,6 +383,75 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 }
             });
         }
+    }
+
+    $scope.ShowSubTaskMain = function (index, TaskId) {
+        $("#SubTask" + index).find('i').removeClass('si si si-plus');
+        $("#SubTask" + index).find('i').addClass('spinner-border spinner-border-sm');
+
+        var tr = $("#SubTask" + index).closest('tr');
+
+        var table = tr.closest('table').attr('id');
+        var row = TaskTable.row(tr);
+
+        // var row = TaskTable.row(tr);
+
+        if (row.child.isShown()) {
+            $("#SubTask" + index).find('i').removeClass('si-minus si');
+            $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
+            $("#SubTask" + index).find('i').addClass('si si si-plus');
+            row.child.hide();
+        }
+        else {
+            var data = {
+                'TaskId': TaskId
+            }
+            CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetSubTask", data).then(function (response) {
+                if (response.data[0] == "OK") {
+                    $scope.BindSubTask(response, row);
+                    $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
+                    $("#SubTask" + index).find('i').addClass('si-minus si');
+                }
+                else {
+                    $("#SubTask" + index).find('i').removeClass('spinner-border spinner-border-sm');
+                    $("#SubTask" + index).find('i').addClass('si-minus si');
+                }
+            });
+        }
+    }
+
+    $scope.BindSubTask = function (response, row ) {
+        var SubTaskID = response.data[1][0].ID;
+        var Html = '<div><table class="mg-b-0 text-md-nowrap" style="width:82%" id = "tblSubTask' + SubTaskID + '" ><thead><tr><th scope="col">SubTask</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
+        angular.forEach(response.data[1], function (value, key) {
+            var i = key + 1;
+            //Html += '<tr><td  >' + i + '';
+            Html += '<tr><td data-label="SubTask" id = "SubTask' + key + '">' + value.SubTask + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td></tr > ';
+        });
+        Html += '</tbody></table></div>';
+        row.child(Html).show();
+
+        setTimeout(function () {
+            var SubTaskTable = $('#tblSubTask' + SubTaskID).DataTable({
+                "paging": false,
+                "ordering": false,
+                "info": false,
+                "lengthChange": true,
+                responsive: true,
+                bDestroy: true,
+                "bFilter": false,
+                "createdRow": function (row, data, index) {
+                    $compile(row)($scope); //add this to compile the DOM
+                },
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ ',
+                }
+            });
+            SubTaskTable.buttons().container()
+                .appendTo('#tblTask_wrapper .col-md-6:eq(0)');
+        }, 2);
     }
 
     $scope.AddMilestonePopUp = function (Project) {
@@ -421,6 +477,22 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         $rootScope.MilestonePopData = Milestone;
         $("#AddTaskPopUp").modal("show");
 
+    }
+
+    $scope.OpenAddSubTaskPopMain = function (TaskData) {
+        var data = {
+            'ProjectId': TaskData.Project,
+            'MilestoneId': TaskData.MileStone,
+            'TaskId': TaskData.ID
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddSubTaskMain", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                $rootScope.ProjectPopData = response.data[1];
+                $rootScope.MilestonePopData = response.data[2];
+                $rootScope.TaskPopData = TaskData;
+                $("#AddSubTaskPopUp").modal("show");
+            }
+        });
     }
 
     $scope.OpenAddSubTaskPop = function (Task, Milestone, Project, TaskTableRow) {
@@ -646,6 +718,122 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     });
                 }
             });
+        });
+    }
+
+    $scope.EditSubTaskPop = function (Task, Milestone, Project, TaskTableRow) {
+        $rootScope.TaskRow = TaskTableRow;
+        $rootScope.ProjectPopData = Project;
+        $rootScope.MilestonePopData = Milestone;
+        $rootScope.TaskPopData = Task;
+        var data = {
+            'TaskId': Task.ID
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetSubTask", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                $rootScope.EditSubTask = response.data[1];
+                angular.forEach($rootScope.EditSubTask, function (value, key) {
+
+                    var obj = {};
+                    obj.ID = value.ID;
+                    obj.SubTask = value.SubTask;
+                    obj.Members = value.Members;
+                    obj.MemberTitle = value.MembersName;
+                    obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+                    obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
+                    obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+                    obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+                    obj.NoOfDays = value.NoOfDays;
+                    obj.Task = value.Task;
+                    obj.Milestone = value.MileStone;
+                    obj.Project = value.Project;
+                    obj.InternalStatus = value.InternalStatus;
+                    obj.Status = value.Status;
+                    obj.Delete = "No";
+                    $rootScope.SubTask.push(obj);
+                });
+                $("#btnSubTaskCreation").text("Update");
+                $("#AddSubTaskPopUp").modal("show");
+                //$scope.$apply();
+            }
+            else {
+            }
+        });
+
+    }
+
+    $scope.EditSubTaskPopMain = function (TaskData) {
+        var data = {
+            'ProjectId': TaskData.Project,
+            'MilestoneId': TaskData.MileStone,
+            'TaskId': TaskData.ID
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddSubTaskMain", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                $scope.EditSubTaskPop(TaskData, response.data[2], response.data[1], '');
+            }
+        });
+    }
+
+    $scope.DeleteSubTask = function (Task, Milestone, Project, TaskTableRow) {
+        swal({
+            title: "Subtask Deletion",
+            text: "Are you sure do you really want to delete this project subtask?",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+            var data = {
+                'ProjectId': Project.ID,
+                'MilestoneId': Milestone.ID,
+                'TaskId': Task.ID
+            }
+                $scope.DeleteAllSubTask(data, Milestone);
+        });
+    }
+
+    $scope.DeleteSubTaskMain = function (TaskData) {
+        swal({
+            title: "Subtask Deletion",
+            text: "Are you sure do you really want to delete this project subtask?",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+            var data = {
+                'ProjectId': TaskData.Project,
+                'MilestoneId': TaskData.MileStone,
+                'TaskId': TaskData.ID
+            }
+                $scope.DeleteAllSubTask(data, "");
+
+        });
+    }
+
+    $scope.DeleteAllSubTask = function (data, Milestone) {
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/DeleteAllSubTask", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                if (Milestone != "") {
+                    var data = {
+                        'MilestoneId': Milestone.ID,
+                    }
+                    CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
+                        if (response.data[0] == "OK") {
+                            $rootScope.BindTask(response, Milestone, Project, TaskTableRow);
+                            swal("Subtask deleted successfully.");
+                        }
+
+                    });
+
+                }
+                else {
+                    swal("Subtask deleted successfully.");
+                    $rootScope.LoadProjectData();
+                }
+            }
+            
         });
     }
 
@@ -1115,33 +1303,6 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
         });
     }
 
-    $(function () {
-
-        //$scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
-        //$rootScope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
-        //$scope.TaskData = $.parseJSON($("#hdnTaskData").val());
-        //angular.forEach($scope.TaskData, function (value, key) {
-        //    var obj = {};
-        //    obj.Task = value.Task;
-        //    obj.Members = value.Members;
-        //    obj.MemberTitle = value.MembersName;
-        //    obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
-        //    obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
-        //    obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
-        //    obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
-        //    obj.NoOfDays = value.NoOfDays;
-        //    obj.TaskStatus = value.TaskStatus;
-        //    obj.StatusName = value.TaskStatusName;
-        //    obj.Project = $scope.ProjectData.ID;
-        //    obj.Milestone = $rootScope.MilestoneData.ID;
-        //   $rootScope.Task.push(obj);
-        //});
-        //$scope.$apply();
-
-        // AmazeUI Datetimepicker
-
-    });
-
     $scope.DeleteTask = function (index) {
        $rootScope.Task.splice(index, 1);
     }
@@ -1202,6 +1363,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
         var ValidateStatus = $scope.ValidateRequest();
         if (ValidateStatus) {
             var obj = {};
+            obj.ID = $("#divAddTask").attr("data-id");
             obj.Task = $scope.ngtxtTask;
             obj.Members = $scope.ngddlMember;
             obj.MemberTitle = $("#ddlMember option:selected").text();
@@ -1246,7 +1408,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             $scope.ngtxtTaskDays = "";
             $timeout(function () {
                 $("#ddlMember").trigger('change');
-                $("#ddlStatus").trigger('change');
+                //$("#ddlStatus").trigger('change');
             }, 10);
 
 
@@ -1323,7 +1485,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
 
 ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, $rootScope, $timeout, CommonAppUtilityService) {
 
-    $scope.SubTask = [];
+    $rootScope.SubTask = [];
 
     $scope.LoadSubTask = function () {
 
@@ -1331,7 +1493,13 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             $("#frmProjectDashboard")[0].reset();
             $("#ddlSubTaskMember").val(null).trigger('change.select2');
             $("#ddlSubTaskStatus").val(null).trigger('change.select2');
-            $scope.SubTask.length = 0;
+            $("#btnSubTaskCreation").text("Submit");
+            $rootScope.SubTask.length = 0;
+        });
+
+        $("#txtSubTaskStartDate").on('click', function () {
+            if ($("#divAddSubTask").attr("data-id") > 0)
+                $('.datetimepicker').hide();
         });
 
         $('#txtSubTaskStartDate').datetimepicker({
@@ -1346,12 +1514,24 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             autoclose: true
         });
 
-
         $('.SubTaskdate').datetimepicker().on('changeDate', function (e) {
 
             var start = moment($("#txtSubTaskStartDate").val(), 'DD/MM/YYYY');
             var end = moment($("#txtSubTaskEndDate").val(), 'DD/MM/YYYY');
             var days = end.diff(start, 'days');
+
+            if ($("#divAddSubTask").attr("data-enddate") != "") {
+                var EditEndDate = moment($("#divAddSubTask").attr("data-enddate"), 'DD/MM/YYYY');
+                var ChkEditDate = moment(EditEndDate).format('YYYY/MM/DD');
+                if (!moment(end.format('YYYY/MM/DD')).isSameOrAfter(ChkEditDate)) {
+                    alert("End date can't be less");
+                    $("#txtSubTaskEndDate").val('');
+                    $timeout(function () {
+                        $("#txtSubTaskEndDate").val($("#divAddSubTask").attr("data-enddate"));
+                    })
+                    return false;
+                }
+            }
 
             //check start and end date is between project dates
             var ProjectSdate = moment($scope.ProjectPopData.StartDate.split(' ')[0], 'DD/MM/YYYY');
@@ -1460,36 +1640,8 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
 
     }
 
-    $(function () {
-
-        //$scope.ProjectData = $.parseJSON($("#hdnProjectData").val());
-        //$rootScope.MilestoneData = $.parseJSON($("#hdnMilestoneData").val());
-        //$scope.TaskData = $.parseJSON($("#hdnTaskData").val());
-        //$scope.SubTaskData = $.parseJSON($("#hdnSubTaskData").val());
-
-        //angular.forEach($scope.SubTaskData, function (value, key) {
-        //    var obj = {};
-        //    obj.SubTask = value.SubTask;
-        //    obj.Members = value.Members;
-        //    obj.MemberTitle = value.MembersName;
-        //    obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
-        //    obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
-        //    obj.StartDate = moment(value.StartDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
-        //    obj.EndDate = moment(value.EndDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
-        //    obj.NoOfDays = value.NoOfDays;
-        //    obj.SubTaskStatus = value.SubTaskStatus;
-        //    obj.StatusName = value.SubTaskStatusName;
-        //    obj.Project = $scope.ProjectData.ID;
-        //    obj.Milestone = $rootScope.MilestoneData.ID;
-        //    $scope.SubTask.push(obj);
-        //});
-        //$scope.$apply();
-
-        // AmazeUI Datetimepicker
-    });
-
     $scope.DeleteSubTask = function (index) {
-        $scope.SubTask.splice(index, 1);
+        $rootScope.SubTask.splice(index, 1);
     }
 
     function clearErrorClass() {
@@ -1521,12 +1673,12 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             rv = false;
         }
 
-        if ($scope.ngddlSubTaskStatus == "" || $scope.ngddlSubTaskStatus == undefined || $scope.ngddlSubTaskStatus == null) {
-            $("#ddlSubTaskStatus").addClass("parsley-error");
-            $("#ddlSubTaskStatus").next().children().first().children().css("border-color", "#ee335e");
-            $("#ddlSubTaskStatus").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
-            rv = false;
-        }
+        //if ($scope.ngddlSubTaskStatus == "" || $scope.ngddlSubTaskStatus == undefined || $scope.ngddlSubTaskStatus == null) {
+        //    $("#ddlSubTaskStatus").addClass("parsley-error");
+        //    $("#ddlSubTaskStatus").next().children().first().children().css("border-color", "#ee335e");
+        //    $("#ddlSubTaskStatus").parent().append("<li class='parsley - required parsley-errors-list filled erralign'>This value is required.</li>");
+        //    rv = false;
+        //}
 
         if ($scope.ngddlSubTaskMember == "" || $scope.ngddlSubTaskMember == undefined || $scope.ngddlSubTaskMember == null) {
             $("#ddlSubTaskMember").addClass("parsley-error");
@@ -1548,6 +1700,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
         var ValidateStatus = $scope.ValidateRequest();
         if (ValidateStatus) {
             var obj = {};
+            obj.ID = $("#divAddSubTask").attr("data-id");
             obj.SubTask = $scope.ngtxtSubTask;
             obj.Members = $scope.ngddlSubTaskMember;
             obj.MemberTitle = $("#ddlSubTaskMember option:selected").text();
@@ -1556,12 +1709,31 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             obj.StartDate = moment($("#txtSubTaskStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
             obj.EndDate = moment($("#txtSubTaskEndDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
             obj.NoOfDays = $scope.ngtxtSubTaskDays;
-            obj.SubTaskStatus = $scope.ngddlSubTaskStatus;
-            obj.StatusName = $("#ddlSubTaskStatus option:selected").text();
+            //obj.SubTaskStatus = $scope.ngddlSubTaskStatus;
+            //obj.StatusName = $("#ddlSubTaskStatus option:selected").text();
             obj.Project = $scope.ProjectPopData.ID;
             obj.Milestone = $rootScope.MilestonePopData.ID;
-            obj.Task =$rootScope.TaskPopData.ID;
-            $scope.SubTask.push(obj);
+            obj.Task = $rootScope.TaskPopData.ID;
+
+            if ($("#divAddSubTask").attr("data-id") > 0) {
+                obj.InternalStatus = $("#divAddSubTask").attr("data-internalstatus");
+                obj.Status = $("#divAddSubTask").attr("data-statusid");
+                obj.Delete = "No";
+
+            }
+            else {
+                obj.InternalStatus = "";
+                obj.Status = "0";
+            }
+
+            $rootScope.SubTask.push(obj);
+
+            $('#txtSubTaskStartDate').attr('readonly', false);
+            $("#divAddSubTask").attr("data-id", 0);
+            $("#divAddSubTask").attr("data-internalstatus", "");
+            $("#divAddSubTask").attr("data-statusid", "0");
+            $("#divAddSubTask").attr("data-enddate", "");
+
 
             //clear all the fields
             $scope.ngddlSubTaskMember = "";
@@ -1581,44 +1753,69 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
     }
 
     $scope.EditSubTask = function (index) {
-        $scope.ngtxtSubTask = $scope.SubTask[index].SubTask;
-        $scope.ngtxtSubTaskStartDate = $scope.SubTask[index].StartDate;
-        $("#txtSubTaskStartDate").val($scope.SubTask[index].StartDate);
-        $scope.ngtxtSubTaskEndDate = $scope.SubTask[index].EndDate;
-        $("#txtSubTaskEndDate").val($scope.SubTask[index].EndDate);
-        $scope.ngtxtSubTaskDays = $scope.SubTask[index].NoOfDays;
+        $scope.ngtxtSubTask = $rootScope.SubTask[index].SubTask;
+        $scope.ngtxtSubTaskStartDate = $rootScope.SubTask[index].StartDateView;
+        $("#txtSubTaskStartDate").val($rootScope.SubTask[index].StartDateView);
+        $scope.ngtxtSubTaskEndDate = $rootScope.SubTask[index].EndDateView;
+        $("#txtSubTaskEndDate").val($rootScope.SubTask[index].EndDateView);
+        $scope.ngtxtSubTaskDays = $rootScope.SubTask[index].NoOfDays;
 
         $timeout(function () {
-            $("#ddlSubTaskMember").val($scope.SubTask[index].Members).trigger('change');
-            $("#ddlSubTaskStatus").val($scope.SubTask[index].SubTaskStatus).trigger('change');
-            $scope.SubTask.splice(index, 1);
+            $("#ddlSubTaskMember").val($rootScope.SubTask[index].Members).trigger('change');
+            //$("#ddlSubTaskStatus").val($rootScope.SubTask[index].SubTaskStatus).trigger('change');
+            $rootScope.SubTask.splice(index, 1);
         }, 10);
 
+        $("#divAddSubTask").attr("data-internalstatus", $rootScope.SubTask[index].InternalStatus);
+        $("#divAddSubTask").attr("data-statusid", $rootScope.SubTask[index].Status);
+        $("#divAddSubTask").attr("data-id", $rootScope.SubTask[index].ID);
+        if ($rootScope.SubTask[index].ID > 0) {
+            $('#txtSubTaskStartDate').attr('readonly', true);
+            $("#divAddSubTask").attr("data-enddate", $rootScope.SubTask[index].EndDateView);
+        }
     }
 
     $scope.FinalAddSubTask = function () {
-        if ($scope.SubTask.length > 0) {
-            $scope.SubTaskLoad = true;
-            var AddSubTask = new Array();
-            AddSubTask = $scope.SubTask;
+        if ($rootScope.SubTask.length > 0) {
+            $rootScope.SubTaskLoad = true;
 
-            CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddSubTask", AddSubTask).then(function (response) {
+            if ($rootScope.EditSubTask.length > 0) {
+                var data = {
+                    'AddSubTask': $rootScope.SubTask,
+                    'Action': "Update"
+                }
+            }
+            else {
+                var data = {
+                    'AddSubTask': $rootScope.SubTask,
+                    'Action': "Insert"
+                }
+            }
+            //var AddSubTask = new Array();
+            //AddSubTask = $rootScope.SubTask;
+
+            CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddSubTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
-                    //$('#SuccessModelSubTask').modal('show');
-                    $scope.SubTaskLoad = false;
-                    $("#AddSubTaskPopUp").modal("hide");
 
                     var data = {
                         'MilestoneId': $rootScope.MilestonePopData.ID
                     }
                     CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
                         if (response.data[0] == "OK") {
-                            $rootScope.BindTask(response, $rootScope.MilestonePopData, $rootScope.ProjectPopData, $rootScope.TaskRow);
+
+                            if ($rootScope.TaskRow != undefined)
+                                $rootScope.BindTask(response, $rootScope.MilestonePopData, $rootScope.ProjectPopData, $rootScope.TaskRow);
+                            else
+                                $rootScope.LoadProjectData();
+
+                            $rootScope.SubTaskLoad = false;
+                            $("#AddSubTaskPopUp").modal("hide");
+
                         }
                     });
                 }
                 else
-                    $scope.SubTaskLoad = false;
+                    $rootScope.SubTaskLoad = false;
             });
         }
         else

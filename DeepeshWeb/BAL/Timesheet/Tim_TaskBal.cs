@@ -12,6 +12,15 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_TaskBal
     {
+        public List<TIM_TaskModel> GetAllTask(ClientContext clientContext, int LogInId)
+        {
+            List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
+            string filter = "MembersId eq " + LogInId + " and InternalStatus ne 'TaskDeleted' and InternalStatus ne 'ProjectDeleted'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTask = BindList(jArray);
+            return lstTask;
+        }
+
         public List<TIM_TaskModel> GetTaskByMilestoneId(ClientContext clientContext, int MilestoneId)
         {
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();

@@ -55,7 +55,7 @@
         width: 15% !important;
     }
 
-    #tblProject, .tabs-menu-body {
+    #tblProject, #tblTask, .tabs-menu-body {
         width: 100% !important;
     }
 
@@ -307,6 +307,7 @@
                                 <ul class="nav panel-tabs main-nav-line">
                                     <li class="nav-item"><a href="#tab1" class="nav-link active" data-toggle="tab">Cards</a></li>
                                     <li class="nav-item"><a href="#tab2" class="nav-link" data-toggle="tab">Table</a></li>
+                                    <li class="nav-item"><a href="#tab3" class="nav-link" data-toggle="tab">Task</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -376,7 +377,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th class="border-bottom-0">Sr.no.</th>
-                                                            <th class="border-bottom-0">Project Name</th>
+                                                            <th class="border-bottom-0" style="padding-left: 35px;">Project Name</th>
                                                             <th class="border-bottom-0">Start Date</th>
                                                             <th class="border-bottom-0">End Date</th>
                                                             <th class="border-bottom-0">Description</th>
@@ -405,7 +406,7 @@
                                                             <td>{{item.Description}}</td>
                                                             <td>
                                                                 <span ng-if="item.InternalStatus == 'ProjectCreated'">
-                                                                     <i class="fa fa-plus text-primary mr-2" ng-click="AddMilestonePopUp(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Milestone"></i>
+                                                                    <i class="fa fa-plus text-primary mr-2" ng-click="AddMilestonePopUp(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Milestone"></i>
                                                                 </span>
                                                                 <span ng-if="item.InternalStatus != 'ProjectCreated'">
                                                                     <i class="si si-pencil text-primary mr-2" ng-click="EditMilestonePopUp(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Edit Milestone"></i>
@@ -421,6 +422,62 @@
                                     </div>
 
                                 </div>
+                                <div class="tab-pane" id="tab3">
+                                    <div class="card mg-b-20">
+                                        <div class="card-body">
+                                            <div class="table-responsive fontclass">
+                                                <table id="tblTask" class="table key-buttons text-md-nowrap">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="border-bottom-0">Sr.no.</th>
+                                                            <th class="border-bottom-0" style="padding-left: 35px;">Task</th>
+                                                            <th class="border-bottom-0">Member</th>
+                                                            <th class="border-bottom-0">Start Date</th>
+                                                            <th class="border-bottom-0">End Date</th>
+                                                            <th class="border-bottom-0">Days</th>
+                                                            <th class="border-bottom-0">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="item in TaskData">
+                                                            <td>{{$index+1}}</td>
+                                                            <td>
+                                                                <span class="details-td" id="SubTask{{$index}}">
+                                                                    <span ng-if="item.InternalStatus != 'TaskCreated'">
+                                                                        <i class="si si si-plus" aria-hidden="true" ng-click="ShowSubTaskMain($index, item.ID)"></i>
+                                                                        &nbsp;
+                                                                    </span>
+                                                                </span>
+                                                                <span class="details-td" id="Milestone{{$index}}">
+                                                                    <span ng-if="item.InternalStatus == 'TaskCreated'">
+                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    </span>
+                                                                </span>
+                                                                {{item.Task}}
+                                                            </td>
+                                                            <td>{{item.MembersName}}</td>
+                                                            <td>{{DateFormat(item.StartDate)}}</td>
+                                                            <td>{{DateFormat(item.EndDate)}}</td>
+                                                            <td>{{item.NoOfDays}}</td>
+                                                            <td>
+                                                                <span ng-if="item.InternalStatus == 'TaskCreated'">
+                                                                    <i class="fa fa-plus text-primary mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Subtask" ng-click="OpenAddSubTaskPopMain(item)"></i>
+                                                                </span>
+                                                                <span ng-if="item.InternalStatus != 'TaskCreated'">
+                                                                    <i class="si si-pencil text-primary mr-2" ng-click="EditSubTaskPopMain(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Edit Subtask"></i>
+                                                                    <i class="si si-trash text-danger mr-2" ng-click="DeleteSubTaskMain(item)" data-toggle="tooltip" title="" data-placement="top" data-original-title="Delete Subtask"></i>
+
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
                         </div>
                     </div>

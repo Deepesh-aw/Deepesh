@@ -22,10 +22,10 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstProjectCreation;
         }
 
-        public List<TIM_ProjectCreationModel> GetProjectCreationAllItems(ClientContext clientContext)
+        public List<TIM_ProjectCreationModel> GetProjectCreationAllItems(ClientContext clientContext, int LogInId, string LogInCode)
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
-            string filter = "InternalStatus ne 'ProjectDeleted'";
+            string filter = "(InternalStatus ne 'ProjectDeleted') and (ProjectManagerId eq "+ LogInId + " or substringof('"+ LogInCode + "',MembersCodeText))";
             JArray jArray = RESTGet(clientContext, filter);
             lstProjectCreation = GetProjectCreationListItems(jArray);
             return lstProjectCreation;
