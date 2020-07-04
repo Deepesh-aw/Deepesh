@@ -22,5 +22,7 @@ namespace DeepeshWeb.Models.Timesheet
         public string MembersText { get; set; }
         public int ProjectManager { get; set; }
         public string ProjectManagerName { get; set; }
+        public int Client { get; set; }
+        public string ClientName { get; set; }
     }
 }

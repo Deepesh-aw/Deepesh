@@ -1,0 +1,346 @@
+﻿
+@{
+    ViewBag.Title = "Timesheet Dashboard";
+}
+
+@section style
+{
+    <!-- Internal Select2 css -->
+    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
+
+    <!--Internal  Datetimepicker-slider css -->
+    <link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
+
+    <!-- Internal Data table css -->
+    <link href="~/assets/plugins/datatable/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatable/css/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/datatable/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatable/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/datatable/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/sweet-alert/sweetalert.css" rel="stylesheet" />
+}
+
+<style>
+    .modal.left .modal-dialog {
+        position: fixed;
+        right: 0;
+        margin: auto;
+        height: 100%;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+
+    .modal.left .modal-content {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .modal-lg, .modal-xl {
+        max-width: 1240px;
+    }
+
+    i {
+        cursor: pointer;
+    }
+
+    .tooltip {
+        z-index: 100000000 !important;
+    }
+</style>
+
+<style>
+
+    .tableCss {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+        .tableCss caption {
+            font-size: 1.5em;
+            margin: .5em 0 .75em;
+        }
+
+        .tableCss tr {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: .35em;
+        }
+
+        .tableCss th,
+        .tableCss td {
+            padding: .625em;
+            text-align: center;
+        }
+
+        .tableCss th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .tableCss thead th {
+            padding: 12px !important;
+        }
+
+    .fa {
+        margin: auto !important;
+    }
+
+    @@media screen and (max-width: 600px) {
+        .datetimepicker table {
+            background: none;
+        }
+
+        .datetimepicker {
+            width: auto;
+        }
+
+        .tableCss {
+            border: 0;
+        }
+
+            .tableCss caption {
+                font-size: 1.3em;
+            }
+
+            .tableCss thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            .tableCss tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            .tableCss td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: .8em;
+                text-align: right;
+            }
+
+        input {
+            border-radius: 4px;
+        }
+
+        .input {
+            border-radius: 4px;
+        }
+
+        .tableCss td::before {
+            /*
+        * aria-label has no advantage, it won't be read inside a table
+        content: attr(aria-label);
+        */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tableCss td:last-child {
+            border-bottom: 0;
+        }
+        /*table td input {
+            padding: .625em;
+            text-align: center;
+            width: 50% !important;
+            margin-left: auto !important;
+        }*/
+        .responsivetablediv {
+            margin-top: 25px !important;
+        }
+    }
+
+    .erralign {
+        text-align: left;
+    }
+</style>
+
+
+<form id="frmProjectDashboard" name="frmTimesheetDashboard" ng-app="TimesheetDashboardApp" ng-controller="TimesheetDashboardController" ng-init="LoadTimesheetDashboard()" autocomplete="off">
+    <!-- container opened -->
+    <div class="container">
+        <div class="modal left fade" id="AddTimesheetPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            @Html.Partial("~/Views/Partial/TIM_AddTimesheet.cshtml");
+        </div>
+
+        <div class="breadcrumb-header justify-content-between">
+            <div class="my-auto">
+                <div class="d-flex">
+                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Timesheet Dashboard</span>
+                </div>
+            </div>
+            <div class="my-auto">
+                <div class="d-flex">
+                    <a href="#" class="btn btn-primary float-right" ng-click="OpenAddTimesheet()">Add Timesheet</a>
+                </div>
+            </div>
+        </div>
+        <div class="card mg-b-20">
+            <div class="card-header pb-0">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title mg-b-0">Pending</h4>
+                    <i class="mdi mdi-dots-horizontal text-gray"></i>
+                </div>
+                <p class="tx-12 tx-gray-500 mb-2"><a href=""></a></p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="Pending" class="table key-buttons text-md-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-bottom-0">Sr.no.</th>
+                                <th class="border-bottom-0">Date</th>
+                                <th class="border-bottom-0">Project Name</th>
+                                <th class="border-bottom-0">Milestone</th>
+                                <th class="border-bottom-0">Task</th>
+                                <th class="border-bottom-0">Description</th>
+                                <th class="border-bottom-0">Hours</th>
+                                <th class="border-bottom-0">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>16/05/2020</td>
+                                <td>Avrio</td>
+                                <td>Design</td>
+                                <td>Flowchart</td>
+                                <td>Description1</td>
+                                <td>2</td>
+                                <td><span class="badge badge-danger">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>17/05/2020</td>
+                                <td>Ashton Cox</td>
+                                <td>Design</td>
+                                <td>Debugging</td>
+                                <td>Description2</td>
+                                <td>3</td>
+                                <td><span class="badge badge-danger">Pending</span></td>
+                            </tr>
+
+                            <tr>
+                                <td>3</td>
+                                <td>18/05/2020</td>
+                                <td>Cedric Kelly</td>
+                                <td>Development</td>
+                                <td>List Creation</td>
+                                <td>Description3</td>
+                                <td>4</td>
+                                <td><span class="badge badge-danger">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card mg-b-20">
+            <div class="card-header pb-0">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title mg-b-0">Completed</h4>
+                    <i class="mdi mdi-dots-horizontal text-gray"></i>
+                </div>
+                <p class="tx-12 tx-gray-500 mb-2"><a href=""></a></p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="Approved" class="table key-buttons text-md-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-bottom-0">Sr.no.</th>
+                                <th class="border-bottom-0">Date</th>
+                                <th class="border-bottom-0">Project Name</th>
+                                <th class="border-bottom-0">Milestone</th>
+                                <th class="border-bottom-0">Task</th>
+                                <th class="border-bottom-0">Description</th>
+                                <th class="border-bottom-0">Hours</th>
+                                <th class="border-bottom-0">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>16/05/2020</td>
+                                <td>Avrio</td>
+                                <td>Design</td>
+                                <td>Flowchart</td>
+                                <td>Description1</td>
+                                <td>2</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>17/05/2020</td>
+                                <td>Ashton Cox</td>
+                                <td>Design</td>
+                                <td>Debugging</td>
+                                <td>Description2</td>
+                                <td>3</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                            </tr>
+
+                            <tr>
+                                <td>3</td>
+                                <td>18/05/2020</td>
+                                <td>Cedric Kelly</td>
+                                <td>Development</td>
+                                <td>List Creation</td>
+                                <td>Description3</td>
+                                <td>4</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts
+{
+    <!-- Internal Select2.min js -->
+    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/assets/js/select2.js"></script>
+
+    <!--Internal  jquery-simple-datetimepicker js -->
+    <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
+
+    <!-- Internal Data tables -->
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/responsive.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.bootstrap4.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/pdfmake.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/vfs_fonts.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/responsive.bootstrap4.min.js"></script>
+
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_TimesheetDashboard.js"></script>
+
+}

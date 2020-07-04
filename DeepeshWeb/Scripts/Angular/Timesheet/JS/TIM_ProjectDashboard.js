@@ -1071,6 +1071,7 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
             obj.ProjectManager = $rootScope.ProjectPopData.ProjectManager;
             obj.MembersText = $rootScope.ProjectPopData.MembersText;
             obj.Members = $rootScope.ProjectPopData.Members;
+            obj.Client = $rootScope.ProjectPopData.ClientName;
             if ($("#divAddMile").attr("data-id") > 0) {
                 obj.InternalStatus = $("#divAddMile").attr("data-internalstatus");
                 obj.Status = $("#divAddMile").attr("data-statusid");
@@ -1375,6 +1376,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             //obj.TaskStatus = $scope.ngddlStatus;
             //obj.StatusName = $("#ddlStatus option:selected").text();
             obj.Project = $rootScope.ProjectPopData.ID;
+            obj.Client = $rootScope.ProjectPopData.ClientName;
             obj.Milestone = $rootScope.MilestonePopData.ID;
 
             if ($("#divAddTask").attr("data-id") > 0) {
@@ -1712,6 +1714,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             //obj.SubTaskStatus = $scope.ngddlSubTaskStatus;
             //obj.StatusName = $("#ddlSubTaskStatus option:selected").text();
             obj.Project = $scope.ProjectPopData.ID;
+            obj.Client = $rootScope.ProjectPopData.ClientName;
             obj.Milestone = $rootScope.MilestonePopData.ID;
             obj.Task = $rootScope.TaskPopData.ID;
 

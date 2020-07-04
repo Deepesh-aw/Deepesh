@@ -307,6 +307,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'ProjectId': '" + item.Project + "'";
                     itemdata += " ,'ProjectManagerId': '" + item.ProjectManager + "'";
                     itemdata += " ,'MembersText': '" + item.MembersText + "'";
+                    itemdata += " ,'ClientId': '" + item.Client + "'";
 
                     if (item.Status == 0)
                     {
@@ -482,6 +483,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'NoOfDays': '" + item.NoOfDays + "'";
                     itemdata += " ,'ProjectId': '" + item.Project + "'";
                     itemdata += " ,'Task': '" + item.Task + "'";
+                    itemdata += " ,'ClientId': '" + item.Client + "'";
                     itemdata += " ,'TaskStatusId': '" + lstPendingStatus[0].ID + "'";
 
                     //if (lstWorkFlow.Count > 0)
@@ -631,6 +633,9 @@ namespace DeepeshWeb.Controllers.TimeSheet
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
+                List<TIM_StatusMasterModel> lstPendingStatus = new List<TIM_StatusMasterModel>();
+                lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
+
                 List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                 lstWorkFlow = BalWorkflow.GetWorkFlowForAddSubTask(clientContext);
                 string returnID = "0";
@@ -645,7 +650,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'NoOfDays': '" + item.NoOfDays + "'";
                     itemdata += " ,'ProjectId': '" + item.Project + "'";
                     itemdata += " ,'SubTask': '" + item.SubTask + "'";
-                    itemdata += " ,'SubTaskStatusId': '" + item.SubTaskStatus + "'";
+                    itemdata += " ,'ClientId': '" + item.Client + "'";
+                    itemdata += " ,'SubTaskStatusId': '" + lstPendingStatus[0].ID + "'";
 
                     if (item.Status == 0)
                     {

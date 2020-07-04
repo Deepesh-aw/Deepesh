@@ -52,7 +52,7 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                     ID = Convert.ToInt32(j["Id"]),
                     EmpCode = j["EmpCode"].ToString(),
                     FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
-                }); ; ;
+                }); 
             }
             return lstEmp[0].ID;
         }

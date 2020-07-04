@@ -28,4 +28,17 @@ namespace DeepeshWeb.Models.Timesheet
         public string ProjectTypeName { get; set; }
         public int Status { get; set; }
     }
+
+    public class EqualityComparer : IEqualityComparer<TIM_ProjectCreationModel>
+    {
+        public bool Equals(TIM_ProjectCreationModel x, TIM_ProjectCreationModel y)
+        {
+            return x.ClientName.Equals(y.ClientName);
+        }
+
+        public int GetHashCode(TIM_ProjectCreationModel obj)
+        {
+            return obj.ClientName.GetHashCode();
+        }
+    }
 }

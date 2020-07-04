@@ -25,5 +25,8 @@ namespace DeepeshWeb.Models.Timesheet
         public int Status { get; set; }
         public string StatusName { get; set; }
         public string DescriptionText { get; set; }
+        public int Client { get; set; }
+        public string ClientName { get; set; }
+
     }
 }

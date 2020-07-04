@@ -21,7 +21,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext);
+                   // lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext);
                     ViewBag.MilestoneData = BalMilestone.GetMilestoneByProjectId(clientContext, 2);
                 }
             }

@@ -26,5 +26,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public string SubTaskStatusName { get; set; }
         public int Status { get; set; }
         public string StatusName { get; set; }
+        public int Client { get; set; }
+        public string ClientName { get; set; }
     }
 }

@@ -190,6 +190,7 @@
     <Compile Include="BAL\Timesheet\TIM_StatusMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_SubTaskBal.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_DashboardLandingController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_TimesheetDashboardController.cs" />
     <Compile Include="Models\Timesheet\Pagination.cs" />
     <Compile Include="Models\Timesheet\TIM_SubTaskModel.cs" />
     <Compile Include="BAL\Timesheet\TIM_TaskBal.cs" />
@@ -8181,6 +8182,7 @@
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddTask.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_MilestoneDetails.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_ProjectCreation.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\TIM_TimesheetDashboard.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="assets\css\sidemenu.css.map" />
@@ -9181,6 +9183,8 @@
     <Content Include="Views\Partial\TIM_AddMilestone.cshtml" />
     <Content Include="Views\Partial\TIM_AddTask.cshtml" />
     <Content Include="Views\Partial\TIM_AddSubTask.cshtml" />
+    <Content Include="Views\TIM_TimesheetDashboard\Index.cshtml" />
+    <Content Include="Views\Partial\TIM_AddTimesheet.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
