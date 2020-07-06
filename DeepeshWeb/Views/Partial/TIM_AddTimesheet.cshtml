@@ -1,7 +1,5 @@
 ﻿@*@using DeepeshWeb.Models.Timesheet*@
 @*@model IEnumerable<TIM_ProjectCreationModel>*@
-@using DeepeshWeb.Models.Timesheet
-@model dynamic
 
 <div class="modal-dialog modal-lg " role="document">
     <div class="modal-content">
@@ -34,9 +32,9 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="ddlClientName">Client Name</label>
-                                        <select class="form-control AllSelect" ng-model="ngddlClient" id="ddlClient" ng-change="ProjectDetails()">
+                                        <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect"  ng-change="ProjectDetails()">
                                             <option></option>
-                                            @{
+                                            @*@{
                                                 var Client = 0;
                                             }
                                             @foreach (var item in ViewBag.AllTask)
@@ -49,7 +47,7 @@
                                                     Client = @item.Client;
                                                 }
 
-                                            }
+                                            }*@
                                             
                                         </select>
                                     </div>
@@ -83,9 +81,9 @@
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                      <select ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()">
+                                                      <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()">
                                                             <option></option>
-                                                            @{
+                                                            @*@{
                                                                 var Project = 0;
                                                             }
                                                             @foreach (var item in ViewBag.AllTask)
@@ -98,13 +96,13 @@
                                                                     Project = @item.Project;
                                                                 }
 
-                                                            }
+                                                            }*@
                                                       </select>
                                                     </td>
                                                     <td>
-                                                        <select ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()">
+                                                        <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()">
                                                             <option></option>
-                                                            @{
+                                                            @*@{
                                                                 var MileStone = 0;
                                                             }
                                                             @foreach (var item in ViewBag.AllTask)
@@ -117,13 +115,13 @@
                                                                     MileStone = @item.MileStone;
                                                                 }
 
-                                                            }
+                                                            }*@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <select ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect">
+                                                        <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect" ng-change="GetHours()">
                                                             <option></option>
-                                                            @foreach (var item in ViewBag.AllTask)
+                                                            @*@foreach (var item in ViewBag.AllTask)
                                                             {
                                                                 if (@item.GetType().GetProperty("SubTask") == null)
                                                                 {
@@ -140,7 +138,7 @@
                                                                 }
 
 
-                                                            }
+                                                            }*@
                                                         </select>
                                                     </td>
                                                     <td><input type="text" class="form-control" ng-model="ngtxtDescription" id="txtDescription"></td>
@@ -170,7 +168,8 @@
                                             <thead>
                                                 <tr>
                                                     <th>Sr.No.</th>
-                                                    <th>Project Name</th>
+                                                    <th>Client</th>
+                                                    <th>Project</th>
                                                     <th>Milestone</th>
                                                     <th>Task</th>
                                                     <th>Description</th>
@@ -183,7 +182,8 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>1</th>
+                                                    <td>1</td>
+                                                    <td>HP</td>
                                                     <td>Project1</td>
                                                     <td>Milestone1</td>
                                                     <td>Task1</td>
@@ -201,6 +201,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>1</td>
+                                                    <td>LG</td>
                                                     <td>Project2</td>
                                                     <td>Milestone2</td>
                                                     <td>Task2</td>

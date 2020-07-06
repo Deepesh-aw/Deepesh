@@ -298,7 +298,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     string returnID = "0";
                     string arr = String.Join(",", item.Members);
 
-                    string itemdata = " 'MileStone': '" + item.MileStone + "'";
+                    string itemdata = " 'MileStone': '" + item.MileStone.Replace("'", @"\'") + "'";
                     itemdata += " ,'MembersId': {'results': [" + arr + "] }";
                     itemdata += " ,'Description': '" + item.Description + "'";
                     itemdata += " ,'StartDate': '" + item.StartDate + "'";

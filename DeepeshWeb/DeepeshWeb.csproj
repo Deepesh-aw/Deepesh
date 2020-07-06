@@ -184,14 +184,17 @@
     <Compile Include="BAL\EmployeeManagement\Emp_BasicInfoBal.cs" />
     <Compile Include="BAL\EmployeeManagement\Emp_ClientMasterDetailsBal.cs" />
     <Compile Include="BAL\NavigationBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_EmployeeTimesheetBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_MilestoneBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectCreationBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectTypeMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_StatusMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_SubTaskBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_WorkingHoursBal.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_DashboardLandingController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_TimesheetDashboardController.cs" />
     <Compile Include="Models\Timesheet\Pagination.cs" />
+    <Compile Include="Models\Timesheet\TIM_EmployeeTimesheetModel.cs" />
     <Compile Include="Models\Timesheet\TIM_SubTaskModel.cs" />
     <Compile Include="BAL\Timesheet\TIM_TaskBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_WorkFlowMasterBal.cs" />
@@ -221,6 +224,7 @@
     <Compile Include="Models\Timesheet\TIM_StatusMasterModel.cs" />
     <Compile Include="Models\Timesheet\TIM_TaskModel.cs" />
     <Compile Include="Models\Timesheet\TIM_WorkFlowMasterModel.cs" />
+    <Compile Include="Models\Timesheet\TIM_WorkingHoursModel.cs" />
     <Compile Include="Models\UserGroupModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharePointContext.cs" />

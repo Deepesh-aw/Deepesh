@@ -13,15 +13,7 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_ProjectCreationBal
     {
-        public List<TIM_ProjectCreationModel> GetProjectCreationByClientId(ClientContext clientContext, int ClientId, int LogInId, string LogInCode)
-        {
-            List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
-            string filter = "(ClientNameId eq " + ClientId + ") and (InternalStatus ne 'ProjectDeleted') and (ProjectManagerId eq " + LogInId + " or substringof('" + LogInCode + "',MembersCodeText))";
-            JArray jArray = RESTGet(clientContext, filter);
-            lstProjectCreation = GetProjectCreationListItems(jArray);
-            return lstProjectCreation;
-        }
-
+        
         public List<TIM_ProjectCreationModel> GetProjectCreationById(ClientContext clientContext, int ProjectId)
         {
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
