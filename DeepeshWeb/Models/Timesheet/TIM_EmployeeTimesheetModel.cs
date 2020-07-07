@@ -30,5 +30,9 @@ namespace DeepeshWeb.Models.Timesheet
         public string SubTaskName { get; set; }
         public string TimesheetAddedDate { get; set; }
         public int UtilizedHours { get; set; }
+        public int Client { get; set; }
+        public string TimesheetID { get; set; }
+
+
     }
 }

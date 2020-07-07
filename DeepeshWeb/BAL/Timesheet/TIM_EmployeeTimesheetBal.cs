@@ -12,10 +12,28 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_EmployeeTimesheetBal
     {
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpId(ClientContext clientContext, int EmpId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "EmployeeId eq " + EmpId + "";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByAllTaskId(ClientContext clientContext, int AllTaskId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
             string filter = "(TaskId eq " + AllTaskId + " or  SubTaskId eq " + AllTaskId + " ) and  InternalStatus ne 'Approved'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByTimesheetId(ClientContext clientContext, string TimesheetId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "TimesheetID eq " + TimesheetId + "";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -51,6 +69,8 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.TaskName = j["Task"]["Task"] == null ? "" : j["Task"]["Task"].ToString();
                 data.TimesheetAddedDate = j["TimesheetAddedDate"] == null ? "" : Convert.ToString(j["TimesheetAddedDate"]);
                 data.UtilizedHours = j["UtilizedHours"] == null ? 0 : Convert.ToInt32(j["UtilizedHours"]);
+                data.TimesheetID = j["TimesheetID"] == null ? "" : Convert.ToString(j["TimesheetID"]);
+
 
                 lstEmployeeTimesheet.Add(data);
             }
@@ -66,7 +86,7 @@ namespace DeepeshWeb.BAL.Timesheet
 
             rESTOption.filter = filter;
             rESTOption.select = "*,Employee/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID";
-            rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask";
+            rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status";
             rESTOption.orderby = "ID desc";
             rESTOption.top = "5000";
 
@@ -74,6 +94,12 @@ namespace DeepeshWeb.BAL.Timesheet
             jArray = restService.GetAllItemFromList(clientContext, "TIM_EmployeeTimesheet", rESTOption);
 
             return jArray;
+        }
+
+        public string SaveTimesheet(ClientContext clientContext, string ItemData)
+        {
+            string response = RESTSave(clientContext, ItemData);
+            return response;
         }
 
         private string RESTSave(ClientContext clientContext, string ItemData)

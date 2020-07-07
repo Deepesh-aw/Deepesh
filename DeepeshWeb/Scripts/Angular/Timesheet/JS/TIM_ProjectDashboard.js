@@ -1748,7 +1748,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
             $scope.ngtxtSubTaskDays = "";
             $timeout(function () {
                 $("#ddlSubTaskMember").trigger('change');
-                $("#ddlSubTaskStatus").trigger('change');
+                //$("#ddlSubTaskStatus").trigger('change');
             }, 10);
 
 

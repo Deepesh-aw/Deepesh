@@ -16,7 +16,7 @@ namespace DeepeshWeb.BAL.EmployeeManagement
 {
     public class Emp_BasicInfoBal
     {
-            public string saveEmp(ClientContext clientContext, string ItemData)
+        public string saveEmp(ClientContext clientContext, string ItemData)
             {
 
                 string response = RESTSave(clientContext, ItemData);
@@ -75,8 +75,6 @@ namespace DeepeshWeb.BAL.EmployeeManagement
             return lstEmp[0].EmpCode;
         }
 
-
-
         public List<Emp_BasicInfoModel> GetAllEmployee(ClientContext clientContext)
         {
             List<Emp_BasicInfoModel> EmpBasicinfo = new List<Emp_BasicInfoModel>();
@@ -123,7 +121,29 @@ namespace DeepeshWeb.BAL.EmployeeManagement
             return EmpManager;
         }
 
+        public Emp_BasicInfoModel GetEmpManager(ClientContext clientContext, string Empcode)
+        {
+            Emp_BasicInfoModel EmpBal = new Emp_BasicInfoModel();
 
+            string filter = "EmpCode eq '" + Empcode + "'";
+
+            JArray jArray = RESTGet(clientContext, filter);
+
+            EmpBal = new Emp_BasicInfoModel
+            {
+                ID = Convert.ToInt32(jArray[0]["ID"]),
+                EmpCode = jArray[0]["EmpCode"] == null ? "" : Convert.ToString(jArray[0]["EmpCode"]),
+                UserNameId = jArray[0]["User_Name"]["Id"] == null ? "" : Convert.ToString(jArray[0]["User_Name"]["Id"]),
+                User_Name = jArray[0]["User_Name"]["Title"] == null ? "" : Convert.ToString(jArray[0]["User_Name"]["Title"]).Trim(),
+                Manager = jArray[0]["Manager"]["FirstName"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["FirstName"]),
+                ManagerCode = jArray[0]["Manager"]["EmpCode"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["EmpCode"]),
+                Manager_Code = jArray[0]["Manager"]["ManagerCode"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["ManagerCode"]),
+                Department = jArray[0]["Department"]["DepartmentName"] == null ? "" : Convert.ToString(jArray[0]["Department"]["DepartmentName"]),
+                ManagerId = jArray[0]["Manager"]["Id"] == null ? 0 : Convert.ToInt32(jArray[0]["Manager"]["Id"].ToString())
+            };
+
+            return EmpBal;
+        }
 
         public List<Emp_BasicInfoModel> GeEmployeeById(ClientContext clientContext, string empid)
         {
@@ -198,10 +218,7 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 return jArray;
             } */
 
-
-
-
-            private string RESTSave(ClientContext clientContext, string ItemData)
+        private string RESTSave(ClientContext clientContext, string ItemData)
             {
                 RestService restService = new RestService();
 

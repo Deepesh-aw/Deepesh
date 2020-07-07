@@ -207,45 +207,25 @@
                             <tr>
                                 <th class="border-bottom-0">Sr.no.</th>
                                 <th class="border-bottom-0">Date</th>
-                                <th class="border-bottom-0">Project Name</th>
-                                <th class="border-bottom-0">Milestone</th>
-                                <th class="border-bottom-0">Task</th>
+                                <th class="border-bottom-0">Timesheet ID</th>
                                 <th class="border-bottom-0">Description</th>
                                 <th class="border-bottom-0">Hours</th>
-                                <th class="border-bottom-0">Status</th>
+                                <th class="border-bottom-0">Pending At</th>
+                                <th class="border-bottom-0">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>16/05/2020</td>
-                                <td>Avrio</td>
-                                <td>Design</td>
-                                <td>Flowchart</td>
-                                <td>Description1</td>
-                                <td>2</td>
-                                <td><span class="badge badge-danger">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>17/05/2020</td>
-                                <td>Ashton Cox</td>
-                                <td>Design</td>
-                                <td>Debugging</td>
-                                <td>Description2</td>
-                                <td>3</td>
-                                <td><span class="badge badge-danger">Pending</span></td>
-                            </tr>
-
-                            <tr>
-                                <td>3</td>
-                                <td>18/05/2020</td>
-                                <td>Cedric Kelly</td>
-                                <td>Development</td>
-                                <td>List Creation</td>
-                                <td>Description3</td>
-                                <td>4</td>
-                                <td><span class="badge badge-danger">Pending</span></td>
+                            <tr ng-repeat="tm in  TimesheetData">
+                                <td>{{$index+1}}</td>
+                                <td>{{DateFormat(tm.TimesheetAddedDate)}}</td>
+                                <td>{{tm.TimesheetID}}</td>
+                                <td>{{tm.Description}}</td>
+                                <td>{{tm.EstimatedHours}}</td>
+                                <td>{{tm.ManagerName}}</td>
+                                <td>
+                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditMainTimesheet(tm)"></i>&nbsp;
+                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ViewMainTimesheet($index)"></i>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -267,45 +247,20 @@
                             <tr>
                                 <th class="border-bottom-0">Sr.no.</th>
                                 <th class="border-bottom-0">Date</th>
-                                <th class="border-bottom-0">Project Name</th>
-                                <th class="border-bottom-0">Milestone</th>
-                                <th class="border-bottom-0">Task</th>
+                                <th class="border-bottom-0">Timesheet ID</th>
                                 <th class="border-bottom-0">Description</th>
                                 <th class="border-bottom-0">Hours</th>
-                                <th class="border-bottom-0">Status</th>
+                                <th class="border-bottom-0">Pending At</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
                                 <td>16/05/2020</td>
-                                <td>Avrio</td>
+                                <td>TIM-10</td>
                                 <td>Design</td>
-                                <td>Flowchart</td>
-                                <td>Description1</td>
-                                <td>2</td>
-                                <td><span class="badge badge-success">Approved</span></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>17/05/2020</td>
-                                <td>Ashton Cox</td>
-                                <td>Design</td>
-                                <td>Debugging</td>
-                                <td>Description2</td>
-                                <td>3</td>
-                                <td><span class="badge badge-success">Approved</span></td>
-                            </tr>
-
-                            <tr>
-                                <td>3</td>
-                                <td>18/05/2020</td>
-                                <td>Cedric Kelly</td>
-                                <td>Development</td>
-                                <td>List Creation</td>
-                                <td>Description3</td>
-                                <td>4</td>
-                                <td><span class="badge badge-success">Approved</span></td>
+                                <td>24</td>
+                                <td>Shripal</td>
                             </tr>
                         </tbody>
                     </table>

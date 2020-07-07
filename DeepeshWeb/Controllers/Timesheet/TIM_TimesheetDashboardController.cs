@@ -1,11 +1,11 @@
-﻿using DeepeshWeb.BAL.EmployeeManagement;
+﻿using DeepeshWeb.BAL;
+using DeepeshWeb.BAL.EmployeeManagement;
 using DeepeshWeb.BAL.Timesheet;
+using DeepeshWeb.Models;
 using DeepeshWeb.Models.Timesheet;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace DeepeshWeb.Controllers.TimeSheet
@@ -23,6 +23,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_StatusMasterBal BalStatus = new TIM_StatusMasterBal();
         TIM_WorkingHoursBal BalWorkinghours = new TIM_WorkingHoursBal();
         TIM_EmployeeTimesheetBal BalEmpTimesheet = new TIM_EmployeeTimesheetBal();
+        GEN_ApproverMasterBal BalApprover = new GEN_ApproverMasterBal();
 
         // GET: TIM_TimesheetDashboard
         public ActionResult Index()
@@ -56,6 +57,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<object> obj = new List<object>();
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+            List<TIM_WorkingHoursModel> lstWorkingHours = new List<TIM_WorkingHoursModel>();
+            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -64,12 +67,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstTask = BalTask.GetAllTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     lstSubTask = BalSubTask.GetAllSubTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     ViewBag.AllTask = lstTask.Cast<object>().Concat(lstSubTask).ToList();
+                    lstWorkingHours = BalWorkinghours.GetWorkingHour(clientContext);
+                    lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByEmpId(clientContext, BalEmp.GetEmpByLogIn(clientContext));
 
                     obj.Add("OK");
-                    obj.Add(lstTask);
-                    obj.Add(lstSubTask);
                     obj.Add(ViewBag.AllTask);
-
+                    obj.Add(lstWorkingHours);
+                    obj.Add(lstEmployeeTimesheet);
                 }
             }
             catch (Exception ex)
@@ -99,21 +103,18 @@ namespace DeepeshWeb.Controllers.TimeSheet
         }
 
         [HttpPost]
-        [ActionName("GetHour")]
-        public JsonResult GetHour(int AllTaskId)
+        [ActionName("GetPrevTimesheet")]
+        public JsonResult GetPrevTimesheet(int AllTaskId)
         {
             List<object> obj = new List<object>();
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            List<TIM_WorkingHoursModel> lstWorkingHoursModel = new List<TIM_WorkingHoursModel>();
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstWorkingHoursModel = BalWorkinghours.GetWorkingHour(clientContext);
                     lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByAllTaskId(clientContext, AllTaskId);
                     obj.Add("OK");
-                    obj.Add(lstWorkingHoursModel);
                     obj.Add(lstEmployeeTimesheet);
                 }
             }
@@ -124,6 +125,87 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [ActionName("AddTimesheet")]
+        public JsonResult AddTimesheet(List<TIM_EmployeeTimesheetModel> EmpTimesheet, string Action)
+        {
+            List<object> obj = new List<object>();
+            int i = 0;
+            string InternalStatus = "Pending";
+            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            {
+                List<TIM_StatusMasterModel> lstPendingStatus = new List<TIM_StatusMasterModel>();
+                lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
+                List<GEN_ApproverRoleNameModel> lstApprover = BalApprover.getApproverData(clientContext, BalEmp.GetEmpCodeByLogIn(clientContext), "Timesheet", "Main");
 
+                string returnID = "0";
+                foreach (var item in EmpTimesheet)
+                {
+                    string itemdata = " 'MileStoneId': '" + item.MileStone + "'";
+
+                    itemdata += " ,'Description': '" + item.Description + "'";
+                    itemdata += " ,'Hours': '" + item.Hours + "'";
+                    itemdata += " ,'EstimatedHours': '" + item.EstimatedHours + "'";
+                    itemdata += " ,'UtilizedHours': '" + item.UtilizedHours + "'";
+                    itemdata += " ,'RemainingHours': '" + item.RemainingHours + "'";
+                    itemdata += " ,'TimesheetAddedDate': '" + item.TimesheetAddedDate + "'";
+                    itemdata += " ,'EmployeeId': '" + BalEmp.GetEmpByLogIn(clientContext) + "'";
+                    itemdata += " ,'ManagerId': '" + lstApprover[0].ID + "'";
+
+                    itemdata += " ,'ProjectId': '" + item.Project + "'";
+                    itemdata += " ,'TaskId': '" + item.Task + "'";
+                    itemdata += " ,'SubTaskId': '" + item.SubTask + "'";
+                    itemdata += " ,'ClientId': '" + item.Client + "'";
+
+
+                    itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
+                    itemdata += " ,'InternalStatus': '"+ InternalStatus + "'";
+
+              
+                    if (item.ID > 0)
+                    {
+                        returnID = BalTask.UpdateTask(clientContext, itemdata, item.ID.ToString());
+                        if (returnID == "Update")
+                            i++;
+                    }
+                    else
+                    {
+                        returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
+                        if (Convert.ToInt32(returnID) > 0)
+                            i++;
+                    }
+
+
+                }
+                
+                if (i == EmpTimesheet.Count)
+                    obj.Add("OK");
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ActionName("GetEditTimesheet")]
+        public JsonResult GetEditTimesheet(string TimesheetId)
+        {
+            List<object> obj = new List<object>();
+            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            try
+            {
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByTimesheetId(clientContext, TimesheetId);
+                    obj.Add("OK");
+                    obj.Add(lstEmployeeTimesheet);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
     }
 }
