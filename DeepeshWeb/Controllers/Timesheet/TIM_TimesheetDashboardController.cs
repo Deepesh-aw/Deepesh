@@ -3,6 +3,7 @@ using DeepeshWeb.BAL.EmployeeManagement;
 using DeepeshWeb.BAL.Timesheet;
 using DeepeshWeb.Models;
 using DeepeshWeb.Models.Timesheet;
+using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +70,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     ViewBag.AllTask = lstTask.Cast<object>().Concat(lstSubTask).ToList();
                     lstWorkingHours = BalWorkinghours.GetWorkingHour(clientContext);
                     lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByEmpId(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-
+                    lstEmployeeTimesheet = lstEmployeeTimesheet.DistinctBy(x => x.TimesheetID).ToList();
                     obj.Add("OK");
                     obj.Add(ViewBag.AllTask);
                     obj.Add(lstWorkingHours);
@@ -127,7 +128,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
         [HttpPost]
         [ActionName("AddTimesheet")]
-        public JsonResult AddTimesheet(List<TIM_EmployeeTimesheetModel> EmpTimesheet, string Action)
+        public JsonResult AddTimesheet(List<TIM_EmployeeTimesheetModel> EmpTimesheet)
         {
             List<object> obj = new List<object>();
             int i = 0;
@@ -158,24 +159,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'SubTaskId': '" + item.SubTask + "'";
                     itemdata += " ,'ClientId': '" + item.Client + "'";
 
-
+                    itemdata += " ,'TimesheetID': '" + item.TimesheetID + "'";
                     itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
                     itemdata += " ,'InternalStatus': '"+ InternalStatus + "'";
-
-              
-                    if (item.ID > 0)
-                    {
-                        returnID = BalTask.UpdateTask(clientContext, itemdata, item.ID.ToString());
-                        if (returnID == "Update")
-                            i++;
-                    }
-                    else
-                    {
-                        returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
+                    
+                    returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
                         if (Convert.ToInt32(returnID) > 0)
                             i++;
-                    }
-
 
                 }
                 
@@ -204,6 +194,28 @@ namespace DeepeshWeb.Controllers.TimeSheet
             catch (Exception ex)
             {
                 throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ActionName("ClearTimesheet")]
+        public JsonResult ClearTimesheet( List<TIM_EmployeeTimesheetModel> ClearTimesheet)
+        {
+            List<object> obj = new List<object>();
+            int i = 0;
+            string returnID = "0";
+            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            {
+                foreach (var item in ClearTimesheet)
+                {
+                    returnID = BalEmpTimesheet.DeleteTimesheet(clientContext,item.ID.ToString());
+                    if(returnID == "Delete")
+                        i++;
+                }
+                if (i == ClearTimesheet.Count)
+                    obj.Add("OK");
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }

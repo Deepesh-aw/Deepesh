@@ -353,7 +353,10 @@ namespace DeepeshWeb.DAL
                 {
                     itemRequestStream.Close();
                 }
-                using (HttpWebResponse itemResponse = (HttpWebResponse)ItemRequest.GetResponse()) ;
+                using (HttpWebResponse itemResponse = (HttpWebResponse)ItemRequest.GetResponse())
+                {
+                    responseText = "Delete";
+                }
 
                 return responseText;
             }
