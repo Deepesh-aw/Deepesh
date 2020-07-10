@@ -84,24 +84,24 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        [ActionName("GetProjectDataByClient")]
-        public JsonResult GetProjectDataByClient(int Client)
-        {
-            List<object> obj = new List<object>();
-            List<TIM_ProjectCreationModel> lstProject = new List<TIM_ProjectCreationModel>();
-            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
-            {
-                //lstProject = bal.GetProjectCreationByClientId(clientContext, Client, BalEmp.GetEmpByLogIn(clientContext), BalEmp.GetEmpCodeByLogIn(clientContext));
-                if (lstProject.Count > 0)
-                {
-                    obj.Add("OK");
-                    obj.Add(lstProject);
-                }
-            }
-            return Json(obj, JsonRequestBehavior.AllowGet);
-        }
+        //[HttpPost]
+        //[ActionName("GetProjectDataByClient")]
+        //public JsonResult GetProjectDataByClient(int Client)
+        //{
+        //    List<object> obj = new List<object>();
+        //    List<TIM_ProjectCreationModel> lstProject = new List<TIM_ProjectCreationModel>();
+        //    var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+        //    using (var clientContext = spContext.CreateUserClientContextForSPHost())
+        //    {
+        //        //lstProject = bal.GetProjectCreationByClientId(clientContext, Client, BalEmp.GetEmpByLogIn(clientContext), BalEmp.GetEmpCodeByLogIn(clientContext));
+        //        if (lstProject.Count > 0)
+        //        {
+        //            obj.Add("OK");
+        //            obj.Add(lstProject);
+        //        }
+        //    }
+        //    return Json(obj, JsonRequestBehavior.AllowGet);
+        //}
 
         [HttpPost]
         [ActionName("GetPrevTimesheet")]
@@ -153,7 +153,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'TimesheetAddedDate': '" + item.TimesheetAddedDate + "'";
                     itemdata += " ,'EmployeeId': '" + BalEmp.GetEmpByLogIn(clientContext) + "'";
                     itemdata += " ,'ManagerId': '" + lstApprover[0].ID + "'";
-
+                    itemdata += " ,'FromTime': '" + item.FromTime + "'";
+                    itemdata += " ,'ToTime': '" + item.ToTime + "'";
                     itemdata += " ,'ProjectId': '" + item.Project + "'";
                     itemdata += " ,'TaskId': '" + item.Task + "'";
                     itemdata += " ,'SubTaskId': '" + item.SubTask + "'";

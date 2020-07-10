@@ -14,7 +14,7 @@
                 <div class="col-xl-12 col-lg-12">
 
                     <!--Entry Code start-->
-                    <div class="card custom-card">
+                    <div class="card custom-card" ng-hide="ViewTimesheet">
                         <div class="card-body">
                             <div class="row row-sm">
                                 <div class="col-lg-3">
@@ -32,23 +32,23 @@
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="ddlClientName">Client Name</label>
-                                        <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect"  ng-change="ProjectDetails()">
+                                        <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect" ng-change="ProjectDetails()">
                                             <option></option>
                                             @*@{
-                                                var Client = 0;
-                                            }
-                                            @foreach (var item in ViewBag.AllTask)
-                                            {
-                                                if (@item.Client != Client)
-                                                {
-                                                    <option value="@item.Client">
-                                                        @item.ClientName
-                                                    </option>
-                                                    Client = @item.Client;
-                                                }
+                                        var Client = 0;
+                                    }
+                                    @foreach (var item in ViewBag.AllTask)
+                                    {
+                                        if (@item.Client != Client)
+                                        {
+                                            <option value="@item.Client">
+                                                @item.ClientName
+                                            </option>
+                                            Client = @item.Client;
+                                        }
 
-                                            }*@
-                                            
+                                    }*@
+
                                         </select>
                                     </div>
                                 </div>
@@ -84,7 +84,7 @@
                     <!-- row -->
                     <div class="row row-sm">
                         <!--div-->
-                        <div class="col-xl-12">
+                        <div class="col-xl-12" ng-hide="ViewTimesheet">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -105,73 +105,73 @@
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                      <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()">
+                                                        <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()">
                                                             <option></option>
                                                             @*@{
-                                                                var Project = 0;
-                                                            }
-                                                            @foreach (var item in ViewBag.AllTask)
-                                                            {
-                                                                if (@item.Project != Project)
-                                                                {
-                                                                    <option value="@item.Project">
-                                                                        @item.ProjectName
-                                                                    </option>
-                                                                    Project = @item.Project;
-                                                                }
+                                                        var Project = 0;
+                                                    }
+                                                    @foreach (var item in ViewBag.AllTask)
+                                                    {
+                                                        if (@item.Project != Project)
+                                                        {
+                                                            <option value="@item.Project">
+                                                                @item.ProjectName
+                                                            </option>
+                                                            Project = @item.Project;
+                                                        }
 
-                                                            }*@
-                                                      </select>
+                                                    }*@
+                                                        </select>
                                                     </td>
                                                     <td>
                                                         <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()">
                                                             <option></option>
                                                             @*@{
-                                                                var MileStone = 0;
-                                                            }
-                                                            @foreach (var item in ViewBag.AllTask)
-                                                            {
-                                                                if (@item.MileStone != MileStone)
-                                                                {
-                                                                    <option value="@item.MileStone">
-                                                                        @item.MileStoneName
-                                                                    </option>
-                                                                    MileStone = @item.MileStone;
-                                                                }
+                                                        var MileStone = 0;
+                                                    }
+                                                    @foreach (var item in ViewBag.AllTask)
+                                                    {
+                                                        if (@item.MileStone != MileStone)
+                                                        {
+                                                            <option value="@item.MileStone">
+                                                                @item.MileStoneName
+                                                            </option>
+                                                            MileStone = @item.MileStone;
+                                                        }
 
-                                                            }*@
+                                                    }*@
                                                         </select>
                                                     </td>
                                                     <td>
                                                         <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect" ng-change="GetPrevTimesheet()">
                                                             <option></option>
                                                             @*@foreach (var item in ViewBag.AllTask)
-                                                            {
-                                                                if (@item.GetType().GetProperty("SubTask") == null)
-                                                                {
-                                                                    <option value="@item.ID">
-                                                                        @item.Task
-                                                                    </option>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <option value="@item.ID">
-                                                                        @item.SubTask
-                                                                    </option>
+                                                    {
+                                                        if (@item.GetType().GetProperty("SubTask") == null)
+                                                        {
+                                                            <option value="@item.ID">
+                                                                @item.Task
+                                                            </option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.ID">
+                                                                @item.SubTask
+                                                            </option>
 
-                                                                }
+                                                        }
 
 
-                                                            }*@
+                                                    }*@
                                                         </select>
                                                     </td>
                                                     <td><input type="text" class="form-control" ng-model="ngtxtDescription" id="txtDescription"></td>
-                                                    <td><input type="text" class="form-control" ng-model="ngtxtHours" id="txtHours" ng-change="GetRemainingHorus()"></td>
+                                                    <td><input type="text" class="form-control" readonly="readonly" ng-model="ngtxtHours" id="txtHours"></td>
                                                     <td><input type="text" class="form-control" ng-model="ngtxtEstimatedHours" id="txtEstimatedHours" readonly="readonly"></td>
                                                     <td><input type="text" class="form-control" ng-model="ngtxtUtilizedHours" id="txtUtilizedHours" readonly="readonly"></td>
                                                     <td><input type="text" class="form-control" ng-model="ngtxtRemainingHours" id="txtRemainingHours" readonly="readonly"></td>
                                                     <td>
-                                                        <div class="btn-icon-list pd-t-10" id="divAddTimesheet" data-id="0" >
+                                                        <div class="btn-icon-list pd-t-10" id="divAddTimesheet" data-id="0">
                                                             <i data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2" ng-click="AddTimesheet()"></i>
                                                         </div>
                                                     </td>
@@ -191,8 +191,10 @@
                                         <table class="mg-b-0 text-md-nowrap tableCss">
                                             <thead>
                                                 <tr>
-                                                    <th>Sr.No.</th>
+                                                    <th>S.N.</th>
                                                     <th>Client</th>
+                                                    <th>From Time</th>
+                                                    <th>To Time</th>
                                                     <th>Project</th>
                                                     <th>Milestone</th>
                                                     <th>Task</th>
@@ -200,14 +202,16 @@
                                                     <th>Hours</th>
                                                     <th>Estimated Hours</th>
                                                     <th>Utilized Hours</th>
-                                                    <th>Remaining</th>
-                                                    <th>Action</th>
+                                                    <th>Remaining Hours</th>
+                                                    <th ng-hide="ViewTimesheet">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr ng-repeat="t in TimesheetArr">
                                                     <td>{{$index+1}}</td>
                                                     <td>{{t.ClientName}}</td>
+                                                    <td>{{t.FromTimeView}}</td>
+                                                    <td>{{t.ToTimeView}}</td>
                                                     <td>{{t.ProjectName}}</td>
                                                     <td>{{t.MileStoneName}}</td>
                                                     <td>{{t.AllTask}}</td>
@@ -216,7 +220,7 @@
                                                     <td>{{t.EstimatedHours}}</td>
                                                     <td>{{t.UtilizedHours}}</td>
                                                     <td>{{t.RemainingHours}}</td>
-                                                    <td>
+                                                    <td ng-hide="ViewTimesheet">
                                                         <div>
                                                             <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditTimesheet($index)"></i>
                                                             <i class="si si-trash text-danger mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Delete" ng-click="DeleteTimesheet($index)"></i>
@@ -233,12 +237,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-center">
+                <div class="modal-footer justify-content-center" ng-hide="ViewTimesheet">
                     <button type="button" class="btn btn-primary" id="btnAddTimesheet" ng-hide="TimesheetLoad" ng-click="FinalAddTimesheet()">Submit</button>
                     <button class="btn btn-primary" type="button" ng-show="TimesheetLoad" disabled>
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         Please wait...
                     </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-footer justify-content-center" ng-show="ViewTimesheet">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>

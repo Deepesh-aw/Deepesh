@@ -182,6 +182,7 @@
             @Html.Partial("~/Views/Partial/TIM_AddTimesheet.cshtml");
         </div>
 
+
         <div class="breadcrumb-header justify-content-between">
             <div class="my-auto">
                 <div class="d-flex">
@@ -225,8 +226,8 @@
                                 <td>{{tm.EstimatedHours}}</td>
                                 <td>{{tm.ManagerName}}</td>
                                 <td>
-                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditMainTimesheet(tm)"></i>&nbsp;
-                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ViewMainTimesheet($index)"></i>
+                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditViewMainTimesheet(tm,'Edit')"></i>&nbsp;
+                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View')"></i>
                                 </td>
                             </tr>
                         </tbody>

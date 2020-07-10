@@ -33,7 +33,7 @@ namespace DeepeshWeb.Models.Timesheet
         public int Client { get; set; }
         public string ClientName { get; set; }
         public string TimesheetID { get; set; }
-
-
+        public string FromTime { get; set; }
+        public string ToTime { get; set; }
     }
 }

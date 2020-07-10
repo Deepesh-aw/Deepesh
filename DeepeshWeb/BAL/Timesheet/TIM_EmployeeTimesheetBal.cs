@@ -5,6 +5,7 @@ using Microsoft.SharePoint.Client;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 
@@ -73,6 +74,16 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.ClientName = j["Client"]["ClientName"] == null ? "" : Convert.ToString(j["Client"]["ClientName"].ToString());
                 data.Client = j["Client"]["ID"] == null ? 0 : Convert.ToInt32(j["Client"]["ID"].ToString());
 
+
+                DateTime utcfrmdate = DateTime.ParseExact(Convert.ToString(j["FromTime"]), "dd-MM-yyyy h:mm:ss", CultureInfo.InvariantCulture);
+                var frmDate = TimeZoneInfo.ConvertTimeFromUtc(utcfrmdate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                DateTime utctodate = DateTime.ParseExact(Convert.ToString(j["ToTime"]), "dd-MM-yyyy h:mm:ss", CultureInfo.InvariantCulture);
+                var toDate = TimeZoneInfo.ConvertTimeFromUtc(utctodate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                data.FromTime = frmDate.ToString();
+                data.ToTime = toDate.ToString();
+
                 lstEmployeeTimesheet.Add(data);
             }
 
@@ -86,7 +97,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID";
+            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime";
             rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status,Client";
             rESTOption.orderby = "ID desc";
             rESTOption.top = "5000";
