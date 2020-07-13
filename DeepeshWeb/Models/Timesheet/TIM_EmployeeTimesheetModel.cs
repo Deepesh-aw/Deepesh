@@ -13,15 +13,15 @@ namespace DeepeshWeb.Models.Timesheet
         public string ApproveDescription { get; set; }
         public int Employee { get; set; }
         public string EmployeeName { get; set; }
-        public int EstimatedHours { get; set; }
-        public int Hours { get; set; }
+        public string EstimatedHours { get; set; }
+        public string Hours { get; set; }
         public int Manager { get; set; }
         public string ManagerName { get; set; }
         public int MileStone { get; set; }
         public string MileStoneName { get; set; }
         public int Project { get; set; }
         public string ProjectName { get; set; }
-        public int RemainingHours { get; set; }
+        public string RemainingHours { get; set; }
         public int Status { get; set; }
         public string StatusName { get; set; }
         public int Task { get; set; }
@@ -29,7 +29,7 @@ namespace DeepeshWeb.Models.Timesheet
         public int SubTask { get; set; }
         public string SubTaskName { get; set; }
         public string TimesheetAddedDate { get; set; }
-        public int UtilizedHours { get; set; }
+        public string UtilizedHours { get; set; }
         public int Client { get; set; }
         public string ClientName { get; set; }
         public string TimesheetID { get; set; }

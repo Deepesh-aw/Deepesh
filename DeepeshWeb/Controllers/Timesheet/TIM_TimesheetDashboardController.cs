@@ -29,25 +29,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         // GET: TIM_TimesheetDashboard
         public ActionResult Index()
         {
-            //List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
-            //List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-            //try
-            //{
-            //    var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            //    using (var clientContext = spContext.CreateUserClientContextForSPHost())
-            //    {
-            //        //lstProjectCreation = BalProjectCreation.GetProjectCreationAllItems(clientContext, BalEmp.GetEmpByLogIn(clientContext), BalEmp.GetEmpCodeByLogIn(clientContext));
-            //        lstTask = BalTask.GetAllTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-            //        lstSubTask = BalSubTask.GetAllSubTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-            //        ViewBag.AllTask = lstTask.Cast<object>().Concat(lstSubTask).ToList();
-
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
-            //}
-            //lstProjectCreation.Distinct(new EqualityComparer())
+            
             return View();
         }
 
@@ -59,7 +41,9 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
             List<TIM_WorkingHoursModel> lstWorkingHours = new List<TIM_WorkingHoursModel>();
-            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetPending = new List<TIM_EmployeeTimesheetModel>();
+            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetApproved = new List<TIM_EmployeeTimesheetModel>();
+
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -69,12 +53,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstSubTask = BalSubTask.GetAllSubTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     ViewBag.AllTask = lstTask.Cast<object>().Concat(lstSubTask).ToList();
                     lstWorkingHours = BalWorkinghours.GetWorkingHour(clientContext);
-                    lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByEmpId(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstEmployeeTimesheet = lstEmployeeTimesheet.DistinctBy(x => x.TimesheetID).ToList();
+                    lstEmployeeTimesheetPending = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndPending(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    lstEmployeeTimesheetPending = lstEmployeeTimesheetPending.DistinctBy(x => x.TimesheetID).ToList();
+                    lstEmployeeTimesheetApproved = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndApprove(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     obj.Add("OK");
                     obj.Add(ViewBag.AllTask);
                     obj.Add(lstWorkingHours);
-                    obj.Add(lstEmployeeTimesheet);
+                    obj.Add(lstEmployeeTimesheetPending);
+                    obj.Add(lstEmployeeTimesheetApproved);
                 }
             }
             catch (Exception ex)

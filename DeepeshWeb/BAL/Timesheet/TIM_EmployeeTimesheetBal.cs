@@ -13,10 +13,19 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_EmployeeTimesheetBal
     {
-        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpId(ClientContext clientContext, int EmpId)
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndPending(ClientContext clientContext, int EmpId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "EmployeeId eq " + EmpId + "";
+            string filter = "EmployeeId eq " + EmpId + " and InternalStatus eq 'Pending'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndApprove(ClientContext clientContext, int EmpId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "EmployeeId eq " + EmpId + " and InternalStatus eq 'Approved'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -53,15 +62,15 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.Description = j["Description"] == null ? "" : Convert.ToString(j["Description"]);
                 data.Employee = j["Employee"]["ID"] == null ? 0 : Convert.ToInt32(j["Employee"]["ID"]);
                 data.EmployeeName = j["Employee"]["FirstName"] == null ? "" : j["Employee"]["FirstName"].ToString() + " " + j["Employee"]["LastName"].ToString();
-                data.EstimatedHours = j["EstimatedHours"] == null ? 0 : Convert.ToInt32(j["EstimatedHours"]);
-                data.Hours = j["Hours"] == null ? 0 : Convert.ToInt32(j["Hours"]);
+                data.EstimatedHours = j["EstimatedHours"] == null ? "" : Convert.ToString(j["EstimatedHours"]);
+                data.Hours = j["Hours"] == null ? "" : Convert.ToString(j["Hours"]);
                 data.Manager = j["Manager"]["ID"] == null ? 0 : Convert.ToInt32(j["Manager"]["ID"]);
                 data.ManagerName = j["Manager"]["FirstName"] == null ? "" : j["Manager"]["FirstName"].ToString() + " " + j["Manager"]["LastName"].ToString();
                 data.MileStone = j["MileStone"]["ID"] == null ? 0 : Convert.ToInt32(j["MileStone"]["ID"]);
                 data.MileStoneName = j["MileStone"]["MileStone"] == null ? "" : Convert.ToString(j["MileStone"]["MileStone"]);
                 data.Project = j["Project"]["Id"] == null ? 0 : Convert.ToInt32(j["Project"]["Id"]);
                 data.ProjectName = j["Project"]["ProjectName"] == null ? "" : j["Project"]["ProjectName"].ToString();
-                data.RemainingHours = j["RemainingHours"] == null ? 0 : Convert.ToInt32(j["RemainingHours"]);
+                data.RemainingHours = j["RemainingHours"] == null ? "" : Convert.ToString(j["RemainingHours"]);
                 data.Status = j["Status"]["ID"] == null ? 0 : Convert.ToInt32(j["Status"]["ID"]);
                 data.StatusName = j["Status"]["StatusName"] == null ? "" : j["Status"]["StatusName"].ToString();
                 data.SubTask = j["SubTask"]["Id"] == null ? 0 : Convert.ToInt32(j["SubTask"]["Id"]);
@@ -69,20 +78,23 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.Task = j["Task"]["Id"] == null ? 0 : Convert.ToInt32(j["Task"]["Id"]);
                 data.TaskName = j["Task"]["Task"] == null ? "" : j["Task"]["Task"].ToString();
                 data.TimesheetAddedDate = j["TimesheetAddedDate"] == null ? "" : Convert.ToString(j["TimesheetAddedDate"]);
-                data.UtilizedHours = j["UtilizedHours"] == null ? 0 : Convert.ToInt32(j["UtilizedHours"]);
+                data.UtilizedHours = j["UtilizedHours"] == null ? "" : Convert.ToString(j["UtilizedHours"]);
                 data.TimesheetID = j["TimesheetID"] == null ? "" : Convert.ToString(j["TimesheetID"]);
                 data.ClientName = j["Client"]["ClientName"] == null ? "" : Convert.ToString(j["Client"]["ClientName"].ToString());
                 data.Client = j["Client"]["ID"] == null ? 0 : Convert.ToInt32(j["Client"]["ID"].ToString());
 
 
-                DateTime utcfrmdate = DateTime.ParseExact(Convert.ToString(j["FromTime"]), "dd-MM-yyyy h:mm:ss", CultureInfo.InvariantCulture);
+                DateTime utcfrmdate = DateTime.ParseExact(Convert.ToString(j["FromTime"]), "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
                 var frmDate = TimeZoneInfo.ConvertTimeFromUtc(utcfrmdate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
-                DateTime utctodate = DateTime.ParseExact(Convert.ToString(j["ToTime"]), "dd-MM-yyyy h:mm:ss", CultureInfo.InvariantCulture);
+                DateTime utctodate = DateTime.ParseExact(Convert.ToString(j["ToTime"]), "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                 var toDate = TimeZoneInfo.ConvertTimeFromUtc(utctodate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
                 data.FromTime = frmDate.ToString();
                 data.ToTime = toDate.ToString();
+
+                //data.FromTime = j["FromTime"] == null ? "" : Convert.ToString(j["FromTime"]);
+                //data.ToTime = j["ToTime"] == null ? "" : Convert.ToString(j["ToTime"]);
 
                 lstEmployeeTimesheet.Add(data);
             }

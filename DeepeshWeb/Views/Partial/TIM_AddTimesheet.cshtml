@@ -32,7 +32,8 @@
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="ddlClientName">Client Name</label>
-                                        <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect" ng-change="ProjectDetails()">
+                                        <div id="ClientType" class="parsley-select">
+                                        <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect" ng-change="ProjectDetails()" data-parsley-class-handler="#ClientType" data-parsley-errors-container="#ClientError" required="">
                                             <option></option>
                                             @*@{
                                         var Client = 0;
@@ -50,30 +51,60 @@
                                     }*@
 
                                         </select>
+                                        </div>
+                                        <div id="ClientError"></div>
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="form-group">
-                                        <label for="txtTimesheetDate">From Time</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                                                </div>
-                                            </div><input class="form-control Time" type="text" ng-model="ngtxtFromTime" id="txtFromTime">
-                                        </div>
+                                        <label for="txtTimesheetDate">Project</label>
+                                        <div id="ProjecttType" class="parsley-select">
+                                                        <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()" data-parsley-class-handler="#ProjecttType" data-parsley-errors-container="#ProjectError" required="">
+                                                            <option></option>
+                                                            @*@{
+                                                        var Project = 0;
+                                                    }
+                                                    @foreach (var item in ViewBag.AllTask)
+                                                    {
+                                                        if (@item.Project != Project)
+                                                        {
+                                                            <option value="@item.Project">
+                                                                @item.ProjectName
+                                                            </option>
+                                                            Project = @item.Project;
+                                                        }
+
+                                                    }*@
+                                                        </select>
+                                                        </div>
+                                                        <div id="ProjectError"></div>
+                                        
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="form-group">
-                                        <label for="txtTimesheetDate">To Time</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                                                </div>
-                                            </div><input class="form-control Time" type="text" ng-model="ngtxtToTime" id="txtToTime">
-                                        </div>
+                                        <label for="txtTimesheetDate">Milestone</label>
+                                        <div id="MileType" class="parsley-select">
+                                                        <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()" data-parsley-class-handler="#MileType" data-parsley-errors-container="#MileError" required="">
+                                                            <option></option>
+                                                            @*@{
+                                                        var MileStone = 0;
+                                                    }
+                                                    @foreach (var item in ViewBag.AllTask)
+                                                    {
+                                                        if (@item.MileStone != MileStone)
+                                                        {
+                                                            <option value="@item.MileStone">
+                                                                @item.MileStoneName
+                                                            </option>
+                                                            MileStone = @item.MileStone;
+                                                        }
+
+                                                    }*@
+                                                        </select>
+                                                        </div>
+                                                         <div id="MileError"></div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -91,59 +122,23 @@
                                         <table class="mg-b-0 text-md-nowrap tableCss">
                                             <thead>
                                                 <tr>
-                                                    <th>Project Name</th>
-                                                    <th>Milestone</th>
                                                     <th>Task</th>
-                                                    <th>Description</th>
-                                                    <th>Hours</th>
-                                                    <th>Estimated Hours</th>
-                                                    <th>Utilized Hours</th>
-                                                    <th>Remaining</th>
+                                                    <th>From Time</th>
+                                                    <th>To Time</th>
+                                                    <th>Desc.</th>
+                                                    <th>Hrs.</th>
+                                                    <th>Estd. Hrs.</th>
+                                                    <th>Utld. Hrs.</th>
+                                                    <th>Rem. Hrs.</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>
-                                                        <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()">
-                                                            <option></option>
-                                                            @*@{
-                                                        var Project = 0;
-                                                    }
-                                                    @foreach (var item in ViewBag.AllTask)
-                                                    {
-                                                        if (@item.Project != Project)
-                                                        {
-                                                            <option value="@item.Project">
-                                                                @item.ProjectName
-                                                            </option>
-                                                            Project = @item.Project;
-                                                        }
-
-                                                    }*@
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()">
-                                                            <option></option>
-                                                            @*@{
-                                                        var MileStone = 0;
-                                                    }
-                                                    @foreach (var item in ViewBag.AllTask)
-                                                    {
-                                                        if (@item.MileStone != MileStone)
-                                                        {
-                                                            <option value="@item.MileStone">
-                                                                @item.MileStoneName
-                                                            </option>
-                                                            MileStone = @item.MileStone;
-                                                        }
-
-                                                    }*@
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect" ng-change="GetPrevTimesheet()">
+                                                 
+                                                    <td style="width:18%">
+                                                        <div id="TaskType" class="parsley-select">
+                                                        <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect" ng-change="GetPrevTimesheet()" data-parsley-class-handler="#TaskType" data-parsley-errors-container="#TaskError" required="">
                                                             <option></option>
                                                             @*@foreach (var item in ViewBag.AllTask)
                                                     {
@@ -164,15 +159,37 @@
 
                                                     }*@
                                                         </select>
+                                                             </div>
+                                                        <div id="TaskError"></div>
                                                     </td>
-                                                    <td><input type="text" class="form-control" ng-model="ngtxtDescription" id="txtDescription"></td>
-                                                    <td><input type="text" class="form-control" readonly="readonly" ng-model="ngtxtHours" id="txtHours"></td>
-                                                    <td><input type="text" class="form-control" ng-model="ngtxtEstimatedHours" id="txtEstimatedHours" readonly="readonly"></td>
-                                                    <td><input type="text" class="form-control" ng-model="ngtxtUtilizedHours" id="txtUtilizedHours" readonly="readonly"></td>
-                                                    <td><input type="text" class="form-control" ng-model="ngtxtRemainingHours" id="txtRemainingHours" readonly="readonly"></td>
-                                                    <td>
+                                                    <td style="width:12%">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                                </div>
+                                                            </div><input class="form-control Time" type="text" ng-model="ngtxtFromTime" id="txtFromTime" data-parsley-class-handler="#FrmTimeType" data-parsley-errors-container="#FrmTimeError" required="">
+                                                        </div>
+                                                        <div id="FrmTimeError"></div>
+                                                    </td>
+                                                    <td style="width:12%">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                                </div>
+                                                            </div><input class="form-control Time" type="text" ng-model="ngtxtToTime" id="txtToTime" data-parsley-class-handler="#ToTimeType" data-parsley-errors-container="#ToTimeError" required="">
+                                                        </div>
+                                                        <div id="ToTimeError"></div>
+                                                    </td>
+                                                    <td style="width:20%"><input type="text" class="form-control" ng-model="ngtxtDescription" id="txtDescription" required=""></td>
+                                                    <td style="width:7%"><input type="text" class="form-control" readonly="readonly" ng-model="ngtxtHours" id="txtHours"></td>
+                                                    <td style="width:7%"><input type="text" class="form-control" ng-model="ngtxtEstimatedHours" id="txtEstimatedHours" readonly="readonly"></td>
+                                                    <td style="width:7%"><input type="text" class="form-control" ng-model="ngtxtUtilizedHours" id="txtUtilizedHours" readonly="readonly"></td>
+                                                    <td style="width:7%"><input type="text" class="form-control" ng-model="ngtxtRemainingHours" id="txtRemainingHours" readonly="readonly"></td>
+                                                    <td style="width:5%">
                                                         <div class="btn-icon-list pd-t-10" id="divAddTimesheet" data-id="0">
-                                                            <i data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2" ng-click="AddTimesheet()"></i>
+                                                            <button type="submit" data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2" style="border:none;background:none" ></button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -188,21 +205,21 @@
                                 <div class="card-body">
                                     <div class="table-responsive">
 
-                                        <table class="mg-b-0 text-md-nowrap tableCss">
+                                        <table class="mg-b-0 text-md-nowrap tableCss" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th>S.N.</th>
                                                     <th>Client</th>
+                                                    <th>Project</th>
+                                                    <th>Mile - Stone</th>
+                                                    <th>Task</th>
                                                     <th>From Time</th>
                                                     <th>To Time</th>
-                                                    <th>Project</th>
-                                                    <th>Milestone</th>
-                                                    <th>Task</th>
                                                     <th>Desc.</th>
-                                                    <th>Hours</th>
-                                                    <th>Estimated Hours</th>
-                                                    <th>Utilized Hours</th>
-                                                    <th>Remaining Hours</th>
+                                                    <th>Hrs.</th>
+                                                    <th>Estd. Hrs.</th>
+                                                    <th>Utld. Hrs.</th>
+                                                    <th>Rem. Hrs.</th>
                                                     <th ng-hide="ViewTimesheet">Action</th>
                                                 </tr>
                                             </thead>
@@ -210,11 +227,11 @@
                                                 <tr ng-repeat="t in TimesheetArr">
                                                     <td>{{$index+1}}</td>
                                                     <td>{{t.ClientName}}</td>
-                                                    <td>{{t.FromTimeView}}</td>
-                                                    <td>{{t.ToTimeView}}</td>
                                                     <td>{{t.ProjectName}}</td>
                                                     <td>{{t.MileStoneName}}</td>
                                                     <td>{{t.AllTask}}</td>
+                                                    <td>{{t.FromTimeView}}</td>
+                                                    <td>{{t.ToTimeView}}</td>
                                                     <td>{{t.Description}}</td>
                                                     <td>{{t.Hours}}</td>
                                                     <td>{{t.EstimatedHours}}</td>
