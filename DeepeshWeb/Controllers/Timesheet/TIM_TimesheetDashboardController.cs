@@ -56,6 +56,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstEmployeeTimesheetPending = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndPending(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     lstEmployeeTimesheetPending = lstEmployeeTimesheetPending.DistinctBy(x => x.TimesheetID).ToList();
                     lstEmployeeTimesheetApproved = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndApprove(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    lstEmployeeTimesheetApproved = lstEmployeeTimesheetApproved.DistinctBy(x => x.TimesheetID).ToList();
+
                     obj.Add("OK");
                     obj.Add(ViewBag.AllTask);
                     obj.Add(lstWorkingHours);

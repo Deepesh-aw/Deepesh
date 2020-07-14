@@ -13,6 +13,42 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_EmployeeTimesheetBal
     {
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByTaskId(ClientContext clientContext, int TaskId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "TaskId eq " + TaskId + "";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetBySubTaskId(ClientContext clientContext, int SubTaskId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "SubTaskId eq " + SubTaskId + "";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByManagerIdAndPending(ClientContext clientContext, int ManagerId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "ManagerId eq " + ManagerId + " and InternalStatus eq 'Pending'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByManagerIdAndApprove(ClientContext clientContext, int ManagerId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "ManagerId eq " + ManagerId + " and InternalStatus eq 'Approved'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndPending(ClientContext clientContext, int EmpId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
@@ -132,7 +168,7 @@ namespace DeepeshWeb.BAL.Timesheet
             return restService.SaveItem(clientContext, "TIM_EmployeeTimesheet", ItemData);
         }
 
-        public string UpdateProject(ClientContext clientContext, string ItemData, string ID)
+        public string UpdateTimesheet(ClientContext clientContext, string ItemData, string ID)
         {
 
             string response = RESTUpdate(clientContext, ItemData, ID);

@@ -11,6 +11,15 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_SubTaskBal
     {
+        public List<TIM_SubTaskModel> GetSubTaskBySubTaskId(ClientContext clientContext, int SubTaskId)
+        {
+            List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+            string filter = "Id eq " + SubTaskId + " and InternalStatus ne 'SubTaskDeleted' and InternalStatus ne 'ProjectDeleted' and InternalStatus ne 'Approved'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstSubTask = BindList(jArray);
+            return lstSubTask;
+        }
+
         public List<TIM_SubTaskModel> GetAllSubTask(ClientContext clientContext, int LogInId)
         {
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
@@ -19,10 +28,11 @@ namespace DeepeshWeb.BAL.Timesheet
             lstSubTask = BindList(jArray);
             return lstSubTask;
         }
+
         public List<TIM_SubTaskModel> GetSubTaskByTaskId(ClientContext clientContext, int TaskId)
         {
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-            string filter = "TaskId eq " + TaskId + " and InternalStatus ne 'SubTaskDeleted' and InternalStatus ne 'ProjectDeleted'";
+            string filter = "TaskId eq " + TaskId + " and InternalStatus ne 'SubTaskDeleted' and InternalStatus ne 'ProjectDeleted' and InternalStatus ne 'Approved'";
             JArray jArray = RESTGet(clientContext, filter);
             lstSubTask = BindList(jArray);
             return lstSubTask;

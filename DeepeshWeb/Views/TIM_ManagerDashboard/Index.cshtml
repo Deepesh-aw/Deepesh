@@ -1,16 +1,10 @@
 ﻿
 @{
-    ViewBag.Title = "Timesheet Dashboard";
+    ViewBag.Title = "Manager Dashboard";
 }
 
 @section style
 {
-    <!-- Internal Select2 css -->
-    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
-
-    <!--Internal  Datetimepicker-slider css -->
-
-    <link href="~/assets/plugins/amazeui-datetimepicker/css/amazeui.datetimepicker.css" rel="stylesheet">
 
     <!-- Internal Data table css -->
     <link href="~/assets/plugins/datatable/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -174,25 +168,19 @@
 </style>
 
 
-<form id="frmTimesheetDashboard" name="frmTimesheetDashboard" ng-app="TimesheetDashboardApp" ng-controller="TimesheetDashboardController" ng-init="OnLoad()" autocomplete="off">
+<form id="frmManagerDashboard" name="frmTimesheetDashboard" ng-app="ManagerDashboardApp" ng-controller="ManagerDashboardController" ng-init="TimesheetLoad()" autocomplete="off">
     <!-- container opened -->
     <div class="container">
-        <div class="modal left fade" id="AddTimesheetPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        <div class="modal left fade" id="ViewTimesheetPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
-            @Html.Partial("~/Views/Partial/TIM_AddTimesheet.cshtml");
+            @Html.Partial("~/Views/Partial/TIM_ViewTimesheet.cshtml");
         </div>
-
 
 
         <div class="breadcrumb-header justify-content-between">
             <div class="my-auto">
                 <div class="d-flex">
-                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Timesheet Dashboard</span>
-                </div>
-            </div>
-            <div class="my-auto">
-                <div class="d-flex">
-                    <a href="#" class="btn btn-primary float-right" ng-click="OpenAddTimesheet()">Add Timesheet</a>
+                    <h4 class="content-title mb-0 my-auto">Timesheet</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Manager Dashboard</span>
                 </div>
             </div>
         </div>
@@ -227,8 +215,7 @@
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ManagerName}}</td>
                                 <td>
-                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditViewMainTimesheet(tm,'Edit')"></i>&nbsp;
-                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View')"></i>
+                                    <i class="si si-check text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Approve" ng-click="ApproveTimesheet(tm)"></i>&nbsp;
                                 </td>
                             </tr>
                         </tbody>
@@ -276,13 +263,6 @@
 
 @section scripts
 {
-    <!-- Internal Select2.min js -->
-    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
-    <script src="~/assets/js/select2.js"></script>
-
-    <!--Internal  jquery-simple-datetimepicker js -->
-
-    <script src="~/assets/plugins/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js"></script>
 
     <!-- Internal Data tables -->
     <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
@@ -301,7 +281,6 @@
     <script src="~/assets/plugins/datatable/js/buttons.colVis.min.js"></script>
     <script src="~/assets/plugins/datatable/js/responsive.bootstrap4.min.js"></script>
 
-    <script src="~/assets/plugins/parsleyjs/parsley.min.js"></script>
-    <script src="~/Scripts/Angular/Timesheet/JS/TIM_TimesheetDashboard.js"></script>
+    <script src="~/Scripts/Angular/Timesheet/JS/TIM_ManagerDashboard.js"></script>
 
 }

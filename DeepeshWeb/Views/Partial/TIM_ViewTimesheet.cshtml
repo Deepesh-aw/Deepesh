@@ -1,0 +1,156 @@
+﻿@*@using DeepeshWeb.Models.Timesheet*@
+@*@model IEnumerable<TIM_ProjectCreationModel>*@
+
+<div class="modal-dialog modal-lg " role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title w-100" id="MilestoneTitle">Timesheet Details</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+                <div class="col-xl-12 col-lg-12">
+
+                    <!--Entry Code start-->
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <div class="row row-sm">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Timesheet Date</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{DateFormat(CurrentTimesheet[0].TimesheetAddedDate)}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Timesheet ID</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].TimesheetID}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Employee</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].EmployeeName}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Manager</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].ManagerName}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Entry Code End-->
+                    </div>
+
+                    <!-- row -->
+                    <div class="row row-sm">
+                        <div class="col-xl-12" ng-if="CurrentTimesheet.length>0">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+
+                                        <table class="mg-b-0 text-md-nowrap tableCss" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>S.N.</th>
+                                                    <th>Client</th>
+                                                    <th>Project</th>
+                                                    <th>Mile - Stone</th>
+                                                    <th>Task</th>
+                                                    <th>From Time</th>
+                                                    <th>To Time</th>
+                                                    <th>Desc.</th>
+                                                    <th>Hrs.</th>
+                                                    <th>Estd. Hrs.</th>
+                                                    <th>Utld. Hrs.</th>
+                                                    <th>Rem. Hrs.</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="t in CurrentTimesheet">
+                                                    <td>{{$index+1}}</td>
+                                                    <td>{{t.ClientName}}</td>
+                                                    <td>{{t.ProjectName}}</td>
+                                                    <td>{{t.MileStoneName}}</td>
+                                                    <td ng-show="t.Task != 0">{{t.Task}}</td>
+                                                    <td ng-show="t.SubTask != 0">{{t.SubTask}}</td>
+                                                    <td>{{TimeFormat(t.FromTime)}}</td>
+                                                    <td>{{TimeFormat(t.ToTime)}}</td>
+                                                    <td>{{t.Description}}</td>
+                                                    <td>{{t.Hours}}</td>
+                                                    <td>{{t.EstimatedHours}}</td>
+                                                    <td>{{t.UtilizedHours}}</td>
+                                                    <td>{{t.RemainingHours}}</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div><!-- bd -->
+                                </div><!-- bd -->
+                            </div><!-- bd -->
+                        </div>
+                    </div>
+
+                    <div class="row row-sm">
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row row-sm">
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <b>Remark</b>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <textarea rows="4" cols="6" id="txtRemark" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" id="btnApproveTimesheet" ng-hide="ApproveLoad" ng-click="FinalApproveTimesheet('Approve')">Approve</button>
+                    <button class="btn btn-primary" type="button" ng-show="ApproveLoad" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Please wait...
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="btRejectTimesheet" ng-hide="RejectLoad" ng-click="FinalApproveTimesheet('Reject')">Reject</button>
+                    <button class="btn btn-primary" type="button" ng-show="RejectLoad" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Please wait...
+                    </button>
+
+                    @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

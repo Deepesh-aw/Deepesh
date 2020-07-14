@@ -152,7 +152,19 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             $timeout(function () {
                 $("#ddlClient").val('').trigger('change');
             }, 10);
+
+            Array.from(document.getElementsByClassName('parsley-success')).forEach(function (el) {
+                el.classList.remove('parsley-success');
+            });
+
+            Array.from(document.getElementsByClassName('parsley-error')).forEach(function (el) {
+                el.classList.remove('parsley-error');
+            });
+
+            if ($('.parsley-required').length>0)
+                $('.parsley-required').text('');
         });
+
 
     })
 
@@ -480,6 +492,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
     $scope.OpenAddTimesheet = function () {
         $scope.ngtxtTimesheetDate = moment().format("DD/MM/YYYY");
+        $("#MilestoneTitle").text("Add Timesheet");
         $("#AddTimesheetPopUp").modal('show');
     }
 
@@ -541,7 +554,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             if (response.data[1].length > 0) {
                 $scope.EditTimesheetArr = response.data[1];
                 $scope.TimeId = $scope.EditTimesheetArr[0].TimesheetID;
-                $scope.ngtxtTimesheetDate = moment($scope.EditTimesheetArr[0].TimesheetAddedDate).format("DD-MM-YYYY");
+                $scope.ngtxtTimesheetDate = $scope.EditTimesheetArr[0].TimesheetAddedDate.split(' ')[0];
                 angular.forEach($scope.EditTimesheetArr, function (value, key) {
 
                     var obj = {};
@@ -577,10 +590,18 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
                     }
 
+                    obj.EmployeeName = value.EmployeeName;
+                    obj.ManagerName = value.ManagerName;
+
                     $scope.TimesheetArr.push(obj);
                 })
-                if (Action == "View") 
+                if (Action == "View") {
                     $scope.ViewTimesheet = true;
+                    $("#MilestoneTitle").text("View Timesheet");
+                }
+                else {
+                    $("#MilestoneTitle").text("Edit Timesheet");
+                }
 
                 $("#btnAddTimesheet").text("Update");
                 $("#AddTimesheetPopUp").modal('show');
@@ -596,5 +617,6 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         $scope.ngtxtRemainingHours = undefined;
         $scope.ngtxtUtilizedHours = undefined;
     }
+
 
 });

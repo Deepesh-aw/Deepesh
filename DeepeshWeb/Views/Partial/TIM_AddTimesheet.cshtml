@@ -13,6 +13,56 @@
             <div class="container">
                 <div class="col-xl-12 col-lg-12">
 
+                    <div class="card custom-card" ng-show="ViewTimesheet">
+                        <div class="card-body">
+                            <div class="row row-sm">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Timesheet Date</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{DateFormat(TimesheetArr[0].TimesheetAddedDate)}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Timesheet ID</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].TimesheetID}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Employee</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].EmployeeName}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Manager</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].ManagerName}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Entry Code End-->
+                    </div>
+
                     <!--Entry Code start-->
                     <div class="card custom-card" ng-hide="ViewTimesheet">
                         <div class="card-body">
@@ -33,9 +83,9 @@
                                     <div class="form-group">
                                         <label for="ddlClientName">Client Name</label>
                                         <div id="ClientType" class="parsley-select">
-                                        <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect" ng-change="ProjectDetails()" data-parsley-class-handler="#ClientType" data-parsley-errors-container="#ClientError" required="">
-                                            <option></option>
-                                            @*@{
+                                            <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect" ng-change="ProjectDetails()" data-parsley-class-handler="#ClientType" data-parsley-errors-container="#ClientError" required="">
+                                                <option></option>
+                                                @*@{
                                         var Client = 0;
                                     }
                                     @foreach (var item in ViewBag.AllTask)
@@ -50,7 +100,7 @@
 
                                     }*@
 
-                                        </select>
+                                            </select>
                                         </div>
                                         <div id="ClientError"></div>
                                     </div>
@@ -59,52 +109,52 @@
                                     <div class="form-group">
                                         <label for="txtTimesheetDate">Project</label>
                                         <div id="ProjecttType" class="parsley-select">
-                                                        <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()" data-parsley-class-handler="#ProjecttType" data-parsley-errors-container="#ProjectError" required="">
-                                                            <option></option>
-                                                            @*@{
-                                                        var Project = 0;
-                                                    }
-                                                    @foreach (var item in ViewBag.AllTask)
-                                                    {
-                                                        if (@item.Project != Project)
-                                                        {
-                                                            <option value="@item.Project">
-                                                                @item.ProjectName
-                                                            </option>
-                                                            Project = @item.Project;
-                                                        }
+                                            <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()" data-parsley-class-handler="#ProjecttType" data-parsley-errors-container="#ProjectError" required="">
+                                                <option></option>
+                                                @*@{
+                                        var Project = 0;
+                                    }
+                                    @foreach (var item in ViewBag.AllTask)
+                                    {
+                                        if (@item.Project != Project)
+                                        {
+                                            <option value="@item.Project">
+                                                @item.ProjectName
+                                            </option>
+                                            Project = @item.Project;
+                                        }
 
-                                                    }*@
-                                                        </select>
-                                                        </div>
-                                                        <div id="ProjectError"></div>
-                                        
+                                    }*@
+                                            </select>
+                                        </div>
+                                        <div id="ProjectError"></div>
+
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="txtTimesheetDate">Milestone</label>
                                         <div id="MileType" class="parsley-select">
-                                                        <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()" data-parsley-class-handler="#MileType" data-parsley-errors-container="#MileError" required="">
-                                                            <option></option>
-                                                            @*@{
-                                                        var MileStone = 0;
-                                                    }
-                                                    @foreach (var item in ViewBag.AllTask)
-                                                    {
-                                                        if (@item.MileStone != MileStone)
-                                                        {
-                                                            <option value="@item.MileStone">
-                                                                @item.MileStoneName
-                                                            </option>
-                                                            MileStone = @item.MileStone;
-                                                        }
+                                            <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()" data-parsley-class-handler="#MileType" data-parsley-errors-container="#MileError" required="">
+                                                <option></option>
+                                                @*@{
+                                        var MileStone = 0;
+                                    }
+                                    @foreach (var item in ViewBag.AllTask)
+                                    {
+                                        if (@item.MileStone != MileStone)
+                                        {
+                                            <option value="@item.MileStone">
+                                                @item.MileStoneName
+                                            </option>
+                                            MileStone = @item.MileStone;
+                                        }
 
-                                                    }*@
-                                                        </select>
-                                                        </div>
-                                                         <div id="MileError"></div>
-                                        
+                                    }*@
+                                            </select>
+                                        </div>
+                                        <div id="MileError"></div>
+
                                     </div>
                                 </div>
                             </div>
@@ -135,12 +185,12 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                 
+
                                                     <td style="width:18%">
                                                         <div id="TaskType" class="parsley-select">
-                                                        <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect" ng-change="GetPrevTimesheet()" data-parsley-class-handler="#TaskType" data-parsley-errors-container="#TaskError" required="">
-                                                            <option></option>
-                                                            @*@foreach (var item in ViewBag.AllTask)
+                                                            <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect" ng-change="GetPrevTimesheet()" data-parsley-class-handler="#TaskType" data-parsley-errors-container="#TaskError" required="">
+                                                                <option></option>
+                                                                @*@foreach (var item in ViewBag.AllTask)
                                                     {
                                                         if (@item.GetType().GetProperty("SubTask") == null)
                                                         {
@@ -158,8 +208,8 @@
 
 
                                                     }*@
-                                                        </select>
-                                                             </div>
+                                                            </select>
+                                                        </div>
                                                         <div id="TaskError"></div>
                                                     </td>
                                                     <td style="width:12%">
@@ -189,7 +239,7 @@
                                                     <td style="width:7%"><input type="text" class="form-control" ng-model="ngtxtRemainingHours" id="txtRemainingHours" readonly="readonly"></td>
                                                     <td style="width:5%">
                                                         <div class="btn-icon-list pd-t-10" id="divAddTimesheet" data-id="0">
-                                                            <button type="submit" data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2" style="border:none;background:none" ></button>
+                                                            <button type="submit" data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2" style="border:none;background:none"></button>
                                                         </div>
                                                     </td>
                                                 </tr>

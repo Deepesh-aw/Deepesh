@@ -15,7 +15,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_MilestoneModel> GetMilestoneByProjectId(ClientContext clientContext, int Id)
         {
             List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
-            string filter = "ProjectId eq " + Id + " and InternalStatus ne 'MilestoneDeleted' and InternalStatus ne 'ProjectDeleted' ";
+            string filter = "ProjectId eq " + Id + " and InternalStatus ne 'MilestoneDeleted' and InternalStatus ne 'ProjectDeleted' and InternalStatus ne 'Approved' ";
             JArray jArray = RESTGet(clientContext, filter);
             lstMilestone = BindList(jArray);
             return lstMilestone;

@@ -617,6 +617,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Members = $rootScope.ProjectPopData.Members;
                     obj.InternalStatus = value.InternalStatus;
                     obj.Status = value.Status;
+                    obj.Client = value.Client;
+                    obj.ClientName = value.ClientName;
                     obj.Delete = "No";
                     $rootScope.Milestone.push(obj);
                 });
@@ -678,6 +680,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Project = value.Project;
                     obj.InternalStatus = value.InternalStatus;
                     obj.Status = value.Status;
+                    obj.Client = value.Client;
+                    obj.ClientName = value.ClientName;
                     obj.Delete = "No";
                    $rootScope.Task.push(obj);
                 });
@@ -749,6 +753,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Project = value.Project;
                     obj.InternalStatus = value.InternalStatus;
                     obj.Status = value.Status;
+                    obj.Client = value.Client;
+                    obj.ClientName = value.ClientName;
                     obj.Delete = "No";
                     $rootScope.SubTask.push(obj);
                 });

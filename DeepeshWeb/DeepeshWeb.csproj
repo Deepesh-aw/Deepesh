@@ -195,6 +195,7 @@
     <Compile Include="BAL\Timesheet\TIM_SubTaskBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_WorkingHoursBal.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_DashboardLandingController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_ManagerDashboardController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_TimesheetDashboardController.cs" />
     <Compile Include="Models\EmployeeManagement\Emp_DepartmentModel.cs" />
     <Compile Include="Models\GEN_ApproverMasterModel.cs" />
@@ -8188,6 +8189,7 @@
     <Content Include="Scripts\Angular\DAL\Navigation.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddSubTask.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_DashboardLanding.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\TIM_ManagerDashboard.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_ProjectDashboard.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddMilestone.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_AddTask.js" />
@@ -9196,6 +9198,8 @@
     <Content Include="Views\Partial\TIM_AddSubTask.cshtml" />
     <Content Include="Views\TIM_TimesheetDashboard\Index.cshtml" />
     <Content Include="Views\Partial\TIM_AddTimesheet.cshtml" />
+    <Content Include="Views\TIM_ManagerDashboard\Index.cshtml" />
+    <Content Include="Views\Partial\TIM_ViewTimesheet.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

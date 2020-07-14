@@ -12,6 +12,53 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_WorkFlowMasterBal
     {
+        public List<TIM_WorkFlowMasterModel> GetWorkFlowForTimesheetApprove(ClientContext clientContext)
+        {
+            List<TIM_WorkFlowMasterModel> _WorkFlowModel = new List<TIM_WorkFlowMasterModel>();
+
+            string filter = "TransactionType eq 'TimesheetApprove' and Action eq 'Forward'";
+
+            JArray jArray = RESTGet(clientContext, filter);
+
+            foreach (JObject j in jArray)
+            {
+                _WorkFlowModel.Add(new TIM_WorkFlowMasterModel
+                {
+                    TransactionType = j["TransactionType"] == null ? "" : j["TransactionType"].ToString(),
+                    FromStatus = j["FromStatus"]["StatusName"] == null ? "" : Convert.ToString(j["FromStatus"]["StatusName"].ToString()),
+                    ToStatus = j["ToStatus"]["StatusName"] == null ? "" : Convert.ToString(j["ToStatus"]["StatusName"].ToString()),
+                    ToStatusID = j["ToStatus"] == null ? "" : Convert.ToString(j["ToStatus"]["ID"].ToString()),
+                    InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"].ToString())
+                });
+            }
+
+            return _WorkFlowModel;
+        }
+
+        public List<TIM_WorkFlowMasterModel> GetWorkFlowForTimesheetReject(ClientContext clientContext)
+        {
+            List<TIM_WorkFlowMasterModel> _WorkFlowModel = new List<TIM_WorkFlowMasterModel>();
+
+            string filter = "TransactionType eq 'TimesheetReject' and Action eq 'Forward'";
+
+            JArray jArray = RESTGet(clientContext, filter);
+
+            foreach (JObject j in jArray)
+            {
+                _WorkFlowModel.Add(new TIM_WorkFlowMasterModel
+                {
+                    TransactionType = j["TransactionType"] == null ? "" : j["TransactionType"].ToString(),
+                    FromStatus = j["FromStatus"]["StatusName"] == null ? "" : Convert.ToString(j["FromStatus"]["StatusName"].ToString()),
+                    ToStatus = j["ToStatus"]["StatusName"] == null ? "" : Convert.ToString(j["ToStatus"]["StatusName"].ToString()),
+                    ToStatusID = j["ToStatus"] == null ? "" : Convert.ToString(j["ToStatus"]["ID"].ToString()),
+                    InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"].ToString())
+                });
+            }
+
+            return _WorkFlowModel;
+        }
+
+
         public List<TIM_WorkFlowMasterModel> GetWorkFlowForProjectCreation(ClientContext clientContext)
         {
             List<TIM_WorkFlowMasterModel> _WorkFlowModel = new List<TIM_WorkFlowMasterModel>();
