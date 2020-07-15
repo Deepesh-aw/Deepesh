@@ -32,7 +32,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     ViewBag.ProjectTypeData = BalProjectType.GetProjectType(clientContext);
                     ViewBag.ClientData = BalClient.GetClient(clientContext);
                     ViewBag.EmpData = BalEmp.GetEmp(clientContext);
-                    ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
+                    //ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
                 }
             }
             catch (Exception ex)

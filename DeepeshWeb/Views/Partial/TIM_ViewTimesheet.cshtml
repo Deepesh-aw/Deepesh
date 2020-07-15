@@ -81,6 +81,7 @@
                                                     <th>Task</th>
                                                     <th>From Time</th>
                                                     <th>To Time</th>
+                                                    <th>Status</th>
                                                     <th>Desc.</th>
                                                     <th>Hrs.</th>
                                                     <th>Estd. Hrs.</th>
@@ -98,6 +99,7 @@
                                                     <td ng-show="t.SubTask != 0">{{t.SubTask}}</td>
                                                     <td>{{TimeFormat(t.FromTime)}}</td>
                                                     <td>{{TimeFormat(t.ToTime)}}</td>
+                                                    <td>{{t.AllTaskStatusName}}</td>
                                                     <td>{{t.Description}}</td>
                                                     <td>{{t.Hours}}</td>
                                                     <td>{{t.EstimatedHours}}</td>

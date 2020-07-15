@@ -29,7 +29,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
         // GET: TIM_TimesheetDashboard
         public ActionResult Index()
         {
-            
+            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            {
+                ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
+            }
             return View();
         }
 
@@ -147,7 +151,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'TaskId': '" + item.Task + "'";
                     itemdata += " ,'SubTaskId': '" + item.SubTask + "'";
                     itemdata += " ,'ClientId': '" + item.Client + "'";
-
+                    itemdata += " ,'AllTaskStatusId': '" + item.AllTaskStatus + "'";
                     itemdata += " ,'TimesheetID': '" + item.TimesheetID + "'";
                     itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
                     itemdata += " ,'InternalStatus': '"+ InternalStatus + "'";

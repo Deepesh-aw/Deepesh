@@ -118,7 +118,8 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.TimesheetID = j["TimesheetID"] == null ? "" : Convert.ToString(j["TimesheetID"]);
                 data.ClientName = j["Client"]["ClientName"] == null ? "" : Convert.ToString(j["Client"]["ClientName"].ToString());
                 data.Client = j["Client"]["ID"] == null ? 0 : Convert.ToInt32(j["Client"]["ID"].ToString());
-
+                data.AllTaskStatusName = j["AllTaskStatus"]["StatusName"] == null ? "" : j["AllTaskStatus"]["StatusName"].ToString();
+                data.AllTaskStatus = j["AllTaskStatus"]["ID"] == null ? 0 : Convert.ToInt32(j["AllTaskStatus"]["ID"]);
 
                 DateTime utcfrmdate = DateTime.ParseExact(Convert.ToString(j["FromTime"]), "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
                 var frmDate = TimeZoneInfo.ConvertTimeFromUtc(utcfrmdate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
@@ -145,8 +146,8 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime";
-            rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status,Client";
+            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID";
+            rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status,Client,AllTaskStatus";
             rESTOption.orderby = "ID desc";
             rESTOption.top = "5000";
 

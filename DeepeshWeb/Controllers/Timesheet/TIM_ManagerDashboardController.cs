@@ -85,59 +85,69 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                 i++;
                                 if (item.Task > 0)
                                 {
-                                    List<TIM_EmployeeTimesheetModel> lstTimesheetForTask = new List<TIM_EmployeeTimesheetModel>();
-                                    lstTimesheetForTask = BalEmpTimesheet.GetEmpTimesheetByTaskId(clientContext, item.Task);
-                                    if (lstTimesheetForTask.Count > 0)
+                                    if(item.AllTaskStatusName == "Completed")
                                     {
-                                        if (lstTimesheetForTask[0].RemainingHours.Split(':')[0] == "0" || lstTimesheetForTask[0].RemainingHours.Split(':')[0] == "00")
-                                        {
-                                            List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-                                            lstSubTask = BalSubTask.GetSubTaskByTaskId(clientContext, item.Task);
-                                            if(lstSubTask.Count == 0)
-                                            {
-                                                taskdata += " ,'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                                                string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, item.Task.ToString());
-                                                if (TaskUpdate == "Update")
-                                                {
-                                                    UpdateAllStatus(taskdata, item, lstWorkFlowForApproveTimesheet);
-                                                }
-                                            }
-                                            
-                                        }
+                                        taskdata += " ,'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                        string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, item.Task.ToString());
                                     }
-                                    
+                                    //List<TIM_EmployeeTimesheetModel> lstTimesheetForTask = new List<TIM_EmployeeTimesheetModel>();
+                                    //lstTimesheetForTask = BalEmpTimesheet.GetEmpTimesheetByTaskId(clientContext, item.Task);
+                                    //if (lstTimesheetForTask.Count > 0)
+                                    //{
+                                    //    if (lstTimesheetForTask[0].RemainingHours.Split(':')[0] == "0" || lstTimesheetForTask[0].RemainingHours.Split(':')[0] == "00")
+                                    //    {
+                                    //        List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+                                    //        lstSubTask = BalSubTask.GetSubTaskByTaskId(clientContext, item.Task);
+                                    //        if(lstSubTask.Count == 0)
+                                    //        {
+                                    //            taskdata += " ,'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                    //            string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, item.Task.ToString());
+                                    //            if (TaskUpdate == "Update")
+                                    //            {
+                                    //                UpdateAllStatus(taskdata, item, lstWorkFlowForApproveTimesheet);
+                                    //            }
+                                    //        }
+
+                                    //    }
+                                    //}
+
                                 }
                                 else if(item.SubTask > 0)
                                 {
-                                    List<TIM_EmployeeTimesheetModel> lstTimesheetForSubTask = new List<TIM_EmployeeTimesheetModel>();
-                                    lstTimesheetForSubTask = BalEmpTimesheet.GetEmpTimesheetBySubTaskId(clientContext, item.SubTask);
-                                    if (lstTimesheetForSubTask.Count > 0)
+                                    if (item.AllTaskStatusName == "Completed")
                                     {
-                                        if (lstTimesheetForSubTask[0].RemainingHours.Split(':')[0] == "0" || lstTimesheetForSubTask[0].RemainingHours.Split(':')[0] == "00")
-                                        {
-                                            taskdata += " ,'SubTaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                                            string SubTaskUpdate = BalSubTask.UpdateSubTask(clientContext, taskdata, item.SubTask.ToString());
-                                            if (SubTaskUpdate == "Update")
-                                            {
-                                                List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-                                                lstSubTask = BalSubTask.GetSubTaskBySubTaskId(clientContext, item.SubTask);
-                                                if(lstSubTask.Count > 0)
-                                                {
-                                                    List<TIM_SubTaskModel> lstSubTaskCount = new List<TIM_SubTaskModel>();
-                                                    lstSubTaskCount = BalSubTask.GetSubTaskByTaskId(clientContext, lstSubTask[0].Task);
-                                                    if(lstSubTask.Count == 0)
-                                                    {
-                                                        taskdata += " ,'SubTaskStatus': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                                                        string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, lstSubTaskCount[0].Task.ToString());
-                                                        if(TaskUpdate == "Update")
-                                                        {
-                                                            UpdateAllStatus(taskdata, item, lstWorkFlowForApproveTimesheet);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        taskdata += " ,'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                        string SubTaskUpdate = BalSubTask.UpdateSubTask(clientContext, taskdata, item.SubTask.ToString());
                                     }
+                                    //List<TIM_EmployeeTimesheetModel> lstTimesheetForSubTask = new List<TIM_EmployeeTimesheetModel>();
+                                    //lstTimesheetForSubTask = BalEmpTimesheet.GetEmpTimesheetBySubTaskId(clientContext, item.SubTask);
+                                    //if (lstTimesheetForSubTask.Count > 0)
+                                    //{
+                                    //    if (lstTimesheetForSubTask[0].RemainingHours.Split(':')[0] == "0" || lstTimesheetForSubTask[0].RemainingHours.Split(':')[0] == "00")
+                                    //    {
+                                    //        taskdata += " ,'SubTaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                    //        string SubTaskUpdate = BalSubTask.UpdateSubTask(clientContext, taskdata, item.SubTask.ToString());
+                                    //        if (SubTaskUpdate == "Update")
+                                    //        {
+                                    //            List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+                                    //            lstSubTask = BalSubTask.GetSubTaskBySubTaskId(clientContext, item.SubTask);
+                                    //            if(lstSubTask.Count > 0)
+                                    //            {
+                                    //                List<TIM_SubTaskModel> lstSubTaskCount = new List<TIM_SubTaskModel>();
+                                    //                lstSubTaskCount = BalSubTask.GetSubTaskByTaskId(clientContext, lstSubTask[0].Task);
+                                    //                if(lstSubTask.Count == 0)
+                                    //                {
+                                    //                    taskdata += " ,'SubTaskStatus': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                    //                    string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, lstSubTaskCount[0].Task.ToString());
+                                    //                    if(TaskUpdate == "Update")
+                                    //                    {
+                                    //                        UpdateAllStatus(taskdata, item, lstWorkFlowForApproveTimesheet);
+                                    //                    }
+                                    //                }
+                                    //            }
+                                    //        }
+                                    //    }
+                                    //}
                                 }
                             }
                         }

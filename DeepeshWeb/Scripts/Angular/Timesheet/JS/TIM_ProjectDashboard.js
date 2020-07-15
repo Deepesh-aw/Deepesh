@@ -94,6 +94,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //$('.main-toggle').on('click', function () {
         //    $(this).toggleClass('on');
         //})
+
+        
     })
 
 

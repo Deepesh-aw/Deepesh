@@ -27,7 +27,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_StatusMasterModel> GetStatusForAction(ClientContext clientContext)
         {
             List<TIM_StatusMasterModel> lstStatus = new List<TIM_StatusMasterModel>();
-            string filter = "(StatusName eq 'Pending') or (StatusName eq 'Approved')";
+            string filter = "(StatusName eq 'Pending') or (StatusName eq 'Completed')";
             JArray jArray = RESTGet(clientContext, filter);
             foreach (JObject j in jArray)
             {

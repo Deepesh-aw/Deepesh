@@ -35,5 +35,10 @@ namespace DeepeshWeb.Models.Timesheet
         public string TimesheetID { get; set; }
         public string FromTime { get; set; }
         public string ToTime { get; set; }
+        public int AllTaskStatus { get; set; }
+        public string AllTaskStatusName { get; set; }
+        public string AllTaskInternalStatus { get; set; }
+
+
     }
 }

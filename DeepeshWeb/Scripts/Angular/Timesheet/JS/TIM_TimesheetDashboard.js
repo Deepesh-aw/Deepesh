@@ -79,7 +79,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 else {
                     var diff = moment.duration(tTo.diff(tFrom));
                     //var totalMin = diff.hours() * 60 + diff.minutes();
-                    $scope.ngtxtHours = diff.hours() + ':' + diff.minutes();
+                    $scope.ngtxtHours = diff.hours() + ':' + (diff.minutes() < 10 ? "0" : '') + diff.minutes();
                     $("#txtHours").val($scope.ngtxtHours);
                     $scope.ngtxtUtilizedHours = ExistUtilize;
                     $scope.GetRemainingHorus();
@@ -151,6 +151,8 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
             $timeout(function () {
                 $("#ddlClient").val('').trigger('change');
+                $("#ddlAllTaskStatus").val('').trigger('change');
+
             }, 10);
 
             Array.from(document.getElementsByClassName('parsley-success')).forEach(function (el) {
@@ -212,6 +214,10 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 if (response.data[1].length > 0) {
                     $scope.AllTaskArr = response.data[1];
                     $scope.ClientDetails = [...new Map($scope.AllTaskArr.map(item => [item['Client'], item])).values()];
+                    if ($scope.ClientDetails.length == 1)
+                        $timeout(function () {
+                            $("#ddlClient").val("number:" + $scope.ClientDetails[0].Client).trigger('change');
+                        })
                 }
 
                 if (response.data[2].length > 0)
@@ -298,7 +304,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             if (ExistUtilize != 0) {
                 $scope.ngtxtUtilizedHours = ExistUtilize;
                 $scope.ngtxtEstimatedHours = $scope.CurrentTask[0].NoOfDays * WorkingHour;
-                $scope.ngtxtEstimatedHours = $scope.ngtxtEstimatedHours + ":" + 0;
+                $scope.ngtxtEstimatedHours = $scope.ngtxtEstimatedHours + ":00";
                 $scope.GetRemainingHorus();
             }
             else {
@@ -312,7 +318,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                             $scope.ngtxtUtilizedHours = 0;
 
                         $scope.ngtxtEstimatedHours = $scope.CurrentTask[0].NoOfDays * WorkingHour;
-                        $scope.ngtxtEstimatedHours = $scope.ngtxtEstimatedHours +":" + 0;
+                        $scope.ngtxtEstimatedHours = $scope.ngtxtEstimatedHours +":00";
                         $scope.GetRemainingHorus();
                     }
 
@@ -431,6 +437,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         obj.ToTime = moment($scope.ngtxtTimesheetDate + $("#txtToTime").val(), 'DD-MM-YYYY hh:mm').format("MM-DD-YYYY hh:mm A");
         obj.FromTimeView = $("#txtFromTime").val();
         obj.ToTimeView = $("#txtToTime").val();
+        obj.AllTaskStatus = $scope.ngddlAllTaskStatus;
 
 
         if ($scope.CurrentTask[0].hasOwnProperty("SubTask"))
@@ -446,6 +453,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
         $timeout(function () {
             $("#ddlClient").val('').trigger('change');
+            $("#ddlAllTaskStatus").val('').trigger('change');
         }, 10);
 
         $("#txtFromTime").val('');
@@ -471,6 +479,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
         $timeout(function () {
             $("#ddlClient").val("number:" + $scope.TimesheetArr[i].Client).trigger('change');
+            $("#ddlAllTaskStatus").val( $scope.TimesheetArr[i].AllTaskStatus).trigger('change');
             $timeout(function () {
                 $("#ddlProjectName").val("number:" +$scope.TimesheetArr[i].Project).trigger('change');
                 $timeout(function () {
