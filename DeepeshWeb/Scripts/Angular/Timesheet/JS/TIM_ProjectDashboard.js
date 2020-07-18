@@ -172,6 +172,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                         .appendTo('#tblProject_wrapper .col-md-6:eq(0)');
                 }, 2);
             }
+            else {
+                $('#tblProject').DataTable({});
+            }
         });
     }
 
@@ -305,7 +308,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
        $rootScope.TaskProjectData = Project;
        $rootScope.TaskRow = row;
 
-        var Html = '<div><table class="table key-buttons text-md-nowrap " id="tblTask' + TaskID + '" style="width:82%" ><thead><tr><th scope="col" style="padding-left: 35px;">Task</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th><th scope="col">Action</th></tr></thead> <tbody>';
+        var Html = '<div><table class="table key-buttons text-md-nowrap " id="tblTask' + TaskID + '" style="width:82%" ><thead><tr><th scope="col" style="padding-left: 35px;">Task</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead> <tbody>';
         angular.forEach(response.data[1], function (value, key) {
             var i = key + 1;
             $scope["Task" + value.ID] = value;
@@ -315,7 +318,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             else
                 Html += '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
 
-            Html += '</span >' + value.Task + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td> ';
+            Html += '</span >' + value.Task + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td data-label="Status">' + value.TaskStatusName + '</td><td> ';
 
             if (value.InternalStatus == "TaskCreated") {
                 Html += '<i class="fa fa-plus text-primary mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Subtask" ng-click="OpenAddSubTaskPop(Task' + value.ID + ', TaskMilestone, TaskProjectData, TaskRow)"></i>';
@@ -424,11 +427,11 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     $scope.BindSubTask = function (response, row ) {
         var SubTaskID = response.data[1][0].ID;
-        var Html = '<div><table class="mg-b-0 text-md-nowrap" style="width:82%" id = "tblSubTask' + SubTaskID + '" ><thead><tr><th scope="col">SubTask</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th></tr></thead> <tbody>';
+        var Html = '<div><table class="mg-b-0 text-md-nowrap" style="width:82%" id = "tblSubTask' + SubTaskID + '" ><thead><tr><th scope="col">SubTask</th><th scope="col">Member</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th><th scope="col">Status</th></tr></thead> <tbody>';
         angular.forEach(response.data[1], function (value, key) {
             var i = key + 1;
             //Html += '<tr><td  >' + i + '';
-            Html += '<tr><td data-label="SubTask" id = "SubTask' + key + '">' + value.SubTask + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td></tr > ';
+            Html += '<tr><td data-label="SubTask" id = "SubTask' + key + '">' + value.SubTask + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td data-label="Status">' + value.SubTaskStatusName + '</td></tr > ';
         });
         Html += '</tbody></table></div>';
         row.child(Html).show();
@@ -681,6 +684,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Milestone = value.MileStone;
                     obj.Project = value.Project;
                     obj.InternalStatus = value.InternalStatus;
+                    obj.TaskStatusName = value.TaskStatusName;
                     obj.Status = value.Status;
                     obj.Client = value.Client;
                     obj.ClientName = value.ClientName;
@@ -755,6 +759,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Project = value.Project;
                     obj.InternalStatus = value.InternalStatus;
                     obj.Status = value.Status;
+                    obj.SubTaskStatusName = value.SubTaskStatusName;
                     obj.Client = value.Client;
                     obj.ClientName = value.ClientName;
                     obj.Delete = "No";
@@ -1176,7 +1181,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             $("#ddlMember").val(null).trigger('change.select2');
            // $("#ddlStatus").val(null).trigger('change.select2');
             $("#btnTaskCreation").text("Submit");
-
+            $('#txtTaskStartDate').attr('readonly', false);
            $rootScope.Task.length = 0;
         });
 

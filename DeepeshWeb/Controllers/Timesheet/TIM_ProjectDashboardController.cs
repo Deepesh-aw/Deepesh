@@ -484,7 +484,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'ProjectId': '" + item.Project + "'";
                     itemdata += " ,'Task': '" + item.Task + "'";
                     itemdata += " ,'ClientId': '" + item.Client + "'";
-                    itemdata += " ,'TaskStatusId': '" + lstPendingStatus[0].ID + "'";
 
                     //if (lstWorkFlow.Count > 0)
                     //{
@@ -496,6 +495,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     {
                         itemdata += " ,'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
                         itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
+                        itemdata += " ,'TaskStatusId': '" + lstPendingStatus[0].ID + "'";
+
                     }
                     else
                     {

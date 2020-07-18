@@ -182,7 +182,9 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
                 $scope.TimesheetData.length = $scope.TimesheetDataPending.length + $scope.TimesheetDataApproved.length;
 
-                $scope.TimeId = "TIM-" + Number($scope.TimesheetData.length) + 1;
+                var count = 1
+                count = count + Number($scope.TimesheetData.length);
+                $scope.TimeId = "TIM-" + count;
 
                 $('#Pending').DataTable().clear().destroy();
                 $('#Approved').DataTable().clear().destroy();
@@ -259,12 +261,19 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         $scope.TaskInfo = [];
         $scope.TaskInfo = $scope.AllTaskArr.filter(function (e, i) {
             if (e.MileStone == $scope.ngddlMilestone) {
-                if (e.hasOwnProperty("SubTask"))
+                if (e.hasOwnProperty("SubTask") && e.SubTaskStatusName != "Approved") {
                     $scope.AllTaskArr[i].AllTask = e.SubTask;
-                else
+                    return e.MileStone == $scope.ngddlMilestone;
+
+                }
+                else if (e.hasOwnProperty("Task") && e.TaskStatusName != "Approved") {
                     $scope.AllTaskArr[i].AllTask = e.Task;
+                    return e.MileStone == $scope.ngddlMilestone;
+
+                }
+
+
             }
-            return e.MileStone == $scope.ngddlMilestone;
         })
 
         $timeout(function () {
@@ -613,6 +622,9 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 }
 
                 $("#btnAddTimesheet").text("Update");
+                $timeout(function () {
+                    $("#ddlClient").val('').trigger('change');
+                }, 10);
                 $("#AddTimesheetPopUp").modal('show');
 
             }

@@ -58,6 +58,15 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstTIM_EmployeeTimesheet;
         }
 
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndDateFilter(ClientContext clientContext, int EmpId, string From, string To)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "EmployeeId eq " + EmpId + " and (TimesheetAddedDate ge '"+ From + "' and TimesheetAddedDate le '" + To + "')";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndApprove(ClientContext clientContext, int EmpId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
@@ -121,17 +130,17 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.AllTaskStatusName = j["AllTaskStatus"]["StatusName"] == null ? "" : j["AllTaskStatus"]["StatusName"].ToString();
                 data.AllTaskStatus = j["AllTaskStatus"]["ID"] == null ? 0 : Convert.ToInt32(j["AllTaskStatus"]["ID"]);
 
-                DateTime utcfrmdate = DateTime.ParseExact(Convert.ToString(j["FromTime"]), "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
-                var frmDate = TimeZoneInfo.ConvertTimeFromUtc(utcfrmdate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                //DateTime utcfrmdate = DateTime.ParseExact(Convert.ToString(j["FromTime"]), "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
+                //var frmDate = TimeZoneInfo.ConvertTimeFromUtc(utcfrmdate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
-                DateTime utctodate = DateTime.ParseExact(Convert.ToString(j["ToTime"]), "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                var toDate = TimeZoneInfo.ConvertTimeFromUtc(utctodate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                //DateTime utctodate = DateTime.ParseExact(Convert.ToString(j["ToTime"]), "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                //var toDate = TimeZoneInfo.ConvertTimeFromUtc(utctodate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
-                data.FromTime = frmDate.ToString();
-                data.ToTime = toDate.ToString();
+                //data.FromTime = frmDate.ToString();
+                //data.ToTime = toDate.ToString();
 
-                //data.FromTime = j["FromTime"] == null ? "" : Convert.ToString(j["FromTime"]);
-                //data.ToTime = j["ToTime"] == null ? "" : Convert.ToString(j["ToTime"]);
+                data.FromTime = j["FromTime"] == null ? "" : Convert.ToString(j["FromTime"]);
+                data.ToTime = j["ToTime"] == null ? "" : Convert.ToString(j["ToTime"]);
 
                 lstEmployeeTimesheet.Add(data);
             }

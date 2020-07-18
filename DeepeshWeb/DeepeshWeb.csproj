@@ -197,6 +197,7 @@
     <Compile Include="Controllers\TimeSheet\TIM_DashboardLandingController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_ManagerDashboardController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_TimesheetDashboardController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_TimesheetReportController.cs" />
     <Compile Include="Models\EmployeeManagement\Emp_DepartmentModel.cs" />
     <Compile Include="Models\GEN_ApproverMasterModel.cs" />
     <Compile Include="Models\GEN_ApproverRoleListModel.cs" />
@@ -8196,6 +8197,7 @@
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_MilestoneDetails.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_ProjectCreation.js" />
     <Content Include="Scripts\Angular\Timesheet\JS\TIM_TimesheetDashboard.js" />
+    <Content Include="Scripts\Angular\Timesheet\JS\TIM_TimesheetReport.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="assets\css\sidemenu.css.map" />
@@ -9200,6 +9202,7 @@
     <Content Include="Views\Partial\TIM_AddTimesheet.cshtml" />
     <Content Include="Views\TIM_ManagerDashboard\Index.cshtml" />
     <Content Include="Views\Partial\TIM_ViewTimesheet.cshtml" />
+    <Content Include="Views\TIM_TimesheetReport\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

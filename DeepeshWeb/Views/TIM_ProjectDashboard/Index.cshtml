@@ -435,6 +435,7 @@
                                                             <th class="border-bottom-0">Start Date</th>
                                                             <th class="border-bottom-0">End Date</th>
                                                             <th class="border-bottom-0">Days</th>
+                                                            <th class="border-bottom-0">Status</th>
                                                             <th class="border-bottom-0">Action</th>
                                                         </tr>
                                                     </thead>
@@ -459,6 +460,7 @@
                                                             <td>{{DateFormat(item.StartDate)}}</td>
                                                             <td>{{DateFormat(item.EndDate)}}</td>
                                                             <td>{{item.NoOfDays}}</td>
+                                                            <td>{{item.TaskStatusName}}</td>
                                                             <td>
                                                                 <span ng-if="item.InternalStatus == 'TaskCreated'">
                                                                     <i class="fa fa-plus text-primary mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Subtask" ng-click="OpenAddSubTaskPopMain(item)"></i>

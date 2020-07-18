@@ -32,7 +32,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_SubTaskModel> GetSubTaskByTaskId(ClientContext clientContext, int TaskId)
         {
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-            string filter = "TaskId eq " + TaskId + " and InternalStatus ne 'SubTaskDeleted' and InternalStatus ne 'ProjectDeleted' and InternalStatus ne 'Approved'";
+            string filter = "TaskId eq " + TaskId + " and InternalStatus ne 'SubTaskDeleted' and InternalStatus ne 'ProjectDeleted' ";
             JArray jArray = RESTGet(clientContext, filter);
             lstSubTask = BindList(jArray);
             return lstSubTask;

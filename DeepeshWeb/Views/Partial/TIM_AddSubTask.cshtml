@@ -212,7 +212,7 @@
                                                 <td data-label="Days">{{t.NoOfDays}}</td>
                                                 @*<td data-label="Status">{{t.StatusName}}</td>*@
                                                 <td data-label="Action">
-                                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Edit" ng-click="EditSubTask($index)"></i>&nbsp;
+                                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Edit" ng-click="EditSubTask($index)" ng-hide="t.SubTaskStatusName == 'Approved'"></i>&nbsp;
                                                     <i class="si si-trash text-danger mr-2" data-toggle="tooltip"  data-placement="top" data-original-title="Delete" ng-click="DeleteSubTask($index)" ng-hide="t.Delete == 'No'"></i>
                                                 </td>
                                             </tr>

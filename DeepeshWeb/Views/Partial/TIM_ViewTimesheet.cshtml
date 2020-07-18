@@ -95,8 +95,8 @@
                                                     <td>{{t.ClientName}}</td>
                                                     <td>{{t.ProjectName}}</td>
                                                     <td>{{t.MileStoneName}}</td>
-                                                    <td ng-show="t.Task != 0">{{t.Task}}</td>
-                                                    <td ng-show="t.SubTask != 0">{{t.SubTask}}</td>
+                                                    <td ng-show="t.Task != 0">{{t.TaskName}}</td>
+                                                    <td ng-show="t.SubTask != 0">{{t.SubTaskName}}</td>
                                                     <td>{{TimeFormat(t.FromTime)}}</td>
                                                     <td>{{TimeFormat(t.ToTime)}}</td>
                                                     <td>{{t.AllTaskStatusName}}</td>
@@ -115,7 +115,7 @@
                         </div>
                     </div>
 
-                    <div class="row row-sm">
+                    <div class="row row-sm" ng-hide="Report">
                         <div class="col-xl-12">
                             <div class="card">
                                 <div class="card-body">
@@ -137,19 +137,23 @@
                     </div>
 
                 </div>
-                <div class="modal-footer justify-content-center">
+                <div class="modal-footer justify-content-center" ng-hide="Report">
                     <button type="button" class="btn btn-primary" id="btnApproveTimesheet" ng-hide="ApproveLoad" ng-click="FinalApproveTimesheet('Approve')">Approve</button>
                     <button class="btn btn-primary" type="button" ng-show="ApproveLoad" disabled>
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         Please wait...
                     </button>
-                    <button type="button" class="btn btn-secondary" id="btRejectTimesheet" ng-hide="RejectLoad" ng-click="FinalApproveTimesheet('Reject')">Reject</button>
-                    <button class="btn btn-primary" type="button" ng-show="RejectLoad" disabled>
+                    <button type="button" class="btn btn-danger" id="btRejectTimesheet" ng-hide="RejectLoad" ng-click="FinalApproveTimesheet('Reject')">Reject</button>
+                    <button class="btn btn-danger" type="button" ng-show="RejectLoad" disabled>
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         Please wait...
                     </button>
 
-                    @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>*@
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-footer justify-content-center" ng-show="Report">
+                    
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

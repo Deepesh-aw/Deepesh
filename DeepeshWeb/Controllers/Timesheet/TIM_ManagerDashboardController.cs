@@ -70,8 +70,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     {
                         List<TIM_WorkFlowMasterModel> lstWorkFlowForApproveTimesheet = new List<TIM_WorkFlowMasterModel>();
                         lstWorkFlowForApproveTimesheet = BalWorkflow.GetWorkFlowForTimesheetApprove(clientContext);
-                        string taskdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                        taskdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
+                        //string taskdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                        //taskdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
                         int i = 0;
                         foreach (var item in TimesheetData)
                         {
@@ -87,7 +87,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                 {
                                     if(item.AllTaskStatusName == "Completed")
                                     {
-                                        taskdata += " ,'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                        var taskdata = "'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
                                         string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, item.Task.ToString());
                                     }
                                     //List<TIM_EmployeeTimesheetModel> lstTimesheetForTask = new List<TIM_EmployeeTimesheetModel>();
@@ -116,7 +116,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                 {
                                     if (item.AllTaskStatusName == "Completed")
                                     {
-                                        taskdata += " ,'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                        var taskdata = "'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
                                         string SubTaskUpdate = BalSubTask.UpdateSubTask(clientContext, taskdata, item.SubTask.ToString());
                                     }
                                     //List<TIM_EmployeeTimesheetModel> lstTimesheetForSubTask = new List<TIM_EmployeeTimesheetModel>();
