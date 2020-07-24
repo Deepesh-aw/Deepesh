@@ -108,8 +108,8 @@
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="txtTimesheetDate">Project</label>
-                                        <div id="ProjecttType" class="parsley-select">
-                                            <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect" ng-change="MilestoneDetails()" data-parsley-class-handler="#ProjecttType" data-parsley-errors-container="#ProjectError" required="">
+                                        <div id="ProjectType" class="parsley-select" ng-hide="OtherClient">
+                                            <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect NormalValidate" ng-change="MilestoneDetails()" data-parsley-class-handler="#ProjecttType" data-parsley-errors-container="#ProjectError" >
                                                 <option></option>
                                                 @*@{
                                         var Project = 0;
@@ -127,15 +127,16 @@
                                     }*@
                                             </select>
                                         </div>
-                                        <div id="ProjectError"></div>
-
+                                        <div ng-hide="OtherClient" id="ProjectError"></div>
+                                        <input ng-show="OtherClient" type="text" class="form-control otherValidate"  ng-model="ngtxtProject" id="txtProject">
                                     </div>
                                 </div>
+                                
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="txtTimesheetDate">Milestone</label>
-                                        <div id="MileType" class="parsley-select">
-                                            <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect" ng-change="TaskDetails()" data-parsley-class-handler="#MileType" data-parsley-errors-container="#MileError" required="">
+                                        <div id="MileType" class="parsley-select" ng-hide="OtherClient">
+                                            <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect NormalValidate" ng-change="TaskDetails()" data-parsley-class-handler="#MileType" data-parsley-errors-container="#MileError">
                                                 <option></option>
                                                 @*@{
                                         var MileStone = 0;
@@ -153,8 +154,8 @@
                                     }*@
                                             </select>
                                         </div>
-                                        <div id="MileError"></div>
-
+                                        <div id="MileError" ng-hide="OtherClient"></div>
+                                        <span ng-show="OtherClient"><input type="text" class="form-control otherValidate" ng-model="ngtxtMilestone" id="txtMilestone" /></span>
                                     </div>
                                 </div>
                             </div>
@@ -188,8 +189,8 @@
                                                 <tr>
 
                                                     <td style="width:15%">
-                                                        <div id="TaskType" class="parsley-select">
-                                                            <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect" ng-change="GetPrevTimesheet()" data-parsley-class-handler="#TaskType" data-parsley-errors-container="#TaskError" required="">
+                                                        <div id="TaskType" class="parsley-select" ng-hide="OtherClient">
+                                                            <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect NormalValidate" ng-change="GetPrevTimesheet()" data-parsley-class-handler="#TaskType" data-parsley-errors-container="#TaskError">
                                                                 <option></option>
                                                                 @*@foreach (var item in ViewBag.AllTask)
                                                     {
@@ -211,7 +212,11 @@
                                                     }*@
                                                             </select>
                                                         </div>
-                                                        <div id="TaskError"></div>
+                                                        <div id="TaskError" ng-hide="OtherClient"></div>
+
+                                                        <div ng-show="OtherClient">
+                                                            <input type="text" class="form-control otherValidate"  ng-model="ngtxtTask" id="txtTask">
+                                                        </div>
                                                     </td>
                                                     <td style="width:12%">
                                                         <div class="input-group">

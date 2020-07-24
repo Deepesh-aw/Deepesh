@@ -230,7 +230,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 Html += '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
             }
 
-            Html += '</span >' + value.MileStone + '</td><td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td>';
+            Html += '</span >' + value.MileStone + '</td><td data-label="Start Date">' + value.StartDate + '</td> <td data-label="Estimated End Date">' + value.EndDate + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td>';
 
             if (value.InternalStatus == "MilestoneCreated")
                 Html += '<i class="fa fa-plus text-primary mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Task"  ng-click="OpenAddTaskPop(Mile' + value.ID + ', Project, MileRow)"></i>';
@@ -318,7 +318,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             else
                 Html += '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
 
-            Html += '</span >' + value.Task + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td data-label="Status">' + value.TaskStatusName + '</td><td> ';
+            Html += '</span >' + value.Task + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate + '</td> <td data-label="Estimated End Date">' + value.EndDate + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td data-label="Status">' + value.TaskStatusName + '</td><td> ';
 
             if (value.InternalStatus == "TaskCreated") {
                 Html += '<i class="fa fa-plus text-primary mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Add Subtask" ng-click="OpenAddSubTaskPop(Task' + value.ID + ', TaskMilestone, TaskProjectData, TaskRow)"></i>';
@@ -431,7 +431,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         angular.forEach(response.data[1], function (value, key) {
             var i = key + 1;
             //Html += '<tr><td  >' + i + '';
-            Html += '<tr><td data-label="SubTask" id = "SubTask' + key + '">' + value.SubTask + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate.split(" ")[0] + '</td> <td data-label="Estimated End Date">' + value.EndDate.split(" ")[0] + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td data-label="Status">' + value.SubTaskStatusName + '</td></tr > ';
+            Html += '<tr><td data-label="SubTask" id = "SubTask' + key + '">' + value.SubTask + '</td> <td data-label="Member">' + value.MembersName + '</td> <td data-label="Start Date">' + value.StartDate + '</td> <td data-label="Estimated End Date">' + value.EndDate + '</td> <td data-label="Days">' + value.NoOfDays + '</td><td data-label="Status">' + value.SubTaskStatusName + '</td></tr > ';
         });
         Html += '</tbody></table></div>';
         row.child(Html).show();

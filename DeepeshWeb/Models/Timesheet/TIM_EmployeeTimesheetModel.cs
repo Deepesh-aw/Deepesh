@@ -39,6 +39,10 @@ namespace DeepeshWeb.Models.Timesheet
         public string AllTaskStatusName { get; set; }
         public string AllTaskInternalStatus { get; set; }
 
+        public string OtherClient { get; set; }
+        public string OtherProject { get; set; }
+        public string OtherMilestone { get; set; }
+        public string OtherTask { get; set; }
 
     }
 }

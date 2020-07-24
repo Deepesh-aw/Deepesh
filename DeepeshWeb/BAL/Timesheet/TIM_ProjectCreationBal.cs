@@ -62,9 +62,16 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.ProjectType = j["ProjectType"]["ID"] == null ? 0 : Convert.ToInt32(j["ProjectType"]["ID"].ToString());
                 data.ProjectManagerName = j["ProjectManager"]["FirstName"] == null ? "" : j["ProjectManager"]["FirstName"].ToString() + " " + j["ProjectManager"]["LastName"].ToString();
                 data.ClientProjectManager = j["ClientProjectManager"] == null ? "" : Convert.ToString(j["ClientProjectManager"]);
-                data.StartDate = j["StartDate"] == null ? "" : Convert.ToString(j["StartDate"]);
+                //data.StartDate = j["StartDate"] == null ? "" : Convert.ToString(j["StartDate"]);
                 data.Modified = j["Modified"] == null ? (DateTime?)null : Convert.ToDateTime(j["Modified"]);
-                data.EndDate = j["EndDate"] == null ? "" : Convert.ToString(j["EndDate"]);
+                //data.EndDate = j["EndDate"] == null ? "" : Convert.ToString(j["EndDate"]);
+
+                DateTime dt = Convert.ToDateTime(j["StartDate"]);
+                data.StartDate = dt.ToString("dd-MM-yyyy");
+
+                DateTime dtend = Convert.ToDateTime(j["EndDate"]);
+                data.EndDate = dtend.ToString("dd-MM-yyyy");
+
                 data.NoOfDays = j["NoOfDays"] == null ? 0 : Convert.ToInt32(j["NoOfDays"]);
                 data.Description = j["Description"] == null ? "" : Convert.ToString(j["Description"]);
                 data.InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"]);

@@ -401,8 +401,8 @@
                                                                 </span>
                                                                 {{item.ProjectName}}
                                                             </td>
-                                                            <td>{{DateFormat(item.StartDate)}}</td>
-                                                            <td>{{DateFormat(item.EndDate)}}</td>
+                                                            <td>{{item.StartDate}}</td>
+                                                            <td>{{item.EndDate}}</td>
                                                             <td>{{item.Description}}</td>
                                                             <td>
                                                                 <span ng-if="item.InternalStatus == 'ProjectCreated'">
@@ -457,8 +457,8 @@
                                                                 {{item.Task}}
                                                             </td>
                                                             <td>{{item.MembersName}}</td>
-                                                            <td>{{DateFormat(item.StartDate)}}</td>
-                                                            <td>{{DateFormat(item.EndDate)}}</td>
+                                                            <td>{{item.StartDate}}</td>
+                                                            <td>{{item.EndDate}}</td>
                                                             <td>{{item.NoOfDays}}</td>
                                                             <td>{{item.TaskStatusName}}</td>
                                                             <td>

@@ -79,7 +79,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByAllTaskId(ClientContext clientContext, int AllTaskId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "(TaskId eq " + AllTaskId + " or  SubTaskId eq " + AllTaskId + " ) and  InternalStatus ne 'Approved'";
+            string filter = "(TaskId eq " + AllTaskId + " or  SubTaskId eq " + AllTaskId + " )";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -130,17 +130,33 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.AllTaskStatusName = j["AllTaskStatus"]["StatusName"] == null ? "" : j["AllTaskStatus"]["StatusName"].ToString();
                 data.AllTaskStatus = j["AllTaskStatus"]["ID"] == null ? 0 : Convert.ToInt32(j["AllTaskStatus"]["ID"]);
 
-                //DateTime utcfrmdate = DateTime.ParseExact(Convert.ToString(j["FromTime"]), "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
-                //var frmDate = TimeZoneInfo.ConvertTimeFromUtc(utcfrmdate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                DateTime dt = Convert.ToDateTime(j["FromTime"]);
+                string frm = dt.ToString("dd-MM-yyyy hh:mm:ss tt");
+
+                DateTime utcfrmdate = DateTime.ParseExact(frm, "dd-MM-yyyy hh:mm:ss tt", CultureInfo.InvariantCulture);
+                DateTime frmDate = TimeZoneInfo.ConvertTimeFromUtc(utcfrmdate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                var frmDateFinal = frmDate.ToString("dd-MM-yyyy HH:mm:ss");
+
+                DateTime dtTo = Convert.ToDateTime(j["ToTime"]);
+                string to = dtTo.ToString("dd-MM-yyyy hh:mm:ss tt");
+
+                DateTime utctodate = DateTime.ParseExact(to, "dd-MM-yyyy hh:mm:ss tt", CultureInfo.InvariantCulture);
+                DateTime toDate = TimeZoneInfo.ConvertTimeFromUtc(utctodate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                var toDateFinal = toDate.ToString("dd-MM-yyyy HH:mm:ss");
 
                 //DateTime utctodate = DateTime.ParseExact(Convert.ToString(j["ToTime"]), "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                 //var toDate = TimeZoneInfo.ConvertTimeFromUtc(utctodate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
-                //data.FromTime = frmDate.ToString();
-                //data.ToTime = toDate.ToString();
+                data.FromTime = frmDateFinal.ToString();
+                data.ToTime = toDateFinal.ToString();
 
-                data.FromTime = j["FromTime"] == null ? "" : Convert.ToString(j["FromTime"]);
-                data.ToTime = j["ToTime"] == null ? "" : Convert.ToString(j["ToTime"]);
+                //data.FromTime = j["FromTime"] == null ? "" : Convert.ToString(j["FromTime"]);
+                //data.ToTime = j["ToTime"] == null ? "" : Convert.ToString(j["ToTime"]);
+
+                data.OtherClient = j["OtherClient"] == null ? "" : Convert.ToString(j["OtherClient"]);
+                data.OtherMilestone = j["OtherMilestone"] == null ? "" : Convert.ToString(j["OtherMilestone"]);
+                data.OtherProject = j["OtherProject"] == null ? "" : Convert.ToString(j["OtherProject"]);
+                data.OtherTask = j["OtherTask"] == null ? "" : Convert.ToString(j["OtherTask"]);
 
                 lstEmployeeTimesheet.Add(data);
             }
@@ -155,7 +171,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID";
+            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID,OtherClient,OtherMilestone,OtherProject,OtherTask";
             rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status,Client,AllTaskStatus";
             rESTOption.orderby = "ID desc";
             rESTOption.top = "5000";

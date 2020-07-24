@@ -51,8 +51,15 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.InternalStatus = j["InternalStatus"] == null ? "" : Convert.ToString(j["InternalStatus"]);
                 data.MileStone = j["MileStone"] == null ? "" : Convert.ToString(j["MileStone"]);
                 data.Description = j["Description"] == null ? "" : Convert.ToString(j["Description"]);
-                data.StartDate = j["StartDate"] == null ? "" : Convert.ToString(j["StartDate"]);
-                data.EndDate = j["EndDate"] == null ? "" : Convert.ToString(j["EndDate"]);
+                //data.StartDate = j["StartDate"] == null ? "" : Convert.ToString(j["StartDate"]);
+                //data.EndDate = j["EndDate"] == null ? "" : Convert.ToString(j["EndDate"]);
+
+                DateTime dt = Convert.ToDateTime(j["StartDate"]);
+                data.StartDate = dt.ToString("dd-MM-yyyy");
+
+                DateTime dtend = Convert.ToDateTime(j["EndDate"]);
+                data.EndDate = dtend.ToString("dd-MM-yyyy");
+
                 data.NoOfDays = j["NoOfDays"] == null ? 0 : Convert.ToInt32(j["NoOfDays"]);
                 data.StatusName = j["Status"]["StatusName"] == null ? "" : j["Status"]["StatusName"].ToString();
                 data.ProjectName = j["Project"]["ProjectName"] == null ? "" : j["Project"]["ProjectName"].ToString();

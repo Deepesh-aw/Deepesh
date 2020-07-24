@@ -155,7 +155,12 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'TimesheetID': '" + item.TimesheetID + "'";
                     itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
                     itemdata += " ,'InternalStatus': '"+ InternalStatus + "'";
-                    
+
+                    itemdata += " ,'OtherClient': '" + item.OtherClient + "'";
+                    itemdata += " ,'OtherProject': '" + item.OtherProject + "'";
+                    itemdata += " ,'OtherMilestone': '" + item.OtherMilestone + "'";
+                    itemdata += " ,'OtherTask': '" + item.OtherTask + "'";
+
                     returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
                         if (Convert.ToInt32(returnID) > 0)
                             i++;
