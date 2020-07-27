@@ -604,9 +604,9 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         if ($scope.TimesheetArr.length > 0) {
             $scope.TimesheetLoad = true;
 
-            if ($scope.EditTimesheetArr.length > 0) {
-                $scope.ClearPrev();
-            }
+            //if ($scope.EditTimesheetArr.length > 0) {
+            //    $scope.ClearPrev();
+            //}
             
 
             var data = {
@@ -629,20 +629,20 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
     }
 
-    $scope.ClearPrev = function () {
-        var data = {
-            'ClearTimesheet': $scope.EditTimesheetArr,
-        }
+    //$scope.ClearPrev = function () {
+    //    var data = {
+    //        'ClearTimesheet': $scope.EditTimesheetArr,
+    //    }
 
-        CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/ClearTimesheet", data).then(function (response) {
-            if (response.data[0] == "OK") {
+    //    CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/ClearTimesheet", data).then(function (response) {
+    //        if (response.data[0] == "OK") {
 
-            }
-            else {
-                return false;
-            }
-        });
-    }
+    //        }
+    //        else {
+    //            return false;
+    //        }
+    //    });
+    //}
 
     $scope.DateFormat = function (d) {
         if (d != undefined || d != null) {
@@ -699,15 +699,16 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                         obj.AllTask = value.OtherTask;
                     }
                     obj.ID = value.ID;
+                    obj.AllTaskStatus = value.AllTaskStatus
                     obj.Description = value.Description;
                     obj.Hours = value.Hours;
                     obj.EstimatedHours = value.EstimatedHours;
                     obj.UtilizedHours = value.UtilizedHours;
                     obj.RemainingHours = value.RemainingHours;
                     obj.TimesheetID = value.TimesheetID;
-                    obj.TimesheetAddedDate = value.TimesheetAddedDate;
-                    obj.FromTime = value.FromTime;
-                    obj.ToTime = value.ToTime;
+                    obj.TimesheetAddedDate = moment(value.TimesheetAddedDate, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm:ss");
+                    obj.FromTime = moment(value.FromTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
+                    obj.ToTime = moment(value.ToTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
                     obj.FromTimeView = moment(value.FromTime, ["dd-MM-yyyy h:mm:ss"]).format("HH:mm");
                     obj.ToTimeView = moment(value.ToTime, ["dd-MM-yyyy h:mm:ss"]).format("HH:mm");
 

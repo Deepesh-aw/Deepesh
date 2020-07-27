@@ -135,9 +135,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 string returnID = "0";
                 foreach (var item in EmpTimesheet)
                 {
-                    string itemdata = " 'MileStoneId': '" + item.MileStone + "'";
+                    string itemdata = " 'Description': '" + item.Description + "'";
 
-                    itemdata += " ,'Description': '" + item.Description + "'";
                     itemdata += " ,'Hours': '" + item.Hours + "'";
                     itemdata += " ,'EstimatedHours': '" + item.EstimatedHours + "'";
                     itemdata += " ,'UtilizedHours': '" + item.UtilizedHours + "'";
@@ -147,10 +146,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'ManagerId': '" + lstApprover[0].ID + "'";
                     itemdata += " ,'FromTime': '" + item.FromTime + "'";
                     itemdata += " ,'ToTime': '" + item.ToTime + "'";
-                    itemdata += " ,'ProjectId': '" + item.Project + "'";
-                    itemdata += " ,'TaskId': '" + item.Task + "'";
-                    itemdata += " ,'SubTaskId': '" + item.SubTask + "'";
-                    itemdata += " ,'ClientId': '" + item.Client + "'";
                     itemdata += " ,'AllTaskStatusId': '" + item.AllTaskStatus + "'";
                     itemdata += " ,'TimesheetID': '" + item.TimesheetID + "'";
                     itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
@@ -161,10 +156,24 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     itemdata += " ,'OtherMilestone': '" + item.OtherMilestone + "'";
                     itemdata += " ,'OtherTask': '" + item.OtherTask + "'";
 
-                    returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
+                    if (item.ID > 0)
+                    {
+                        returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
+                        if (returnID == "Update")
+                            i++;
+                    }
+                    else
+                    {
+                        itemdata += " ,'ProjectId': '" + item.Project + "'";
+                        itemdata += " ,'TaskId': '" + item.Task + "'";
+                        itemdata += " ,'SubTaskId': '" + item.SubTask + "'";
+                        itemdata += " ,'ClientId': '" + item.Client + "'";
+                        itemdata += " ,'MileStoneId': '" + item.MileStone + "'";
+                        returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
                         if (Convert.ToInt32(returnID) > 0)
                             i++;
-
+                    }
+                    
                 }
                 
                 if (i == EmpTimesheet.Count)
@@ -196,26 +205,26 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        [ActionName("ClearTimesheet")]
-        public JsonResult ClearTimesheet( List<TIM_EmployeeTimesheetModel> ClearTimesheet)
-        {
-            List<object> obj = new List<object>();
-            int i = 0;
-            string returnID = "0";
-            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
-            {
-                foreach (var item in ClearTimesheet)
-                {
-                    returnID = BalEmpTimesheet.DeleteTimesheet(clientContext,item.ID.ToString());
-                    if(returnID == "Delete")
-                        i++;
-                }
-                if (i == ClearTimesheet.Count)
-                    obj.Add("OK");
-            }
-            return Json(obj, JsonRequestBehavior.AllowGet);
-        }
+        //[HttpPost]
+        //[ActionName("ClearTimesheet")]
+        //public JsonResult ClearTimesheet( List<TIM_EmployeeTimesheetModel> ClearTimesheet)
+        //{
+        //    List<object> obj = new List<object>();
+        //    int i = 0;
+        //    string returnID = "0";
+        //    var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+        //    using (var clientContext = spContext.CreateUserClientContextForSPHost())
+        //    {
+        //        foreach (var item in ClearTimesheet)
+        //        {
+        //            returnID = BalEmpTimesheet.DeleteTimesheet(clientContext,item.ID.ToString());
+        //            if(returnID == "Delete")
+        //                i++;
+        //        }
+        //        if (i == ClearTimesheet.Count)
+        //            obj.Add("OK");
+        //    }
+        //    return Json(obj, JsonRequestBehavior.AllowGet);
+        //}
     }
 }
