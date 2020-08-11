@@ -4,6 +4,14 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
     $scope.CurrentTimesheet = [];
 
     $scope.TimesheetLoad = function () {
+        $(".overlay").hide();
+        $('input,select,textarea').keypress(function () {
+            if ($(this).hasClass("parsley-error")) {
+                $(this).removeClass("parsley-error");
+                $(this).addClass("parsley-success");
+                $(this).next().remove();
+            }
+        });
         CommonAppUtilityService.CreateItem("/TIM_ManagerDashboard/LoadTimesheetData", "").then(function (response) {
             if (response.data[0] == "OK") {
 
@@ -69,7 +77,21 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
         }
     }
 
+    function clearErrorClass() {
+        $('textarea').removeClass("parsley-success");
+        $('textarea').removeClass("parsley-error");
+        $(".parsley-errors-list").remove();
+    }
+
     $scope.FinalApproveTimesheet = function (Action) {
+        clearErrorClass();
+        if ($scope.ngRemark == undefined || $scope.ngRemark == null || $scope.ngRemark == "") {
+            $("#txtRemark").addClass("parsley-error");
+            $("#txtRemark").parent().append("<li class='parsley-required parsley-errors-list filled erralign'>This value is required.</li>");
+            return false;
+        }
+
+        $(".overlay").show();
         if (Action == "Approve") 
             $scope.ApproveLoad = true;
         else
@@ -86,6 +108,9 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
                 $scope.RejectLoad = false;
                 $scope.ApproveLoad = false;
                 $("#ViewTimesheetPopUp").modal("hide");
+                $(".overlay").hide();
+                clearErrorClass();
+                $scope.ngRemark = "";
             }
         });
 

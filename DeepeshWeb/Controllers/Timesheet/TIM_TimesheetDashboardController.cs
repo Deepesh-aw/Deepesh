@@ -126,58 +126,67 @@ namespace DeepeshWeb.Controllers.TimeSheet
             int i = 0;
             string InternalStatus = "Pending";
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            try
             {
-                List<TIM_StatusMasterModel> lstPendingStatus = new List<TIM_StatusMasterModel>();
-                lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
-                List<GEN_ApproverRoleNameModel> lstApprover = BalApprover.getApproverData(clientContext, BalEmp.GetEmpCodeByLogIn(clientContext), "Timesheet", "Main");
-
-                string returnID = "0";
-                foreach (var item in EmpTimesheet)
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    string itemdata = " 'Description': '" + item.Description + "'";
+                    List<TIM_StatusMasterModel> lstPendingStatus = new List<TIM_StatusMasterModel>();
+                    lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
+                    List<GEN_ApproverRoleNameModel> lstApprover = BalApprover.getApproverData(clientContext, BalEmp.GetEmpCodeByLogIn(clientContext), "Timesheet", "Main");
 
-                    itemdata += " ,'Hours': '" + item.Hours + "'";
-                    itemdata += " ,'EstimatedHours': '" + item.EstimatedHours + "'";
-                    itemdata += " ,'UtilizedHours': '" + item.UtilizedHours + "'";
-                    itemdata += " ,'RemainingHours': '" + item.RemainingHours + "'";
-                    itemdata += " ,'TimesheetAddedDate': '" + item.TimesheetAddedDate + "'";
-                    itemdata += " ,'EmployeeId': '" + BalEmp.GetEmpByLogIn(clientContext) + "'";
-                    itemdata += " ,'ManagerId': '" + lstApprover[0].ID + "'";
-                    itemdata += " ,'FromTime': '" + item.FromTime + "'";
-                    itemdata += " ,'ToTime': '" + item.ToTime + "'";
-                    itemdata += " ,'AllTaskStatusId': '" + item.AllTaskStatus + "'";
-                    itemdata += " ,'TimesheetID': '" + item.TimesheetID + "'";
-                    itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
-                    itemdata += " ,'InternalStatus': '"+ InternalStatus + "'";
-
-                    itemdata += " ,'OtherClient': '" + item.OtherClient + "'";
-                    itemdata += " ,'OtherProject': '" + item.OtherProject + "'";
-                    itemdata += " ,'OtherMilestone': '" + item.OtherMilestone + "'";
-                    itemdata += " ,'OtherTask': '" + item.OtherTask + "'";
-
-                    if (item.ID > 0)
+                    string returnID = "0";
+                    foreach (var item in EmpTimesheet)
                     {
-                        returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
-                        if (returnID == "Update")
-                            i++;
+                        string itemdata = " 'Description': '" + item.Description + "'";
+
+                        itemdata += " ,'Hours': '" + item.Hours + "'";
+                        itemdata += " ,'EstimatedHours': '" + item.EstimatedHours + "'";
+                        itemdata += " ,'UtilizedHours': '" + item.UtilizedHours + "'";
+                        itemdata += " ,'RemainingHours': '" + item.RemainingHours + "'";
+                        itemdata += " ,'TimesheetAddedDate': '" + item.TimesheetAddedDate + "'";
+                        itemdata += " ,'EmployeeId': '" + BalEmp.GetEmpByLogIn(clientContext) + "'";
+                        itemdata += " ,'ManagerId': '" + lstApprover[0].ID + "'";
+                        itemdata += " ,'FromTime': '" + item.FromTime + "'";
+                        itemdata += " ,'ToTime': '" + item.ToTime + "'";
+                        itemdata += " ,'AllTaskStatusId': '" + item.AllTaskStatus + "'";
+                        itemdata += " ,'TimesheetID': '" + item.TimesheetID + "'";
+                        itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
+                        itemdata += " ,'InternalStatus': '" + InternalStatus + "'";
+
+                        itemdata += " ,'OtherClient': '" + item.OtherClient + "'";
+                        itemdata += " ,'OtherProject': '" + item.OtherProject + "'";
+                        itemdata += " ,'OtherMilestone': '" + item.OtherMilestone + "'";
+                        itemdata += " ,'OtherTask': '" + item.OtherTask + "'";
+
+                        if (item.ID > 0)
+                        {
+                            returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
+                            if (returnID == "Update")
+                                i++;
+                        }
+                        else
+                        {
+                            itemdata += " ,'ProjectId': '" + item.Project + "'";
+                            itemdata += " ,'TaskId': '" + item.Task + "'";
+                            itemdata += " ,'SubTaskId': '" + item.SubTask + "'";
+                            itemdata += " ,'ClientId': '" + item.Client + "'";
+                            itemdata += " ,'MileStoneId': '" + item.MileStone + "'";
+                            returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
+                            if (Convert.ToInt32(returnID) > 0)
+                                i++;
+                        }
+
                     }
-                    else
-                    {
-                        itemdata += " ,'ProjectId': '" + item.Project + "'";
-                        itemdata += " ,'TaskId': '" + item.Task + "'";
-                        itemdata += " ,'SubTaskId': '" + item.SubTask + "'";
-                        itemdata += " ,'ClientId': '" + item.Client + "'";
-                        itemdata += " ,'MileStoneId': '" + item.MileStone + "'";
-                        returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
-                        if (Convert.ToInt32(returnID) > 0)
-                            i++;
-                    }
-                    
+
+                    if (i == EmpTimesheet.Count)
+                        obj.Add("OK");
                 }
-                
-                if (i == EmpTimesheet.Count)
-                    obj.Add("OK");
+            }
+            catch (Exception ex)
+            {
+                obj.Add("ERROR");
+                return Json(obj, JsonRequestBehavior.AllowGet);
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }

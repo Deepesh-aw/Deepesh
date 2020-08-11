@@ -18,7 +18,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     $scope.ValidateField = true;
 
     $(function () {
-
+        $(".overlay").hide();
         //$scope.OnLoad();
 
         //$('#Pending').DataTable({
@@ -603,7 +603,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     $scope.FinalAddTimesheet = function () {
         if ($scope.TimesheetArr.length > 0) {
             $scope.TimesheetLoad = true;
-
+            $(".overlay").show();
             //if ($scope.EditTimesheetArr.length > 0) {
             //    $scope.ClearPrev();
             //}
@@ -621,11 +621,16 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     $scope.OnLoad();
                     $scope.TimesheetLoad = false;
                     $("#AddTimesheetPopUp").modal("hide");
+                    $(".overlay").hide();
+                }
+                else {
+                    $scope.TimesheetLoad = false;
+                    $(".overlay").hide();
                 }
             });
         }
         else {
-
+            alert("Please add at least one record");
         }
     }
 

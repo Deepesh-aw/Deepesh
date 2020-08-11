@@ -18,6 +18,17 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     $(function () {
 
+        $(".overlay").hide();
+
+        $('input').on("input", function () {
+            //alert(this.id);
+            if (this.value.length > 220) {
+                alert("Maximum length for the field is 220 characters.");
+                $("#" + this.id).val(this.value.slice(0, -1));
+                return false;
+            }
+        });
+
         $(".AddProjectSelect2").select2({
             placeholder: 'Choose one',
             searchInputPlaceholder: 'Search',
@@ -562,6 +573,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     function AddProject() {
         $scope.ProjectCreationLoad = true;
+        $(".overlay").show();
+        
         var MembersText = $("#ddlMembers option:selected").map(function () { return this.text }).get().join(', ');
         var MembersCode = $("#ddlMembers option:selected").map(function () { return this.id }).get().join(', ');
         //var data = $("#frmProjectCreation").serialize();
@@ -592,9 +605,14 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 $scope.ProjectCreationLoad = false;
                 $('#AddProjectPopUp').modal('hide');
                 $scope.LoadProjectData();
+                $(".overlay").hide();
             }
-            else
+            else {
+                alert("Something went wrong. Please try after some time.");
                 $scope.ProjectCreationLoad = false;
+                $(".overlay").hide();
+            }
+                
         });
     }
 
@@ -1139,6 +1157,7 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
     $scope.FinalAddMilestone = function () {
         if ($rootScope.Milestone.length > 0) {
             $scope.MilestoneCreationLoad = true;
+            $(".overlay").show();
             if ($rootScope.EditMilestone.length > 0) {
                 var data = {
                     'AddMilestone': $rootScope.Milestone,
@@ -1160,9 +1179,14 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
                     $scope.MilestoneCreationLoad = false;
                     $("#AddMilestonePopUp").modal("hide");
                     $rootScope.LoadProjectData();
+                    $(".overlay").hide();
                 }
-                else
+                else {
+                    alert("Something went wrong. Please try after some time.");
+                    $(".overlay").hide();
                     $scope.MilestoneCreationLoad = false;
+                }
+                    
             });
         }
         else {
@@ -1457,6 +1481,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
     $scope.FinalAddTask = function () {
         if ($scope.Task.length > 0) {
             $rootScope.TaskLoad = true;
+            $(".overlay").show();
             if ($rootScope.EditTask.length > 0) {
                 var data = {
                     'AddTask': $rootScope.Task,
@@ -1475,8 +1500,9 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
                     //$('#SuccessModelTask').modal('show');
-                   $rootScope.TaskLoad = false;
+                    $rootScope.TaskLoad = false;
                     $("#AddTaskPopUp").modal("hide");
+                    $(".overlay").hide();
                     var data = {
                         'ProjectId': $rootScope.ProjectPopData.ID
                     }
@@ -1488,8 +1514,12 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
                     });
 
                 }
-                else
-                   $rootScope.TaskLoad = false;
+                else {
+                    alert("Something went wrong. Please try after some time.");
+                    $(".overlay").show();
+                    $rootScope.TaskLoad = false;
+                }
+                   
             });
         }
         else
@@ -1794,7 +1824,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
     $scope.FinalAddSubTask = function () {
         if ($rootScope.SubTask.length > 0) {
             $rootScope.SubTaskLoad = true;
-
+            $(".overlay").show();
             if ($rootScope.EditSubTask.length > 0) {
                 var data = {
                     'AddSubTask': $rootScope.SubTask,
@@ -1826,12 +1856,17 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
 
                             $rootScope.SubTaskLoad = false;
                             $("#AddSubTaskPopUp").modal("hide");
+                            $(".overlay").show();
 
                         }
                     });
                 }
-                else
+                else {
+                    alert("Something went wrong. Please try after some time.");
                     $rootScope.SubTaskLoad = false;
+                    $(".overlay").show();
+                }
+                    
             });
         }
         else

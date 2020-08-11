@@ -47,6 +47,17 @@
 </style>
 
 <style>
+    .overlay {
+        background-color: #EFEFEF;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        top: 0px;
+        left: 0px;
+        opacity: -0.5; /* in FireFox */
+        filter: alpha(opacity=50); /* in IE */
+    }
 
     .tableCss {
         border: 1px solid #ccc;
@@ -174,6 +185,7 @@
         <div class="modal left fade" id="ViewTimesheetPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
             @Html.Partial("~/Views/Partial/TIM_ViewTimesheet.cshtml");
+            <div class="overlay"></div>
         </div>
 
 
