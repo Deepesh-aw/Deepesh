@@ -96,7 +96,8 @@
                                                         <span ng-show="t.ClientName!=''">{{t.ClientName}}</span>
                                                         <span ng-show="t.OtherClient!=''">{{t.OtherClient}}</span>
                                                     </td>
-                                                    <td><span ng-show="t.ProjectName!=''">{{t.ProjectName}}</span>
+                                                    <td>
+                                                        <span ng-show="t.ProjectName!=''">{{t.ProjectName}}</span>
                                                         <span ng-show="t.OtherProject!=''">{{t.OtherProject}}</span>
                                                     </td>
                                                     <td>
@@ -119,6 +120,13 @@
                                                 </tr>
 
                                             </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td class="right" colspan="9">Total Hours:</td>
+                                                    <td class="right">{{GetTotalHours()}}</td>
+                                                    <td colspan="3"></td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div><!-- bd -->
                                 </div><!-- bd -->

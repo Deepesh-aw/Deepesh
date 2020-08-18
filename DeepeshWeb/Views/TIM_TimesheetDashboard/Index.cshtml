@@ -232,7 +232,7 @@
                         <tbody>
                             <tr ng-repeat="tm in  TimesheetDataPending">
                                 <td>{{$index+1}}</td>
-                                <td>{{DateFormat(tm.TimesheetAddedDate)}}</td>
+                                <td>{{tm.TimesheetAddedDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
                                 <td>{{tm.Description}}</td>
                                 @*<td>{{tm.EstimatedHours}}</td>*@
@@ -261,21 +261,25 @@
                         <thead>
                             <tr>
                                 <th class="border-bottom-0">Sr.no.</th>
-                                <th class="border-bottom-0">Date</th>
+                                <th class="border-bottom-0">Approve Date</th>
                                 <th class="border-bottom-0">Timesheet ID</th>
-                                <th class="border-bottom-0">Description</th>
+                                <th class="border-bottom-0">Approve Description</th>
                                 @*<th class="border-bottom-0">Hours</th>*@
                                 <th class="border-bottom-0">Approved By</th>
+                                <th class="border-bottom-0">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="tm in  TimesheetDataApproved">
                                 <td>{{$index+1}}</td>
-                                <td>{{DateFormat(tm.TimesheetAddedDate)}}</td>
+                                <td>{{tm.ApproveDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
-                                <td>{{tm.Description}}</td>
+                                <td>{{tm.ApproveDescription}}</td>
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ManagerName}}</td>
+                                <td>
+                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View')"></i>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

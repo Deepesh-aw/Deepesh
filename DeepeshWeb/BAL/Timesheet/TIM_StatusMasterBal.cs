@@ -27,7 +27,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_StatusMasterModel> GetStatusForAction(ClientContext clientContext)
         {
             List<TIM_StatusMasterModel> lstStatus = new List<TIM_StatusMasterModel>();
-            string filter = "(StatusName eq 'Pending') or (StatusName eq 'Completed')";
+            string filter = "(StatusName eq 'Inprogress') or (StatusName eq 'Completed')";
             JArray jArray = RESTGet(clientContext, filter);
             foreach (JObject j in jArray)
             {
@@ -43,7 +43,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_StatusMasterModel> GetPendingStatus(ClientContext clientContext)
         {
             List<TIM_StatusMasterModel> lstStatus = new List<TIM_StatusMasterModel>();
-            string filter = "(StatusName eq 'Pending')";
+            string filter = "(StatusName eq 'Inprogress')";
             JArray jArray = RESTGet(clientContext, filter);
             foreach (JObject j in jArray)
             {

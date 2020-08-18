@@ -77,7 +77,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         {
                             var itemdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
                             itemdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
-                            itemdata += " ,'ApproveDescription': '" + Descrition + "'";
+                            itemdata += " ,'ApproveDescription': '" + Descrition.Replace("'", @"\'") + "'";
+                            itemdata += " ,'ApproveDate': '" + DateTime.Today.ToString("MM/dd/yyyy HH:mm") + "'";
 
                             string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")
@@ -176,6 +177,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
             }
             catch (Exception ex)
             {
+                obj.Add("ERROR");
+                return Json(obj, JsonRequestBehavior.AllowGet);
                 throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
             }
             return Json(obj, JsonRequestBehavior.AllowGet);

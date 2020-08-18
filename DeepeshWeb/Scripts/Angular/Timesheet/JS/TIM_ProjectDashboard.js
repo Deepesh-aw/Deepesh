@@ -1200,6 +1200,13 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
 
     $scope.OnLoadTask = function () {
 
+        $scope.ResizeDatePicker = function (popup) {
+            var popupTop = popup.top - 110;
+            $('.datetimepicker').css({
+                'top': popupTop
+            });
+        }
+
         $('#AddTaskPopUp').on('hide.bs.modal', function () {
             $("#frmProjectDashboard")[0].reset();
             $("#ddlMember").val(null).trigger('change.select2');
@@ -1210,15 +1217,26 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
         });
 
         $("#txtTaskStartDate").on('click', function () {
+            var popup = $(this).offset();
+            $scope.ResizeDatePicker(popup);
+            
+            //$(".datetimepicker").css({ top: '355.594px' });
             if ($("#divAddTask").attr("data-id") > 0)
                 $('.datetimepicker').hide();
         });
 
+        $("#txtTaskEndDate").on('click', function () {
+            var popup = $(this).offset();
+            $scope.ResizeDatePicker(popup);
+        });
+
+
         $('#txtTaskStartDate').datetimepicker({
             minView: 2,
             format: 'dd-mm-yyyy',
-            autoclose: true
-        });
+            autoclose: true,
+            
+        })
 
         $('#txtTaskEndDate').datetimepicker({
             minView: 2,
@@ -1226,8 +1244,18 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             autoclose: true
         });
 
+        //$('.Taskdate').datetimepicker().on('changeMonth', function (e) {
+        //    $timeout(function () {
+        //        var popup = $(this).offset();
+        //        $scope.ResizeDatePicker(popup);
+        //    })
+            
+        //}).on('hide', function (event) {
+        //    return false;
+        //});
 
         $('.Taskdate').datetimepicker().on('changeDate', function (e) {
+            
             var result = true;
             var start = moment($("#txtTaskStartDate").val(), 'DD/MM/YYYY');
             var end = moment($("#txtTaskEndDate").val(), 'DD/MM/YYYY');
@@ -1543,8 +1571,22 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
         });
 
         $("#txtSubTaskStartDate").on('click', function () {
+            var popup = $(this).offset();
+            var popupTop = popup.top - 120;
+            $('.datetimepicker').css({
+                'top': popupTop
+            });
+            //$(".datetimepicker").css({ top: '570.594px' });
             if ($("#divAddSubTask").attr("data-id") > 0)
                 $('.datetimepicker').hide();
+        });
+
+        $("#txtSubTaskEndDate").on('click', function () {
+            var popup = $(this).offset();
+            var popupTop = popup.top - 120;
+            $('.datetimepicker').css({
+                'top': popupTop
+            });
         });
 
         $('#txtSubTaskStartDate').datetimepicker({

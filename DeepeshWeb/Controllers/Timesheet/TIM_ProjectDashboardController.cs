@@ -116,12 +116,12 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     string arr = String.Join(",", Project.Members);
                     //Project.Members = Request["Members"].Split(',').Select(int.Parse).ToArray();
                     //itemdata += " ,'MembersId': {'results': [1,3] }";
-                    string itemdata = " 'ProjectName': '" + Project.ProjectName + "'";
+                    string itemdata = " 'ProjectName': '" + Project.ProjectName.Replace("'", @"\'") + "'";
                     itemdata += " ,'MembersId': {'results': [" + arr + "] }";
-                    itemdata += " ,'ClientProjectManager': '" + Project.ClientProjectManager + "'";
+                    itemdata += " ,'ClientProjectManager': '" + Project.ClientProjectManager.Replace("'", @"\'") + "'";
                     itemdata += " ,'StartDate': '" + Project.StartDate + "'";
                     itemdata += " ,'EndDate': '" + Project.EndDate + "'";
-                    itemdata += " ,'Description': '" + Project.Description + "'";
+                    itemdata += " ,'Description': '" + Project.Description.Replace("'", @"\'") + "'";
                     itemdata += " ,'ProjectTypeId': '" + Project.ProjectType + "'";
                     itemdata += " ,'MembersText': '" + Project.MembersText + "'";
                     itemdata += " ,'MembersCodeText': '" + Project.MembersCodeText + "'";
@@ -311,7 +311,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
                         string itemdata = " 'MileStone': '" + item.MileStone.Replace("'", @"\'") + "'";
                         itemdata += " ,'MembersId': {'results': [" + arr + "] }";
-                        itemdata += " ,'Description': '" + item.Description + "'";
+                        itemdata += " ,'Description': '" + item.Description.Replace("'", @"\'") + "'";
                         itemdata += " ,'StartDate': '" + item.StartDate + "'";
                         itemdata += " ,'EndDate': '" + item.EndDate + "'";
                         itemdata += " ,'NoOfDays': '" + item.NoOfDays + "'";
@@ -502,7 +502,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         itemdata += " ,'EndDate': '" + item.EndDate + "'";
                         itemdata += " ,'NoOfDays': '" + item.NoOfDays + "'";
                         itemdata += " ,'ProjectId': '" + item.Project + "'";
-                        itemdata += " ,'Task': '" + item.Task + "'";
+                        itemdata += " ,'Task': '" + item.Task.Replace("'", @"\'") + "'";
                         itemdata += " ,'ClientId': '" + item.Client + "'";
 
                         //if (lstWorkFlow.Count > 0)
@@ -679,7 +679,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         itemdata += " ,'EndDate': '" + item.EndDate + "'";
                         itemdata += " ,'NoOfDays': '" + item.NoOfDays + "'";
                         itemdata += " ,'ProjectId': '" + item.Project + "'";
-                        itemdata += " ,'SubTask': '" + item.SubTask + "'";
+                        itemdata += " ,'SubTask': '" + item.SubTask.Replace("'", @"\'") + "'";
                         itemdata += " ,'ClientId': '" + item.Client + "'";
                         itemdata += " ,'SubTaskStatusId': '" + lstPendingStatus[0].ID + "'";
 

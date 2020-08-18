@@ -34,7 +34,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByManagerIdAndPending(ClientContext clientContext, int ManagerId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "ManagerId eq " + ManagerId + " and InternalStatus eq 'Pending'";
+            string filter = "ManagerId eq " + ManagerId + " and InternalStatus eq 'Inprogress'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -52,7 +52,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndPending(ClientContext clientContext, int EmpId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "EmployeeId eq " + EmpId + " and InternalStatus eq 'Pending'";
+            string filter = "EmployeeId eq " + EmpId + " and InternalStatus eq 'Inprogress'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -94,6 +94,15 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstTIM_EmployeeTimesheet;
         }
 
+        public List<TIM_EmployeeTimesheetModel> GetAllEmpTimesheet(ClientContext clientContext)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
         public List<TIM_EmployeeTimesheetModel> BindList(JArray jArray)
         {
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
@@ -122,7 +131,17 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.SubTaskName = j["SubTask"]["SubTask"] == null ? "" : Convert.ToString(j["SubTask"]["SubTask"]);
                 data.Task = j["Task"]["Id"] == null ? 0 : Convert.ToInt32(j["Task"]["Id"]);
                 data.TaskName = j["Task"]["Task"] == null ? "" : j["Task"]["Task"].ToString();
-                data.TimesheetAddedDate = j["TimesheetAddedDate"] == null ? "" : Convert.ToString(j["TimesheetAddedDate"]);
+                //data.TimesheetAddedDate = j["TimesheetAddedDate"] == null ? "" : Convert.ToString(j["TimesheetAddedDate"]);
+
+                DateTime TimesheetAdded = Convert.ToDateTime(j["TimesheetAddedDate"]);
+                data.TimesheetAddedDate = TimesheetAdded.ToString("dd-MM-yyyy");
+
+                if (j["ApproveDate"].ToString() != "") {
+                    DateTime TimesheetApproved = Convert.ToDateTime(j["ApproveDate"]);
+                    data.ApproveDate = TimesheetApproved.ToString("dd-MM-yyyy");
+                }
+               
+
                 data.UtilizedHours = j["UtilizedHours"] == null ? "" : Convert.ToString(j["UtilizedHours"]);
                 data.TimesheetID = j["TimesheetID"] == null ? "" : Convert.ToString(j["TimesheetID"]);
                 data.ClientName = j["Client"]["ClientName"] == null ? "" : Convert.ToString(j["Client"]["ClientName"].ToString());
@@ -171,7 +190,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID,OtherClient,OtherMilestone,OtherProject,OtherTask";
+            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID,OtherClient,OtherMilestone,OtherProject,OtherTask,ApproveDate";
             rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status,Client,AllTaskStatus";
             rESTOption.orderby = "ID desc";
             rESTOption.top = "5000";

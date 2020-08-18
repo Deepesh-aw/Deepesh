@@ -3,6 +3,12 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
 
     $scope.CurrentTimesheet = [];
 
+    //$(function () {
+    //    $('#ViewTimesheetPopUp').on('hide.bs.modal', function () {
+    //        $scope.Report = true;
+    //    });
+    //})
+
     $scope.TimesheetLoad = function () {
         $(".overlay").hide();
         $('input,select,textarea').keypress(function () {
@@ -59,13 +65,19 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
         }
     }
 
-    $scope.ApproveTimesheet = function (Timesheet) {
+    $scope.ApproveTimesheet = function (Timesheet, Action) {
         var data = {
             'TimesheetId': Timesheet.TimesheetID
         }
         CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/GetEditTimesheet", data).then(function (response) {
             if (response.data[1].length > 0) {
                 $scope.CurrentTimesheet = response.data[1];
+                if (Action == "View") {
+                    $scope.Report = true;
+                }
+                else
+                    $scope.Report = false;
+
                 $("#ViewTimesheetPopUp").modal('show');
             }
         });
@@ -112,7 +124,35 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
                 clearErrorClass();
                 $scope.ngRemark = "";
             }
+            else {
+                alert("Something went wrong. Please try after some time.");
+                $scope.ApproveLoad = false;
+                $scope.RejectLoad = false;
+                $(".overlay").hide();
+
+            }
+
         });
 
+    }
+
+    $scope.GetTotalHours = function () {
+        var Hours = 0, Minute = 0;
+        angular.forEach($scope.CurrentTimesheet, function (value, key) {
+            Hours = Number(Hours) + Number(value.Hours.split(':')[0]);
+            Minute = Number(Minute) + Number(value.Hours.split(':')[1]);
+            hour_carry = 0;
+
+            if (Minute > 59) {
+                hour_carry = Minute / 60 | 0;
+                Minute = Minute % 60 | 0;
+            }
+
+            Hours = Hours + Number(hour_carry);
+
+            if (Minute.toString().length == 1)
+                Minute = "0" + Minute.toString();
+        });
+        return Hours + ":" + Minute;
     }
 });

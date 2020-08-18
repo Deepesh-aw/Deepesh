@@ -61,12 +61,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstEmployeeTimesheetPending = lstEmployeeTimesheetPending.DistinctBy(x => x.TimesheetID).ToList();
                     lstEmployeeTimesheetApproved = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndApprove(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     lstEmployeeTimesheetApproved = lstEmployeeTimesheetApproved.DistinctBy(x => x.TimesheetID).ToList();
+                    ViewBag.AllTimesheet = BalEmpTimesheet.GetAllEmpTimesheet(clientContext);
 
                     obj.Add("OK");
                     obj.Add(ViewBag.AllTask);
                     obj.Add(lstWorkingHours);
                     obj.Add(lstEmployeeTimesheetPending);
                     obj.Add(lstEmployeeTimesheetApproved);
+                    obj.Add(ViewBag.AllTimesheet);
                 }
             }
             catch (Exception ex)
@@ -124,7 +126,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         {
             List<object> obj = new List<object>();
             int i = 0;
-            string InternalStatus = "Pending";
+            string InternalStatus = "Inprogress";
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             try
             {
@@ -137,7 +139,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     string returnID = "0";
                     foreach (var item in EmpTimesheet)
                     {
-                        string itemdata = " 'Description': '" + item.Description + "'";
+                        string itemdata = " 'Description': '" + item.Description.Replace("'", @"\'") + "'";
 
                         itemdata += " ,'Hours': '" + item.Hours + "'";
                         itemdata += " ,'EstimatedHours': '" + item.EstimatedHours + "'";

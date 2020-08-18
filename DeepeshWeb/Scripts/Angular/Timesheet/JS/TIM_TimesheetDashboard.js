@@ -176,7 +176,10 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 if (response.data[4].length > 0)
                     $scope.TimesheetDataApproved = response.data[4];
 
-                $scope.TimesheetData.length = $scope.TimesheetDataPending.length + $scope.TimesheetDataApproved.length;
+                if (response.data[5].length > 0)
+                    $scope.TimesheetData.length = [...new Map(response.data[5].map(item => [item['TimesheetID'], item])).values()].length;                   
+                else
+                    $scope.TimesheetData.length = 0;
 
                 var count = 1
                 count = count + Number($scope.TimesheetData.length);
@@ -410,6 +413,25 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
     }
     //});
+    $scope.GetTotalHours = function () {
+        var Hours = 0, Minute = 0;
+        angular.forEach($scope.TimesheetArr, function (value, key) {
+            Hours = Number(Hours) + Number(value.Hours.split(':')[0]);
+            Minute = Number(Minute) + Number(value.Hours.split(':')[1]);
+            hour_carry = 0;
+
+            if (Minute > 59) {
+                hour_carry = Minute / 60 | 0;
+                Minute = Minute % 60 | 0;
+            }
+
+            Hours = Hours + Number(hour_carry);
+
+            if (Minute.toString().length == 1)
+                Minute = "0" + Minute.toString();
+        });
+        return Hours + ":" + Minute;
+    }
 
     $scope.timeConvert = function (start, end, action) {
         //var h = mins / 60 | 0,
@@ -519,7 +541,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         obj.FromTimeView = $("#txtFromTime").val();
         obj.ToTimeView = $("#txtToTime").val();
         obj.AllTaskStatus = $scope.ngddlAllTaskStatus;
-
+        obj.AllTaskStatusText = $("#ddlAllTaskStatus option:selected").text();
 
        
 
@@ -624,6 +646,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     $(".overlay").hide();
                 }
                 else {
+                    alert("Something went wrong. Please try after some time.");
                     $scope.TimesheetLoad = false;
                     $(".overlay").hide();
                 }
@@ -704,7 +727,8 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                         obj.AllTask = value.OtherTask;
                     }
                     obj.ID = value.ID;
-                    obj.AllTaskStatus = value.AllTaskStatus
+                    obj.AllTaskStatus = value.AllTaskStatus;
+                    obj.AllTaskStatusText = value.AllTaskStatusName;
                     obj.Description = value.Description;
                     obj.Hours = value.Hours;
                     obj.EstimatedHours = value.EstimatedHours;
