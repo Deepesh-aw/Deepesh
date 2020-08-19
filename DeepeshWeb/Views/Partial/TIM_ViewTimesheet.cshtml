@@ -1,6 +1,12 @@
 ﻿@*@using DeepeshWeb.Models.Timesheet*@
 @*@model IEnumerable<TIM_ProjectCreationModel>*@
 
+<style>
+    .text-red {
+        color: red;
+    }
+</style>
+
 <div class="modal-dialog modal-lg " role="document">
     <div class="modal-content">
         <div class="modal-header">
@@ -116,7 +122,7 @@
                                                     <td>{{t.Hours}}</td>
                                                     <td>{{t.EstimatedHours}}</td>
                                                     <td>{{t.UtilizedHours}}</td>
-                                                    <td>{{t.RemainingHours}}</td>
+                                                    <td ng-class="{'text-red': t.RemainingHours.includes('-')}">{{t.RemainingHours}}</td>
                                                 </tr>
 
                                             </tbody>
@@ -171,7 +177,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
                 <div class="modal-footer justify-content-center" ng-show="Report">
-                    
+
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>

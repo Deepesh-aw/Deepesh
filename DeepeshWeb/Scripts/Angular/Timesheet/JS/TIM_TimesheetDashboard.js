@@ -397,10 +397,16 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     })
                 }
                 else {
-                    $("#txtHours").val('');
-                    $("#txtToTime").val('');
-                    alert("Hours should not be more than estimated hours");
-                    return false;
+                    var RemainingHours = $scope.timeConvert($scope.ngtxtEstimatedHours, TotalUtilize, "Exceed");
+                    $timeout(function () {
+                        $scope.ngtxtRemainingHours = RemainingHours;
+                        $scope.ngtxtUtilizedHours = TotalUtilize;
+                        return false;
+                    })
+                    //$("#txtHours").val('');
+                    //$("#txtToTime").val('');
+                    //alert("Hours should not be more than estimated hours");
+                    //return false;
                 }
 
             }
@@ -455,7 +461,21 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         
         
 
-        if (action == "Minus") {
+        if (action == "Exceed") {
+            let valuestart = moment.duration("20:00", "HH:mm");
+            let valuestop = moment.duration("23:15", "HH:mm");
+            let difference = valuestop.subtract(valuestart);
+            alert(difference);
+
+            min = s[1] - e[1];
+            if (min.toString().length == 1)
+                min = "0" + min.toString();
+
+            hour = s[0] - e[0];
+            diff = "-" + Math.abs(hour) + ":" + Math.abs(min);
+
+        }
+        else if (action == "Minus") {
 
             min = s[1] - e[1];
 
@@ -470,6 +490,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             hour = s[0] - e[0] - hour_carry;
             hour = Math.abs(hour);
             diff = hour + ":" + min;
+
         }
         else if (action == "Add") {
             min = Number(e[1]) + Number(s[1]);
