@@ -34,6 +34,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<object> obj = new List<object>();
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetPending = new List<TIM_EmployeeTimesheetModel>();
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetApproved = new List<TIM_EmployeeTimesheetModel>();
+            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetRejected = new List<TIM_EmployeeTimesheetModel>();
+
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -43,10 +45,12 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstEmployeeTimesheetPending = lstEmployeeTimesheetPending.DistinctBy(x => x.TimesheetID).ToList();
                     lstEmployeeTimesheetApproved = BalEmpTimesheet.GetEmpTimesheetByManagerIdAndApprove(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     lstEmployeeTimesheetApproved = lstEmployeeTimesheetApproved.DistinctBy(x => x.TimesheetID).ToList();
+                    lstEmployeeTimesheetRejected = BalEmpTimesheet.GetEmpTimesheetByManagerIdAndReject(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    lstEmployeeTimesheetRejected = lstEmployeeTimesheetRejected.DistinctBy(x => x.TimesheetID).ToList();
                     obj.Add("OK");
                     obj.Add(lstEmployeeTimesheetPending);
                     obj.Add(lstEmployeeTimesheetApproved);
-
+                    obj.Add(lstEmployeeTimesheetRejected);
                 }
             }
             catch (Exception ex)
@@ -78,7 +82,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             var itemdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
                             itemdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
                             itemdata += " ,'ApproveDescription': '" + Descrition.Replace("'", @"\'") + "'";
-                            itemdata += " ,'ApproveDate': '" + DateTime.Today.ToString("MM/dd/yyyy HH:mm") + "'";
+                            itemdata += " ,'ApproveDate': '" + DateTime.Today.ToString("MM/dd/yyyy HH:mm:ss") + "'";
 
                             string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")
@@ -166,6 +170,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         {
                             var itemdata = "'StatusId': '" + lstWorkFlowForRejectTimesheet[0].ToStatusID + "'";
                             itemdata += " ,'InternalStatus': '" + lstWorkFlowForRejectTimesheet[0].InternalStatus + "'";
+                            itemdata += " ,'RejectDescription': '" + Descrition.Replace("'", @"\'") + "'";
+                            itemdata += " ,'RejectedDate': '" + DateTime.Today.ToString("MM/dd/yyyy HH:mm:ss") + "'";
                             string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")
                                 i++;

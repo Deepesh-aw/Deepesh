@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DeepeshWeb.BAL.EmployeeManagement;
+using Newtonsoft.Json;
 
 namespace DeepeshWeb.Controllers.TimeSheet
 {
@@ -21,6 +22,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         Emp_ClientMasterDetailsBal BalClient = new Emp_ClientMasterDetailsBal();
         Emp_BasicInfoBal BalEmp = new Emp_BasicInfoBal();
         TIM_StatusMasterBal BalStatus = new TIM_StatusMasterBal();
+        TIM_DocumentLibraryBal BalDocument = new TIM_DocumentLibraryBal();
 
         public ActionResult Index()
         {
@@ -78,6 +80,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
         {
             List<object> obj = new List<object>();
             List<TIM_ProjectCreationModel> lstProjectCreation = new List<TIM_ProjectCreationModel>();
+            List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
+
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -87,10 +91,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     {
                         int ProjectId = Convert.ToInt32(Request.Cookies["ProjectId"].Value);
                         lstProjectCreation = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
+                        var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                        lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, ProjectId.ToString(), path);
                         if (lstProjectCreation.Count > 0)
                         {
                             obj.Add("OK");
                             obj.Add(lstProjectCreation);
+                            obj.Add(lstDocument);
                         }
                     }
                 }
@@ -102,34 +109,69 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [ActionName("GetProjectDoc")]
+        public JsonResult GetProjectDoc(int ProjectId)
+        {
+            List<object> obj = new List<object>();
+            List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
+            try
+            {
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                    lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, ProjectId.ToString(), path);
+                    if (lstDocument.Count > 0)
+                    {
+                        obj.Add("OK");
+                        obj.Add(lstDocument);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                obj.Add("ERROR");
+                return Json(obj, JsonRequestBehavior.AllowGet);
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
         [SharePointContextFilter]
         [ActionName("SaveProject")]
-        public JsonResult SaveProject(TIM_ProjectCreationModel Project)
+        public JsonResult SaveProject(FormCollection formCollection)
         {
             List<object> obj = new List<object>();
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+            var name = formCollection["ProjectDetails"];
+            List<TIM_ProjectCreationModel> Project = JsonConvert.DeserializeObject<List<TIM_ProjectCreationModel>>(name);
+            var doc = formCollection["PrevDocument"];
+            List<TIM_DocumentLibraryModel> DeleteDocument = JsonConvert.DeserializeObject<List<TIM_DocumentLibraryModel>>(doc);
+
             try
             {
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
+
                     string returnID = "0";
-                    string arr = String.Join(",", Project.Members);
+                    string arr = String.Join(",", Project[0].Members);
                     //Project.Members = Request["Members"].Split(',').Select(int.Parse).ToArray();
                     //itemdata += " ,'MembersId': {'results': [1,3] }";
-                    string itemdata = " 'ProjectName': '" + Project.ProjectName.Replace("'", @"\'") + "'";
+                    string itemdata = " 'ProjectName': '" + Project[0].ProjectName.Replace("'", @"\'") + "'";
                     itemdata += " ,'MembersId': {'results': [" + arr + "] }";
-                    itemdata += " ,'ClientProjectManager': '" + Project.ClientProjectManager.Replace("'", @"\'") + "'";
-                    itemdata += " ,'StartDate': '" + Project.StartDate + "'";
-                    itemdata += " ,'EndDate': '" + Project.EndDate + "'";
-                    itemdata += " ,'Description': '" + Project.Description.Replace("'", @"\'") + "'";
-                    itemdata += " ,'ProjectTypeId': '" + Project.ProjectType + "'";
-                    itemdata += " ,'MembersText': '" + Project.MembersText + "'";
-                    itemdata += " ,'MembersCodeText': '" + Project.MembersCodeText + "'";
-                    itemdata += " ,'ClientNameId': '" + Project.ClientName + "'";
-                    itemdata += " ,'ProjectManagerId': '" + Project.ProjectManager + "'";
-                    itemdata += " ,'NoOfDays': '" + Project.NoOfDays + "'";
+                    itemdata += " ,'ClientProjectManager': '" + Project[0].ClientProjectManager.Replace("'", @"\'") + "'";
+                    itemdata += " ,'StartDate': '" + Project[0].StartDate + "'";
+                    itemdata += " ,'EndDate': '" + Project[0].EndDate + "'";
+                    itemdata += " ,'Description': '" + Project[0].Description.Replace("'", @"\'") + "'";
+                    itemdata += " ,'ProjectTypeId': '" + Project[0].ProjectType + "'";
+                    itemdata += " ,'MembersText': '" + Project[0].MembersText + "'";
+                    itemdata += " ,'MembersCodeText': '" + Project[0].MembersCodeText + "'";
+                    itemdata += " ,'ClientNameId': '" + Project[0].ClientName + "'";
+                    itemdata += " ,'ProjectManagerId': '" + Project[0].ProjectManager + "'";
+                    itemdata += " ,'NoOfDays': '" + Project[0].NoOfDays + "'";
 
-                    if (Project.ID == 0)
+                    if (Project[0].ID == 0)
                     {
                         List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                         lstWorkFlow = BalWorkflow.GetWorkFlowForProjectCreation(clientContext);
@@ -139,15 +181,71 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
                         }
                         returnID = BalProjectCreation.SaveProjectCreation(clientContext, itemdata);
-                        if (Convert.ToInt32(returnID) > 0)
+                        if (Convert.ToInt32(returnID) > 0) {
+                            if (Request.Files.Count > 0)
+                            {
+                                HttpFileCollectionBase files = Request.Files;
+                                string Type = "ProjectCreation";
+                                for (int i = 0; i < files.Count; i++)
+                                {
+                                    var postedFile = files[i];
+                                    string item = "'LID' : '" + returnID + "'";
+                                    item += ",'DocumentType' : '" + Type + "'";
+                                    item += ",'DocumentPath' : '" + files[i].FileName + "'";
+                                    int res = BalProjectCreation.UploadDocument(clientContext, postedFile, item);
+                                    if(res > 0)
+                                        obj.Add("OK");
+                                }
+
+                            }
+                        }else
                             obj.Add("OK");
                     }
                     else
                     {
-                        returnID = BalProjectCreation.UpdateProject(clientContext, itemdata, Project.ID.ToString());
+                        if (DeleteDocument.Count > 0)
+                        {
+                            int z = 0;
+                            foreach (var item in DeleteDocument)
+                            {
+                                string Result = BalDocument.DeleteDocument(clientContext, item.ID.ToString());
+                                if (Result == "Delete")
+                                    z++;
+                            }
+                            if (z != DeleteDocument.Count)
+                            {
+                                obj.Add("ERROR");
+                                return Json(obj, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+
+                        if (Request.Files.Count > 0)
+                        {
+                            int y = 0;
+                            HttpFileCollectionBase files = Request.Files;
+                            string Type = "ProjectCreation";
+                            for (int i = 0; i < files.Count; i++)
+                            {
+                                var postedFile = files[i];
+                                string item = "'LID' : '" + Project[0].ID + "'";
+                                item += ",'DocumentType' : '" + Type + "'";
+                                item += ",'DocumentPath' : '" + files[i].FileName + "'";
+                                int res = BalProjectCreation.UploadDocument(clientContext, postedFile, item);
+                                if (res > 0)
+                                    y++;
+                            }
+                            if (y != files.Count)
+                            {
+                                obj.Add("ERROR");
+                                return Json(obj, JsonRequestBehavior.AllowGet);
+                            }
+
+                        }
+
+                        returnID = BalProjectCreation.UpdateProject(clientContext, itemdata, Project[0].ID.ToString());
                         if (returnID == "Update")
                         {
-                            if (Project.InternalStatus == "ProjectDeleted")
+                            if (Project[0].InternalStatus == "ProjectDeleted")
                             {
                                 List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                                 lstWorkFlow = BalWorkflow.GetWorkFlowForProjectDeletion(clientContext);
@@ -155,11 +253,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                 {
                                     string projectdata = "'StatusId': '" + lstWorkFlow[0].ToStatusID + "'";
                                     projectdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
-                                    returnID = BalProjectCreation.UpdateProject(clientContext, projectdata, Project.ID.ToString());
+                                    returnID = BalProjectCreation.UpdateProject(clientContext, projectdata, Project[0].ID.ToString());
                                     if (returnID == "Update")
                                     {
                                         List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
-                                        lstMilestone = BalMilestone.GetMilestoneByProjectId(clientContext, Project.ID);
+                                        lstMilestone = BalMilestone.GetMilestoneByProjectId(clientContext, Project[0].ID);
                                         if (lstMilestone.Count > 0)
                                         {
                                             int mile = 0;
@@ -171,7 +269,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                             if (mile == lstMilestone.Count)
                                             {
                                                 List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
-                                                lstTask = BalTask.GetTaskByProjectId(clientContext, Project.ID);
+                                                lstTask = BalTask.GetTaskByProjectId(clientContext, Project[0].ID);
                                                 if (lstTask.Count > 0)
                                                 {
                                                     int task = 0;
@@ -183,7 +281,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                                     if (task == lstTask.Count)
                                                     {
                                                         List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-                                                        lstSubTask = BalSubTask.GetSubTaskByProjectId(clientContext, Project.ID);
+                                                        lstSubTask = BalSubTask.GetSubTaskByProjectId(clientContext, Project[0].ID);
                                                         if (lstSubTask.Count > 0)
                                                         {
                                                             int subtask = 0;
@@ -240,14 +338,18 @@ namespace DeepeshWeb.Controllers.TimeSheet
         {
             List<object> obj = new List<object>();
             List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
+            List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
                 lstMilestone = BalMilestone.GetMilestoneByProjectId(clientContext, ProjectId);
+                var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, ProjectId.ToString(), path);
                 if (lstMilestone.Count > 0)
                 {
                     obj.Add("OK");
                     obj.Add(lstMilestone);
+                    obj.Add(lstDocument);
                 }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
@@ -259,14 +361,18 @@ namespace DeepeshWeb.Controllers.TimeSheet
         {
             List<object> obj = new List<object>();
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
+            List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
                 lstTask = BalTask.GetTaskByMilestoneId(clientContext, MilestoneId);
+                var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, lstTask[0].Project.ToString(), path);
                 if (lstTask.Count > 0)
                 {
                     obj.Add("OK");
                     obj.Add(lstTask);
+                    obj.Add(lstDocument);
                 }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
@@ -278,14 +384,18 @@ namespace DeepeshWeb.Controllers.TimeSheet
         {
             List<object> obj = new List<object>();
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
+            List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
             using (var clientContext = spContext.CreateUserClientContextForSPHost())
             {
                 lstSubTask = BalSubTask.GetSubTaskByTaskId(clientContext, TaskId);
+                var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, lstSubTask[0].Project.ToString(), path);
                 if (lstSubTask.Count > 0)
                 {
                     obj.Add("OK");
                     obj.Add(lstSubTask);
+                    obj.Add(lstDocument);
                 }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
@@ -810,14 +920,19 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
                     List<TIM_ProjectCreationModel> lstProject = new List<TIM_ProjectCreationModel>();
+                    List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
                     lstProject = BalProjectCreation.GetProjectCreationById(clientContext, ProjectId);
                     List<TIM_MilestoneModel> lstMilestone = new List<TIM_MilestoneModel>();
                     lstMilestone = BalMilestone.GetMilestoneByMilestoneId(clientContext, MilestoneId);
-                    if(lstProject.Count>0 && lstMilestone.Count > 0)
+                    var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                    lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, ProjectId.ToString(), path);
+
+                    if (lstProject.Count>0 && lstMilestone.Count > 0)
                     {
                         obj.Add("OK");
                         obj.Add(lstProject[0]);
                         obj.Add(lstMilestone[0]);
+                        obj.Add(lstDocument);
                     }
                 }
             }

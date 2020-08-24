@@ -264,7 +264,7 @@
                                 <td>{{tm.TimesheetID}}</td>
                                 <td>{{tm.ApproveDescription}}</td>
                                 @*<td>{{tm.EstimatedHours}}</td>*@
-                                <td>{{tm.ManagerName}}</td>
+                                <td>{{tm.ModifyName}}</td>
                                 <td>
                                     <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ApproveTimesheet(tm,'View')"></i>
                                 </td>
@@ -274,6 +274,47 @@
                 </div>
             </div>
         </div>
+
+        <div class="card mg-b-20">
+            <div class="card-header pb-0">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title mg-b-0">Rejected</h4>
+                    <i class="mdi mdi-dots-horizontal text-gray"></i>
+                </div>
+                <p class="tx-12 tx-gray-500 mb-2"><a href=""></a></p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="Rejected" class="table key-buttons text-md-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-bottom-0">Sr.no.</th>
+                                <th class="border-bottom-0">Rejected Date</th>
+                                <th class="border-bottom-0">Timesheet ID</th>
+                                <th class="border-bottom-0">Reject Description</th>
+                                @*<th class="border-bottom-0">Hours</th>*@
+                                <th class="border-bottom-0">Approved By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tm in  TimesheetDataRejected">
+                                <td>{{$index+1}}</td>
+                                <td>{{tm.ModifyDate}}</td>
+                                <td>{{tm.TimesheetID}}</td>
+                                <td>{{tm.RejectDescription}}</td>
+                                @*<td>{{tm.EstimatedHours}}</td>*@
+                                <td>{{tm.ModifyName}}</td>
+                                <td>
+                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ApproveTimesheet(tm,'View')"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 </form>
 

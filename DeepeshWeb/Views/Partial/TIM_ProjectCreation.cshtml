@@ -141,13 +141,31 @@
                 </div>
             </div>
         </div>
-        <div class="row row-sm" ng-show="ProjectStatus">
-            <div class="col-lg-6">
+        <div class="row row-sm">
+            <div class="col-lg-6" ng-show="ProjectStatus">
                 <div class="form-group">
                     <label for="ddlMembers">Project Status</label>
                     <div class="main-toggle on" ng-init="ngProjectDelete=false">
                         <span></span>
                     </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="uploadFile">Upload Document</label>
+                    <div class="custom-file">
+                        <input class="custom-file-input" id="uploadFiles" name="fileUpload" type="file"> <label class="custom-file-label" for="uploadFile">Choose file</label>
+                    </div>
+                </div>
+                <div ng-repeat="i in PrevUploadFiles">
+                    <span ng-if="i.Delete == 'No'">
+                        <a href="{{i.Name}}" target="_blank">{{i.DocumentPath}}</a>&nbsp;
+                        <button class="btn btn-danger badge" ng-click="RemovePrev($index)"><i class="fa fa-trash"></i></button>
+                    </span>
+                </div>
+                <div ng-repeat="i in UploadFiles">
+                    {{i.Name}}&nbsp;
+                    <button class="btn btn-danger badge" ng-click="Remove($index)"><i class="fa fa-trash"></i></button>
                 </div>
             </div>
         </div>

@@ -187,6 +187,7 @@
     <Compile Include="BAL\GEN_ApproverMasterBal.cs" />
     <Compile Include="BAL\GEN_ApproverRoleListBal.cs" />
     <Compile Include="BAL\NavigationBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_DocumentLibraryBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_EmployeeTimesheetBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_MilestoneBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectCreationBal.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="Models\GEN_ApproverRoleListModel.cs" />
     <Compile Include="Models\GEN_ApproverRoleNameModel.cs" />
     <Compile Include="Models\Timesheet\Pagination.cs" />
+    <Compile Include="Models\Timesheet\TIM_DocumentLibraryModel.cs" />
     <Compile Include="Models\Timesheet\TIM_EmployeeTimesheetModel.cs" />
     <Compile Include="Models\Timesheet\TIM_SubTaskModel.cs" />
     <Compile Include="BAL\Timesheet\TIM_TaskBal.cs" />

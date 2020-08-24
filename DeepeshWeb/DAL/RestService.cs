@@ -403,6 +403,65 @@ namespace DeepeshWeb.DAL
                 throw new Exception(string.Format("An error occured while reading data. GUID: {0}", ex.ToString()));
             }
         }
+
+        public int UploadDocument(ClientContext ctx, string ListName, HttpPostedFileBase files, string ItemData)
+        {
+            RetrieveAccessToken(ctx);
+            int fileId = 0;
+            XmlNamespaceManager xmlnspm = AddXmlNameSpaces();
+            var formDigestNode = GetFormDigest(ctx.Url, xmlnspm);
+            string formDigest = formDigestNode.InnerXml;
+            var postedFile = files;
+
+            byte[] fileData = null;
+            using (var binaryReader = new BinaryReader(postedFile.InputStream))
+            {
+                fileData = binaryReader.ReadBytes(postedFile.ContentLength);
+            }
+
+            string NewFileWithExtention = string.Empty;
+            var FileName = new FileInfo(postedFile.FileName).Name;
+
+            string filename = string.Concat(FileName.Substring(0, FileName.Length - Path.GetExtension(FileName).Length), "_", DateTime.Now.ToString("yyyyMMddHHmmss"));
+            NewFileWithExtention = string.Concat(filename, Path.GetExtension(FileName));
+
+            string url = ctx.Url + "/_api/Web/Lists/getByTitle('" + ListName + "')/RootFolder/Files/Add(url='" + NewFileWithExtention + "', overwrite=false)?$expand=ListItemAllFields";
+
+            HttpWebRequest endpointRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+            endpointRequest.Method = "POST";
+            endpointRequest.Accept = "application/json;odata=verbose";
+            endpointRequest.ContentType = "application/json;odata=verbose";
+            endpointRequest.Headers.Add("binaryStringRequestBody", "true");
+            endpointRequest.Headers.Add("Authorization", accessToken);
+            endpointRequest.Headers.Add("X-RequestDigest", formDigest);
+            endpointRequest.Credentials = System.Net.CredentialCache.DefaultCredentials;
+            endpointRequest.GetRequestStream().Write(fileData, 0, fileData.Length);
+            try
+            {
+                HttpWebResponse endpointresponse = (HttpWebResponse)endpointRequest.GetResponse();
+                using (StreamReader reader = new StreamReader(endpointresponse.GetResponseStream()))
+                {
+                    string response = reader.ReadToEnd();
+                    JObject jobj = JObject.Parse(response);
+                    if (!string.IsNullOrEmpty(Convert.ToString(jobj)))
+                        fileId = Convert.ToInt32(Convert.ToString(jobj["d"]["ListItemAllFields"]["ID"]));
+                    if (ItemData != "" && ItemData != null)
+                    {
+                        UpdateItem(ctx, ListName, ItemData, fileId.ToString());
+                    }
+
+                }
+
+            }
+            catch (WebException ex)
+            {
+
+
+            }
+
+            return fileId;
+        }
+
     }
 
 }

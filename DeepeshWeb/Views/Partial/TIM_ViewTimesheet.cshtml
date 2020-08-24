@@ -1,11 +1,15 @@
 ﻿@*@using DeepeshWeb.Models.Timesheet*@
 @*@model IEnumerable<TIM_ProjectCreationModel>*@
 
-<style>
-    .text-red {
-        color: red;
-    }
-</style>
+    <style>
+        .text-red {
+            color: red;
+        }
+
+        .badge {
+            font-size: 12px !important;
+        }
+    </style>
 
 <div class="modal-dialog modal-lg " role="document">
     <div class="modal-content">
@@ -23,6 +27,12 @@
                     <div class="card custom-card">
                         <div class="card-body">
                             <div class="row row-sm">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-4" style="text-align: right; font-size: 17px">
+                                    <b>Status :</b>  &nbsp; <label ng-if="CurrentTimesheet[0].StatusName == 'Inprogress'" class="badge badge-dark">{{CurrentTimesheet[0].StatusName}}</label><label ng-if="CurrentTimesheet[0].StatusName == 'Approved'" class="badge badge-success">{{CurrentTimesheet[0].StatusName}}</label><label ng-if="CurrentTimesheet[0].StatusName == 'Reject'" class="badge badge-danger">{{CurrentTimesheet[0].StatusName}}</label>
+                                </div>
+                            </div><br />
+                            <div class="row row-sm">
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <b>Timesheet Date</b>
@@ -30,7 +40,7 @@
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="form-group">
-                                        {{DateFormat(CurrentTimesheet[0].TimesheetAddedDate)}}
+                                        {{CurrentTimesheet[0].TimesheetAddedDate}}
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -66,6 +76,75 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row row-sm" ng-if="CurrentTimesheet[0].StatusName == 'Approved'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Approved Date</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].ModifyDate}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Approved By</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].ModifyName}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm" ng-if="CurrentTimesheet[0].StatusName == 'Approved'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Approved Description</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].ApproveDescription}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm" ng-if="CurrentTimesheet[0].StatusName == 'Reject'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Rejected Date</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].ModifyDate}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Rejected By</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].ModifyName}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm" ng-if="CurrentTimesheet[0].StatusName == 'Reject'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Rejected Description</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{CurrentTimesheet[0].RejectDescription}}
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <!--Entry Code End-->
                     </div>

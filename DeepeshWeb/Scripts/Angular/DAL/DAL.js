@@ -37,4 +37,25 @@ CommonAppUtility.service('CommonAppUtilityService', function ($http, $q) {
         return $http(configinfo);
     }
 
+    this.DataWithFile = function (Url, fileData) {
+
+        var spsite = getUrlVars()["SPHostUrl"];
+        Url = Url + "?SPHostUrl=" + spsite;
+
+        return $.ajax({
+            url: Url,
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: fileData,
+            //success: function (result) {
+            //    alert(result);
+            //},
+            //error: function (err) {
+            //    alert(err.statusText);
+            //}
+        });
+
+    }
+
 });

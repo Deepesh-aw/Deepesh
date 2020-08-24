@@ -6,6 +6,9 @@
   color:red;
  
 }
+    .badge {
+        font-size: 12px !important;
+    }
 </style>
 
 <div class="modal-dialog modal-lg " role="document">
@@ -19,9 +22,14 @@
         <div class="modal-body">
             <div class="container">
                 <div class="col-xl-12 col-lg-12">
-
                     <div class="card custom-card" ng-show="ViewTimesheet">
                         <div class="card-body">
+                            <div class="row row-sm">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-4" style="text-align: right; font-size: 17px">
+                                    <b>Status :</b>  &nbsp; <label ng-if="TimesheetArr[0].StatusName == 'Inprogress'" class="badge badge-dark">{{TimesheetArr[0].StatusName}}</label><label ng-if="TimesheetArr[0].StatusName == 'Approved'" class="badge badge-success">{{TimesheetArr[0].StatusName}}</label><label ng-if="TimesheetArr[0].StatusName == 'Reject'" class="badge badge-danger">{{TimesheetArr[0].StatusName}}</label>
+                                </div>
+                            </div><br />
                             <div class="row row-sm">
                                 <div class="col-lg-3">
                                     <div class="form-group">
@@ -30,7 +38,7 @@
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="form-group">
-                                        {{DateFormat(TimesheetArr[0].TimesheetAddedDate)}}
+                                        {{TimesheetArr[0].TimesheetAddedDate}}
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -66,6 +74,74 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row row-sm" ng-if="TimesheetArr[0].StatusName == 'Approved'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Approved Date</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].ApprovedDate}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Approved By</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].ModifyName}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm" ng-if="TimesheetArr[0].StatusName == 'Approved'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Approved Description</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].ApproveDescription}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm" ng-if="TimesheetArr[0].StatusName == 'Reject'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Rejected Date</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].ModifyDate}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Rejected By</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].ModifyName}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm" ng-if="TimesheetArr[0].StatusName == 'Reject'">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <b>Rejected Description</b>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        {{TimesheetArr[0].RejectDescription}}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!--Entry Code End-->
                     </div>
@@ -74,7 +150,7 @@
                     <div class="card custom-card" ng-hide="ViewTimesheet">
                         <div class="card-body">
                             <div class="row row-sm">
-                                <div class="col-lg-3">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <label for="txtTimesheetDate">Date</label>
                                         <div class="input-group">
@@ -86,83 +162,60 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-3">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <label for="ddlClientName">Client Name</label>
                                         <div id="ClientType" class="parsley-select">
                                             <select ng-options="p.Client as p.ClientName for p in ClientDetails" ng-model="ngddlClient" id="ddlClient" class="form-control AllSelect" ng-change="ProjectDetails()" data-parsley-class-handler="#ClientType" data-parsley-errors-container="#ClientError" required="">
                                                 <option></option>
-                                                @*@{
-                                        var Client = 0;
-                                    }
-                                    @foreach (var item in ViewBag.AllTask)
-                                    {
-                                        if (@item.Client != Client)
-                                        {
-                                            <option value="@item.Client">
-                                                @item.ClientName
-                                            </option>
-                                            Client = @item.Client;
-                                        }
 
-                                    }*@
 
                                             </select>
                                         </div>
                                         <div id="ClientError"></div>
                                     </div>
                                 </div>
-                                <div class="col-lg-3">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <label for="txtTimesheetDate">Project</label>
                                         <div id="ProjectType" class="parsley-select" ng-hide="OtherClient">
-                                            <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect NormalValidate" ng-change="MilestoneDetails()" data-parsley-class-handler="#ProjecttType" data-parsley-errors-container="#ProjectError" >
+                                            <select ng-options="p.Project as p.ProjectName for p in ProjectInfo" ng-model="ngddlProjectName" id="ddlProjectName" class="form-control AllSelect NormalValidate" ng-change="MilestoneDetails()" data-parsley-class-handler="#ProjecttType" data-parsley-errors-container="#ProjectError">
                                                 <option></option>
-                                                @*@{
-                                        var Project = 0;
-                                    }
-                                    @foreach (var item in ViewBag.AllTask)
-                                    {
-                                        if (@item.Project != Project)
-                                        {
-                                            <option value="@item.Project">
-                                                @item.ProjectName
-                                            </option>
-                                            Project = @item.Project;
-                                        }
 
-                                    }*@
                                             </select>
                                         </div>
                                         <div ng-hide="OtherClient" id="ProjectError"></div>
-                                        <input ng-show="OtherClient" type="text" class="form-control otherValidate"  ng-model="ngtxtProject" id="txtProject">
+                                        <input ng-show="OtherClient" type="text" class="form-control otherValidate" ng-model="ngtxtProject" id="txtProject">
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="txtTimesheetDate">Milestone</label>
                                         <div id="MileType" class="parsley-select" ng-hide="OtherClient">
                                             <select ng-options="m.MileStone as m.MileStoneName for m in MilestoneInfo" ng-model="ngddlMilestone" id="ddlMilestone" class="form-control AllSelect NormalValidate" ng-change="TaskDetails()" data-parsley-class-handler="#MileType" data-parsley-errors-container="#MileError">
                                                 <option></option>
-                                                @*@{
-                                        var MileStone = 0;
-                                    }
-                                    @foreach (var item in ViewBag.AllTask)
-                                    {
-                                        if (@item.MileStone != MileStone)
-                                        {
-                                            <option value="@item.MileStone">
-                                                @item.MileStoneName
-                                            </option>
-                                            MileStone = @item.MileStone;
-                                        }
 
-                                    }*@
                                             </select>
                                         </div>
                                         <div id="MileError" ng-hide="OtherClient"></div>
                                         <span ng-show="OtherClient"><input type="text" class="form-control otherValidate" ng-model="ngtxtMilestone" id="txtMilestone" /></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="txtTimesheetDate">Task</label>
+                                        <div id="TaskType" class="parsley-select" ng-hide="OtherClient">
+                                            <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect NormalValidate" ng-change="GetPrevTimesheet()" data-parsley-class-handler="#TaskType" data-parsley-errors-container="#TaskError">
+                                                <option></option>
+                                            </select>
+                                        </div>
+                                        <div id="TaskError" ng-hide="OtherClient"></div>
+
+                                        <div ng-show="OtherClient">
+                                            <input type="text" class="form-control otherValidate" ng-model="ngtxtTask" id="txtTask">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -180,7 +233,7 @@
                                         <table class="mg-b-0 text-md-nowrap tableCss">
                                             <thead>
                                                 <tr>
-                                                    <th>Task</th>
+                                                    @*<th>Task</th>*@
                                                     <th>From Time</th>
                                                     <th>To Time</th>
                                                     <th>Desc.</th>
@@ -189,43 +242,26 @@
                                                     <th>Estd. Hrs.</th>
                                                     <th>Utld. Hrs.</th>
                                                     <th>Rem. Hrs.</th>
+                                                    <th>Doc. Upload</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
 
-                                                    <td style="width: 15%">
+                                                    @*<td style="width:6%">
                                                         <div id="TaskType" class="parsley-select" ng-hide="OtherClient">
                                                             <select select ng-options="t.ID as t.AllTask for t in TaskInfo" ng-model="ngddlTask" id="ddlTask" class="form-control AllSelect NormalValidate" ng-change="GetPrevTimesheet()" data-parsley-class-handler="#TaskType" data-parsley-errors-container="#TaskError">
                                                                 <option></option>
-                                                                @*@foreach (var item in ViewBag.AllTask)
-                                                    {
-                                                        if (@item.GetType().GetProperty("SubTask") == null)
-                                                        {
-                                                            <option value="@item.ID">
-                                                                @item.Task
-                                                            </option>
-                                                        }
-                                                        else
-                                                        {
-                                                            <option value="@item.ID">
-                                                                @item.SubTask
-                                                            </option>
-
-                                                        }
-
-
-                                                    }*@
                                                             </select>
                                                         </div>
                                                         <div id="TaskError" ng-hide="OtherClient"></div>
 
                                                         <div ng-show="OtherClient">
-                                                            <input type="text" class="form-control otherValidate"  ng-model="ngtxtTask" id="txtTask">
+                                                            <input type="text" class="form-control otherValidate" ng-model="ngtxtTask" id="txtTask">
                                                         </div>
-                                                    </td>
-                                                    <td style="width:12%">
+                                                    </td>*@
+                                                    <td style="width:13%">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <div class="input-group-text">
@@ -235,7 +271,7 @@
                                                         </div>
                                                         <div id="FrmTimeError"></div>
                                                     </td>
-                                                    <td style="width:12%">
+                                                    <td style="width:13%">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <div class="input-group-text">
@@ -245,23 +281,40 @@
                                                         </div>
                                                         <div id="ToTimeError"></div>
                                                     </td>
-                                                    <td style="width:15%"><input type="text" class="form-control" ng-model="ngtxtDescription" id="txtDescription" required=""></td>
-                                                     <td style="width:8%">
-                                                         <div id="StatusType" class="parsley-select">
-                                                             <select class="form-control AllSelect" ng-model="ngddlAllTaskStatus" id="ddlAllTaskStatus" data-parsley-class-handler="#StatusType" data-parsley-errors-container="#StatusError" required="">
-                                                                 <option value="">Choose One</option>
-                                                                 @foreach (var i in ViewBag.StatusData)
-                                                                 {
-                                                                     <option value="@i.ID">@i.StatusName</option>
-                                                                 }
-                                                             </select>
-                                                             <div id="StatusError"></div>
-                                                         </div>
-                                                </td>
+                                                    <td style="width:12%"><input type="text" class="form-control" ng-model="ngtxtDescription" id="txtDescription" required=""></td>
+                                                    <td style="width:8%">
+                                                        <div id="StatusType" class="parsley-select">
+                                                            <select class="form-control AllSelect" ng-model="ngddlAllTaskStatus" id="ddlAllTaskStatus" data-parsley-class-handler="#StatusType" data-parsley-errors-container="#StatusError" required="">
+                                                                <option value="">Choose One</option>
+                                                                @foreach (var i in ViewBag.StatusData)
+                                                                {
+                                                                    <option value="@i.ID">@i.StatusName</option>
+                                                                }
+                                                            </select>
+                                                            <div id="StatusError"></div>
+                                                        </div>
+                                                    </td>
                                                     <td style="width:7%"><input type="text" class="form-control" readonly="readonly" ng-model="ngtxtHours" id="txtHours"></td>
                                                     <td style="width:7%"><input type="text" class="form-control" ng-model="ngtxtEstimatedHours" id="txtEstimatedHours" readonly="readonly"></td>
                                                     <td style="width:7%"><input type="text" class="form-control" ng-model="ngtxtUtilizedHours" id="txtUtilizedHours" readonly="readonly"></td>
                                                     <td style="width:7%"><input type="text" class="form-control" ng-model="ngtxtRemainingHours" id="txtRemainingHours" readonly="readonly"></td>
+                                                    <td style="width:16%">
+                                                        <div class="custom-file">
+                                                            <input class="custom-file-input" id="uploadFiles" name="fileUpload" type="file"> <label class="custom-file-label" for="uploadFile" style="text-align:initial">Choose file</label>
+                                                        </div>
+                                                        <div ng-repeat="i in UploadFiles">
+                                                            <li>
+                                                                {{i.Name}}&nbsp;
+                                                          <button class="btn btn-danger badge" ng-click="RemoveTimesheetFiles($index)"><i class="fa fa-trash"></i></button>
+                                                            </li>
+                                                        </div>
+                                                        <span ng-repeat="f in TempPrevTimesheetFiles">
+                                                            <li>
+                                                                <a href="{{f.Name}}" target="_blank">{{f.FileName}}</a>&nbsp;
+                                                                <button class="btn btn-danger badge" ng-click="RemovePrevDoc($index)"><i class="fa fa-trash"></i></button>
+                                                            </li>
+                                                        </span>
+                                                    </td>
                                                     <td style="width:5%">
                                                         <div class="btn-icon-list pd-t-10" id="divAddTimesheet" data-id="0">
                                                             <button type="submit" data-placement="top" data-toggle="tooltip" title="Add" class="fa fa-plus text-primary mr-2" style="border:none;background:none"></button>
@@ -296,6 +349,7 @@
                                                     <th>Estd. Hrs.</th>
                                                     <th>Utld. Hrs.</th>
                                                     <th>Rem. Hrs.</th>
+                                                    <th>Doc.</th>
                                                     <th ng-hide="ViewTimesheet">Action</th>
                                                 </tr>
                                             </thead>
@@ -314,6 +368,15 @@
                                                     <td>{{t.EstimatedHours}}</td>
                                                     <td>{{t.UtilizedHours}}</td>
                                                     <td ng-class="{'text-red': t.RemainingHours.includes('-')}">{{t.RemainingHours}}</td>
+                                                    <td><span ng-repeat="f in t.Files">
+                                                        <li>{{f.FileName}}</li>
+                                                        </span>
+                                                        
+                                                        <span ng-repeat="f in t.PrevFiles">
+                                                            <li><a href="{{f.Name}}" target="_blank">{{f.FileName}}</a></li>
+                                                            <button class="btn btn-danger badge" ng-click="RemovePrevDoc($index)"><i class="fa fa-trash"></i></button>
+                                                        </span>
+                                                    </td>
                                                     <td ng-hide="ViewTimesheet">
                                                         <div>
                                                             <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditTimesheet($index)"></i>
@@ -328,7 +391,7 @@
                                                 <tr>
                                                     <td class="right" colspan="9">Total Hours:</td>
                                                     <td class="right">{{GetTotalHours()}}</td>
-                                                    <td colspan="3"></td>
+                                                    <td colspan="4"></td>
                                                     <td ng-hide="ViewTimesheet"></td>
                                                 </tr>
                                             </tfoot>

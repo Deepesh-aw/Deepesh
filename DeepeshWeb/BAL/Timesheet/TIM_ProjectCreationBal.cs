@@ -119,5 +119,19 @@ namespace DeepeshWeb.BAL.Timesheet
 
             return restService.UpdateItem(clientContext, "TIM_ProjectCreation", ItemData, ID);
         }
+
+        public int UploadDocument(ClientContext clientContext, HttpPostedFileBase files, string ItemData)
+        {
+
+            return RESTUploadFile(clientContext, files, ItemData);
+        }
+
+        private int RESTUploadFile(ClientContext clientContext, HttpPostedFileBase files, string ItemData)
+        {
+
+            RestService restService = new RestService();
+
+            return restService.UploadDocument(clientContext, "TIM_DocumentLibrary", files, ItemData);
+        }
     }
 }

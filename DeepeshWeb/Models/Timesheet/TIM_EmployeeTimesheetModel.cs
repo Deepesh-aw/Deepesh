@@ -9,6 +9,7 @@ namespace DeepeshWeb.Models.Timesheet
     {
         public int ID { get; set; }
         public string Description { get; set; }
+        public string RejectDescription { get; set; }
         public string ApproveDate { get; set; }
         public string ApproveDescription { get; set; }
         public int Employee { get; set; }
@@ -43,6 +44,22 @@ namespace DeepeshWeb.Models.Timesheet
         public string OtherProject { get; set; }
         public string OtherMilestone { get; set; }
         public string OtherTask { get; set; }
+        public string ModifyDate { get; set; }
+        public string ModifyName { get; set; }
+        public List<TimeDoc> ListTimeDoc { get; set; }
+        public string FileCount { get; set; }
+    }
 
+    public class TimeDoc
+    {
+        public string Name { get; set; }
+        public FileObj File { get; set; }
+    }
+    public class FileObj
+    {
+        public string name { get; set; }
+        public  Int64 size { get; set; }
+        public string type { get; set; }
+        public string ByteArr { get; set; }
     }
 }

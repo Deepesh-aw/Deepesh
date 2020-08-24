@@ -16,6 +16,10 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     var ExistUtilize = 0;
     $scope.OtherClient = false;
     $scope.ValidateField = true;
+    $scope.UploadFiles = [];
+    $scope.TimesheetFiles = [];
+    $scope.PrevTimesheetFiles = [];
+    $scope.TempPrevTimesheetFiles = [];
 
     $(function () {
         $(".overlay").hide();
@@ -138,6 +142,10 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
        
 
         $('#AddTimesheetPopUp').on('hide.bs.modal', function () {
+            $scope.PrevTimesheetFiles.length = 0;
+            $scope.TimesheetFiles.length = 0;
+            $scope.UploadFiles.length = 0;
+            $scope.TempPrevTimesheetFiles.length = 0;
             $scope.ViewTimesheet = false;
             $scope.TimeId = "TIM-" + $scope.TimesheetData.length + 1;
             $("#btnAddTimesheet").text("Submit");
@@ -176,6 +184,9 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 if (response.data[4].length > 0)
                     $scope.TimesheetDataApproved = response.data[4];
 
+                if (response.data[6].length > 0)
+                    $scope.TimesheetDataRejected = response.data[6];
+
                 if (response.data[5].length > 0)
                     $scope.TimesheetData.length = [...new Map(response.data[5].map(item => [item['TimesheetID'], item])).values()].length;                   
                 else
@@ -201,6 +212,17 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     });
 
                     $('#Approved').DataTable({
+                        lengthChange: true,
+                        responsive: true,
+                        bDestroy: true,
+                        language: {
+                            searchPlaceholder: 'Search...',
+                            sSearch: '',
+                            lengthMenu: '_MENU_ ',
+                        }
+                    });
+
+                    $('#Rejected').DataTable({
                         lengthChange: true,
                         responsive: true,
                         bDestroy: true,
@@ -465,7 +487,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             let valuestart = moment.duration("20:00", "HH:mm");
             let valuestop = moment.duration("23:15", "HH:mm");
             let difference = valuestop.subtract(valuestart);
-            alert(difference);
+            //alert(difference);
 
             min = s[1] - e[1];
             if (min.toString().length == 1)
@@ -512,7 +534,36 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         return diff;
     }
 
+    $("#uploadFiles").change(function () {
+        var file = $("#uploadFiles")[0].files[0];
+        var reader = new FileReader();
+        var fileByteArray = [];
+        reader.onload = function (event) {
+            var temp = {};
+            temp.Name = file.name;
+            temp.file = file;
+            temp.Flag = "New";
+            temp.Byte = reader.result;
+            //array = new Uint8Array(temp.Byte);
+            //for (var i = 0; i < array.length; i++) {
+            //    fileByteArray.push(array[i]);
+            //}
+            //temp.ByteArr.fileByteArray;
+            //temp.ByteArr = new Uint8Array(temp.Byte);
+            $scope.UploadFiles.push(temp);
+            $scope.$apply();
+        }
+        reader.readAsArrayBuffer(file);
+    });
+
+    $scope.RemoveTimesheetFiles = function (index) {
+        $scope.UploadFiles.splice(index, 1);
+        $scope.TimesheetFiles.splice(index, 1);
+    }
+
+    var count = 0;
     $scope.AddTimesheet = function () {
+        count++;
         var obj = {};
 
         if ($scope.OtherClient == true) {
@@ -564,11 +615,63 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         obj.AllTaskStatus = $scope.ngddlAllTaskStatus;
         obj.AllTaskStatusText = $("#ddlAllTaskStatus option:selected").text();
 
-       
+        if ($scope.UploadFiles.length > 0) {
+            //var Doc = [];
+            //angular.forEach($scope.UploadFiles, function (value, key) {
 
+            //    //obj.NewFile = value.file;
+            //    var DocObj = {};
+            //    DocObj.Name = value.Name;
+            //    var FileObj = {};
+            //    FileObj.name = value.file.name;
+            //    FileObj.size = value.file.size;
+            //    FileObj.type = value.file.type;
+            //    //var FileArr = [];
+            //    //FileObj.ByteArr = value.ByteArr; 
+            //    //FileArr.push(FileObj);
+            //    DocObj.File = FileObj;
+            //    Doc.push(DocObj);
+            //});
+            //obj.ListTimeDoc = Doc;
+            var Doc = [];
+            angular.forEach($scope.UploadFiles, function (value, key) {
+                var CommonObj = {};
+                CommonObj.Name = count+"_"+value.Name;
+                CommonObj.File = value.file;
+                obj.FileName = value.Name;
+                $scope.TimesheetFiles.push(CommonObj);
+
+                
+                Doc.push({ 'FileName': value.Name });
+                obj.Files = Doc;
+            });
+
+
+
+        }
+
+        if ($scope.TempPrevTimesheetFiles.length > 0) {
+            var PrevDoc = [];
+            angular.forEach($scope.TempPrevTimesheetFiles, function (value, key) {
+                var temp = {};
+                temp.ID = value.ID;
+                temp.Name = value.Name;
+                temp.LID = value.LID;
+                temp.FileName = value.FileName;
+                temp.Delete = value.Delete;
+                PrevDoc.push(temp);
+                obj.PrevFiles = PrevDoc;
+
+            });
+        }
+               
+        obj.FileCount = count;
 
         $scope.TimesheetArr.push(obj);
-
+        console.log($scope.TimesheetArr);
+        console.log($scope.TimesheetFiles);
+        $scope.UploadFiles.length = 0;
+        $scope.TempPrevTimesheetFiles.length = 0;
         //clear all the fields
         $scope.ClearPopData();
 
@@ -597,6 +700,35 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         $scope.ngtxtTimesheetDate = moment($scope.TimesheetArr[i].TimesheetAddedDate).format("DD-MM-YYYY");
         $("#txtFromTime").val($scope.TimesheetArr[i].FromTimeView);
         $("#txtToTime").val($scope.TimesheetArr[i].ToTimeView);
+
+        if ($scope.TimesheetFiles.length > 0) {
+            angular.forEach($scope.TimesheetFiles, function (value, key) {
+                var FileName = value.Name.split('_')[0];
+                if ($scope.TimesheetArr[i].FileCount == FileName) {
+                    var CommonObj = {};
+                    CommonObj.Name = value.Name.substring(FileName.length + 1);
+                    CommonObj.file = value.File;
+                    $scope.UploadFiles.push(CommonObj);
+                    //$scope.TimesheetFiles.splice(key, 1);
+                }
+
+            });
+        }
+
+        if ($scope.TimesheetArr[i].PrevFiles.length > 0) {
+            //angular.forEach($scope.TimesheetArr[i].PrevFiles, function (value, key) {
+            //    var temp = {};
+            //    temp.ID = value.ID;
+            //    temp.Name = value.Name;
+            //    temp.LID = value.LID;
+            //    temp.FileName = value.FileName;
+            //    temp.Delete = "No";
+            //    $scope.TempPrevTimesheetFiles.push(temp);
+            //});
+            $scope.TempPrevTimesheetFiles = $scope.TimesheetArr[i].PrevFiles;
+        }
+        
+
 
         if ($scope.TimesheetArr[i].OtherClientStatus == true) {
             $scope.OtherClient = true;
@@ -647,20 +779,21 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         if ($scope.TimesheetArr.length > 0) {
             $scope.TimesheetLoad = true;
             $(".overlay").show();
-            //if ($scope.EditTimesheetArr.length > 0) {
-            //    $scope.ClearPrev();
-            //}
-            
 
-            var data = {
-                'EmpTimesheet': $scope.TimesheetArr,
+            //var data = {
+            //    'EmpTimesheet': $scope.TimesheetArr,
+            //}
+
+            var fileData = new FormData();
+            for (var i = 0; i < $scope.TimesheetFiles.length; i++) {
+                fileData.append($scope.TimesheetFiles[i].name, $scope.TimesheetFiles[i].File, $scope.TimesheetFiles[i].Name);
             }
 
-            //var AddSubTask = new Array();
-            //AddSubTask = $scope.TimesheetArr;
+            fileData.append('TimesheetDetails', JSON.stringify($scope.TimesheetArr));
 
-            CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/AddTimesheet", data).then(function (response) {
-                if (response.data[0] == "OK") {
+            //CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/AddTimesheet", data).then(function (response) {
+            CommonAppUtilityService.DataWithFile("/TIM_TimesheetDashboard/AddTimesheet", fileData).then(function (response) {
+                if (response[0] == "OK") {
                     $scope.OnLoad();
                     $scope.TimesheetLoad = false;
                     $("#AddTimesheetPopUp").modal("hide");
@@ -678,20 +811,6 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
     }
 
-    //$scope.ClearPrev = function () {
-    //    var data = {
-    //        'ClearTimesheet': $scope.EditTimesheetArr,
-    //    }
-
-    //    CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/ClearTimesheet", data).then(function (response) {
-    //        if (response.data[0] == "OK") {
-
-    //        }
-    //        else {
-    //            return false;
-    //        }
-    //    });
-    //}
 
     $scope.DateFormat = function (d) {
         if (d != undefined || d != null) {
@@ -756,16 +875,36 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     obj.UtilizedHours = value.UtilizedHours;
                     obj.RemainingHours = value.RemainingHours;
                     obj.TimesheetID = value.TimesheetID;
-                    obj.TimesheetAddedDate = moment(value.TimesheetAddedDate, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm:ss");
+                    obj.TimesheetAddedDate = value.TimesheetAddedDate;
                     obj.FromTime = moment(value.FromTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
                     obj.ToTime = moment(value.ToTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
                     obj.FromTimeView = moment(value.FromTime, ["dd-MM-yyyy h:mm:ss"]).format("HH:mm");
                     obj.ToTimeView = moment(value.ToTime, ["dd-MM-yyyy h:mm:ss"]).format("HH:mm");
 
-                    
-
+                    obj.ModifyDate = value.ModifyDate;
+                    obj.ModifyName = value.ModifyName;
+                    obj.StatusName = value.StatusName;
                     obj.EmployeeName = value.EmployeeName;
                     obj.ManagerName = value.ManagerName;
+                    obj.ApprovedDate = value.ApproveDate;
+                    obj.ApproveDescription = value.ApproveDescription;
+                    obj.RejectDescription = value.RejectDescription;
+
+                    //Document code
+                    var Doc = [];
+                    angular.forEach(response.data[2], function (value, key) {
+                        if (value.LID == obj.ID) {
+                            var temp = {};
+                            temp.ID = value.ID;
+                            temp.Name = value.Name;
+                            temp.LID = value.LID;
+                            temp.FileName = value.DocumentPath;
+                            temp.Delete = "No";
+                            Doc.push(temp);
+                            obj.PrevFiles = Doc;
+                        }
+                        
+                    });
 
                     $scope.TimesheetArr.push(obj);
                 })

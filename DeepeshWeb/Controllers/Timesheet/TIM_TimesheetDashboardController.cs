@@ -4,9 +4,12 @@ using DeepeshWeb.BAL.Timesheet;
 using DeepeshWeb.Models;
 using DeepeshWeb.Models.Timesheet;
 using Microsoft.Ajax.Utilities;
+using Microsoft.SharePoint.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 
 namespace DeepeshWeb.Controllers.TimeSheet
@@ -25,6 +28,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_WorkingHoursBal BalWorkinghours = new TIM_WorkingHoursBal();
         TIM_EmployeeTimesheetBal BalEmpTimesheet = new TIM_EmployeeTimesheetBal();
         GEN_ApproverMasterBal BalApprover = new GEN_ApproverMasterBal();
+        TIM_DocumentLibraryBal BalDocument = new TIM_DocumentLibraryBal();
 
         // GET: TIM_TimesheetDashboard
         public ActionResult Index()
@@ -47,7 +51,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<TIM_WorkingHoursModel> lstWorkingHours = new List<TIM_WorkingHoursModel>();
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetPending = new List<TIM_EmployeeTimesheetModel>();
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetApproved = new List<TIM_EmployeeTimesheetModel>();
-
+            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetRejected = new List<TIM_EmployeeTimesheetModel>();
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -61,6 +65,9 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstEmployeeTimesheetPending = lstEmployeeTimesheetPending.DistinctBy(x => x.TimesheetID).ToList();
                     lstEmployeeTimesheetApproved = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndApprove(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     lstEmployeeTimesheetApproved = lstEmployeeTimesheetApproved.DistinctBy(x => x.TimesheetID).ToList();
+                    lstEmployeeTimesheetRejected = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndRejected(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    lstEmployeeTimesheetRejected = lstEmployeeTimesheetRejected.DistinctBy(x => x.TimesheetID).ToList();
+
                     ViewBag.AllTimesheet = BalEmpTimesheet.GetAllEmpTimesheet(clientContext);
 
                     obj.Add("OK");
@@ -69,6 +76,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     obj.Add(lstEmployeeTimesheetPending);
                     obj.Add(lstEmployeeTimesheetApproved);
                     obj.Add(ViewBag.AllTimesheet);
+                    obj.Add(lstEmployeeTimesheetRejected);
                 }
             }
             catch (Exception ex)
@@ -122,9 +130,12 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
         [HttpPost]
         [ActionName("AddTimesheet")]
-        public JsonResult AddTimesheet(List<TIM_EmployeeTimesheetModel> EmpTimesheet)
+        public JsonResult AddTimesheet(System.Web.Mvc.FormCollection formCollection)
         {
             List<object> obj = new List<object>();
+            var Timesheet = formCollection["TimesheetDetails"];
+            List<TIM_EmployeeTimesheetModel> EmpTimesheet = JsonConvert.DeserializeObject<List<TIM_EmployeeTimesheetModel>>(Timesheet);
+
             int i = 0;
             string InternalStatus = "Inprogress";
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -164,7 +175,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         {
                             returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")
+                            {
+                                if (Request.Files.Count > 0)
+                                    UploadTimesheetDoc(clientContext, Request.Files, item, returnID);
                                 i++;
+                            }
                         }
                         else
                         {
@@ -175,7 +190,12 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             itemdata += " ,'MileStoneId': '" + item.MileStone + "'";
                             returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
                             if (Convert.ToInt32(returnID) > 0)
+                            {
+                                if (Request.Files.Count > 0)
+                                    UploadTimesheetDoc(clientContext, Request.Files, item, returnID);
                                 i++;
+                            }
+                            
                         }
 
                     }
@@ -193,20 +213,50 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
+        public void UploadTimesheetDoc(ClientContext clientContext, HttpFileCollectionBase files, TIM_EmployeeTimesheetModel item, string returnID)
+        {
+            try
+            {
+                string Type = "TimesheetCreation";
+                for (int j = 0; j < files.Count; j++)
+                {
+                    if (item.FileCount == files[j].FileName.Split('_')[0])
+                    {
+                        var postedFile = files[j];
+                        string Docitem = "'LID' : '" + returnID + "'";
+                        Docitem += ",'TimesheetID' : '" + item.TimesheetID + "'";
+                        Docitem += ",'DocumentType' : '" + Type + "'";
+                        Docitem += ",'DocumentPath' : '" + files[j].FileName.Split('_')[1] + "'";
+                        int res = BalProjectCreation.UploadDocument(clientContext, postedFile, Docitem);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            
+        }
+
         [HttpPost]
         [ActionName("GetEditTimesheet")]
         public JsonResult GetEditTimesheet(string TimesheetId)
         {
             List<object> obj = new List<object>();
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
                     lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByTimesheetId(clientContext, TimesheetId);
+                    var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                    lstDocument = BalDocument.GetDocumentByTimesheetId(clientContext, TimesheetId, path);
+
                     obj.Add("OK");
                     obj.Add(lstEmployeeTimesheet);
+                    obj.Add(lstDocument);
                 }
             }
             catch (Exception ex)

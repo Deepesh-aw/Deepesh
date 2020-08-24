@@ -27,9 +27,13 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
                 if (response.data[2].length > 0)
                     $scope.TimesheetDataApproved = response.data[2];
 
+                if (response.data[3].length > 0)
+                    $scope.TimesheetDataRejected = response.data[3];
+
 
                 $('#Pending').DataTable().clear().destroy();
                 $('#Approved').DataTable().clear().destroy();
+                $('#Rejected').DataTable().clear().destroy();
 
                 setTimeout(function () {
                     $('#Pending').DataTable({
@@ -44,6 +48,17 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
                     });
 
                     $('#Approved').DataTable({
+                        lengthChange: true,
+                        responsive: true,
+                        bDestroy: true,
+                        language: {
+                            searchPlaceholder: 'Search...',
+                            sSearch: '',
+                            lengthMenu: '_MENU_ ',
+                        }
+                    });
+
+                    $('#Rejected').DataTable({
                         lengthChange: true,
                         responsive: true,
                         bDestroy: true,

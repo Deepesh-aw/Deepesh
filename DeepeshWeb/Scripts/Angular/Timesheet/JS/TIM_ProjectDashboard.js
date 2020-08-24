@@ -12,7 +12,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     $rootScope.EditMilestone = [];
     $rootScope.EditTask = [];
     $rootScope.EditSubTask = [];
-
+    $rootScope.PrevUploadFiles = [];
+    $scope.UploadFiles = [];
     var ProjectID;
     var AllDataTableId = {};
 
@@ -87,6 +88,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             $scope.ngtxtNoOfDays = "";
             $scope.ngtxtDescription = "";
 
+            $rootScope.PrevUploadFiles.length = 0;
+            $scope.UploadFiles.length = 0;
+
+
             Array.from(document.getElementsByClassName('parsley-success')).forEach(function (el) {
                 el.classList.remove('parsley-success');
             });
@@ -108,7 +113,6 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
         
     })
-
 
     $scope.OpenAddProjectPop = function () {
         //$('#testPop1').addClass('active');
@@ -476,6 +480,23 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //Url = '/TIM_AddMilestone' + "?SPHostUrl=" + spsite;
         //window.location.href = Url;
         //$("#frmProjectDashboard")[0].reset();
+        var data = {
+            'ProjectId': Project.ID
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectDoc", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                if (response.data[1].length > 0) {
+                    angular.forEach(response.data[1], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
+            }
+        });
         $rootScope.ProjectPopData = Project;
         $("#AddMilestonePopUp").modal("show");
 
@@ -488,6 +509,23 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //var spsite = getUrlVars()["SPHostUrl"];
         //Url = '/TIM_AddTask' + "?SPHostUrl=" + spsite;
         //window.location.href = Url;
+        var data = {
+            'ProjectId': Project.ID
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectDoc", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                if (response.data[1].length > 0) {
+                    angular.forEach(response.data[1], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
+            }
+        });
         $rootScope.MiletableRow = MileTableRow;
         $rootScope.ProjectPopData = Project;
         $rootScope.MilestonePopData = Milestone;
@@ -506,6 +544,16 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 $rootScope.ProjectPopData = response.data[1];
                 $rootScope.MilestonePopData = response.data[2];
                 $rootScope.TaskPopData = TaskData;
+                if (response.data[3].length > 0) {
+                    angular.forEach(response.data[3], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
                 $("#AddSubTaskPopUp").modal("show");
             }
         });
@@ -518,6 +566,23 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //var spsite = getUrlVars()["SPHostUrl"];
         //Url = '/TIM_AddSubTask' + "?SPHostUrl=" + spsite;
         //window.location.href = Url;
+        var data = {
+            'ProjectId': Project.ID
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectDoc", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                if (response.data[1].length > 0) {
+                    angular.forEach(response.data[1], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
+            }
+        });
         $rootScope.TaskRow = TaskTableRow;
         $rootScope.ProjectPopData = Project;
         $rootScope.MilestonePopData = Milestone;
@@ -554,6 +619,20 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     $("#ddlProjectManager").val($scope.ProjectDetails[0].ProjectManager).trigger('change');
                     $("#ddlMembers").val(MemberVal).trigger('change');
                 });
+
+                if (response.data[2].length > 0) {
+                    angular.forEach(response.data[2], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        temp.Delete = "No";
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
+                
+
                 $("#AddProjectPopUp").modal("show");
 
             }
@@ -569,6 +648,30 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         if (d != undefined || d != null) {
             return d.split(' ')[0];
         }
+    }
+
+    $("#uploadFiles").change(function () {
+
+        var file = $("#uploadFiles")[0].files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (event) {
+            var temp = {};
+            temp.Name = file.name;
+            temp.file = file;
+            temp.Flag = "New";
+            $scope.UploadFiles.push(temp);
+            $scope.$apply();
+        }
+        reader.readAsArrayBuffer(file);
+    });
+
+    $scope.Remove = function (index) {
+        $scope.UploadFiles.splice(index, 1);
+    }
+
+    $scope.RemovePrev = function (index) {
+        $rootScope.PrevUploadFiles[index].Delete = "Yes";
     }
 
     function AddProject() {
@@ -594,14 +697,35 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             'ProjectManager': $scope.ngddlProjectManager,
             'ProjectType': $scope.ngddlProjectType,
         }
-        if ($scope.ProjectDetails.length > 0)
-            data.ID = ProjectID;
+        
 
         if ($scope.ngProjectDelete == true)
             data.InternalStatus = "ProjectDeleted";
 
-        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/SaveProject", data).then(function (response) {
-            if (response.data[0] == "OK") {
+        //new code start
+        var fileData = new FormData();
+
+        if ($scope.ProjectDetails.length > 0) {
+            data.ID = ProjectID;
+
+            var PrevDocArr = [];
+            angular.forEach($rootScope.PrevUploadFiles, function (value, key) {
+                if (value.Delete == "Yes")
+                    PrevDocArr.push(value);
+            });
+
+            fileData.append('PrevDocument', JSON.stringify(PrevDocArr));
+        }
+       
+        for (var i = 0; i < $scope.UploadFiles.length; i++) {
+            fileData.append($scope.UploadFiles[i].name, $scope.UploadFiles[i].file);
+        }
+        var objArr = [];
+        objArr.push(data);
+        fileData.append('ProjectDetails', JSON.stringify(objArr));
+
+        CommonAppUtilityService.DataWithFile("/TIM_ProjectDashboard/SaveProject", fileData).then(function (response) {
+            if (response[0] == "OK") {
                 $scope.ProjectCreationLoad = false;
                 $('#AddProjectPopUp').modal('hide');
                 $scope.LoadProjectData();
@@ -645,6 +769,17 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Delete = "No";
                     $rootScope.Milestone.push(obj);
                 });
+
+                if (response.data[2].length > 0) {
+                    angular.forEach(response.data[2], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
                 $("#btnMilestoneCreation").text("Update");
                 $("#AddMilestonePopUp").modal("show");
                 //$scope.$apply();
@@ -709,6 +844,17 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Delete = "No";
                    $rootScope.Task.push(obj);
                 });
+
+                if (response.data[2].length > 0) {
+                    angular.forEach(response.data[2], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
                 $("#btnTaskCreation").text("Update");
                 $("#AddTaskPopUp").modal("show");
                 //$scope.$apply();
@@ -783,6 +929,16 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                     obj.Delete = "No";
                     $rootScope.SubTask.push(obj);
                 });
+                if (response.data[2].length > 0) {
+                    angular.forEach(response.data[2], function (value, key) {
+                        var temp = {};
+                        temp.ID = value.ID;
+                        temp.Name = value.Name;
+                        temp.LID = value.LID;
+                        temp.DocumentPath = value.DocumentPath;
+                        $rootScope.PrevUploadFiles.push(temp);
+                    });
+                }
                 $("#btnSubTaskCreation").text("Update");
                 $("#AddSubTaskPopUp").modal("show");
                 //$scope.$apply();
@@ -936,6 +1092,7 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
 
         // do something
         $('#AddMilestonePopUp').on('hide.bs.modal', function () {
+            $rootScope.PrevUploadFiles.length = 0;
             $scope.ngtxtMileDays = "";
             $("#frmProjectDashboard")[0].reset();
             $rootScope.Milestone.length = 0;
@@ -1208,6 +1365,7 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
         }
 
         $('#AddTaskPopUp').on('hide.bs.modal', function () {
+            $rootScope.PrevUploadFiles.length = 0;
             $("#frmProjectDashboard")[0].reset();
             $("#ddlMember").val(null).trigger('change.select2');
            // $("#ddlStatus").val(null).trigger('change.select2');
@@ -1563,6 +1721,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
     $scope.LoadSubTask = function () {
 
         $('#AddSubTaskPopUp').on('hide.bs.modal', function () {
+            $rootScope.PrevUploadFiles.length = 0;
             $("#frmProjectDashboard")[0].reset();
             $("#ddlSubTaskMember").val(null).trigger('change.select2');
             $("#ddlSubTaskStatus").val(null).trigger('change.select2');
