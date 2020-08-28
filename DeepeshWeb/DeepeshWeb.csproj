@@ -192,11 +192,14 @@
     <Compile Include="BAL\Timesheet\TIM_MilestoneBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectCreationBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectTypeMasterBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_SendEmailBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_StatusMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_SubTaskBal.cs" />
+    <Compile Include="BAL\Timesheet\TIM_TimesheetParentBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_WorkingHoursBal.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_DashboardLandingController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_ManagerDashboardController.cs" />
+    <Compile Include="Controllers\TimeSheet\TIM_SendEmailController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_TimesheetDashboardController.cs" />
     <Compile Include="Controllers\TimeSheet\TIM_TimesheetReportController.cs" />
     <Compile Include="Models\EmployeeManagement\Emp_DepartmentModel.cs" />
@@ -206,6 +209,7 @@
     <Compile Include="Models\Timesheet\Pagination.cs" />
     <Compile Include="Models\Timesheet\TIM_DocumentLibraryModel.cs" />
     <Compile Include="Models\Timesheet\TIM_EmployeeTimesheetModel.cs" />
+    <Compile Include="Models\Timesheet\TIM_SendEmailModel.cs" />
     <Compile Include="Models\Timesheet\TIM_SubTaskModel.cs" />
     <Compile Include="BAL\Timesheet\TIM_TaskBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_WorkFlowMasterBal.cs" />
@@ -234,6 +238,7 @@
     <Compile Include="Models\Timesheet\TIM_ProjectTypeMasterModel.cs" />
     <Compile Include="Models\Timesheet\TIM_StatusMasterModel.cs" />
     <Compile Include="Models\Timesheet\TIM_TaskModel.cs" />
+    <Compile Include="Models\Timesheet\TIM_TimesheetParentModel.cs" />
     <Compile Include="Models\Timesheet\TIM_WorkFlowMasterModel.cs" />
     <Compile Include="Models\Timesheet\TIM_WorkingHoursModel.cs" />
     <Compile Include="Models\UserGroupModel.cs" />
@@ -9205,9 +9210,11 @@
     <Content Include="Views\TIM_ManagerDashboard\Index.cshtml" />
     <Content Include="Views\Partial\TIM_ViewTimesheet.cshtml" />
     <Content Include="Views\TIM_TimesheetReport\Index.cshtml" />
+    <Content Include="Views\Partial\ViewPage1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\TIM_SendEmail\" />
     <Folder Include="Views\TIM_Task\" />
   </ItemGroup>
   <ItemGroup>

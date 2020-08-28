@@ -77,6 +77,7 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.TaskStatus = j["TaskStatus"]["ID"] == null ? 0 : Convert.ToInt32(j["TaskStatus"]["ID"]);
                 data.TaskStatusName = j["TaskStatus"]["StatusName"] == null ? "" : j["TaskStatus"]["StatusName"].ToString();
                 data.Members = j["Members"]["ID"] == null ? 0 : Convert.ToInt32(j["Members"]["ID"]);
+                data.MembersEmail = j["Members"]["OfficeEmail"] == null ? "" : Convert.ToString(j["Members"]["OfficeEmail"]);
                 data.MembersName = j["Members"]["FirstName"] == null ? "" : j["Members"]["FirstName"].ToString() +" "+ j["Members"]["LastName"].ToString();
                 data.ClientName = j["Client"]["ClientName"] == null ? "" : Convert.ToString(j["Client"]["ClientName"].ToString());
                 data.Client = j["Client"]["ID"] == null ? 0 : Convert.ToInt32(j["Client"]["ID"].ToString());
@@ -99,7 +100,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "ID,Task,StartDate,EndDate,Client/ID,Client/ClientName,Status/StatusName,Status/ID,TaskStatus/StatusName,TaskStatus/ID,InternalStatus,NoOfDays,Members/ID,Members/FirstName,Members/LastName,Project/Id,Project/ProjectName,MileStone/ID,MileStone/MileStone";
+            rESTOption.select = "ID,Task,StartDate,EndDate,Client/ID,Client/ClientName,Status/StatusName,Status/ID,TaskStatus/StatusName,TaskStatus/ID,InternalStatus,NoOfDays,Members/ID,Members/FirstName,Members/LastName,Members/OfficeEmail,Project/Id,Project/ProjectName,MileStone/ID,MileStone/MileStone";
             rESTOption.expand = "Project,MileStone,Members,Status,TaskStatus,Client";
             rESTOption.top = "5000";
 

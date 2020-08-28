@@ -87,6 +87,25 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
         CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/GetEditTimesheet", data).then(function (response) {
             if (response.data[1].length > 0) {
                 $scope.CurrentTimesheet = response.data[1];
+                angular.forEach($scope.CurrentTimesheet, function (Parentvalue, Parentkey) {
+                    //Document code
+                    var Doc = [];
+                    Parentvalue.PrevFiles = Doc;
+                    angular.forEach(response.data[2], function (value, key) {
+                        if (value.LID == Parentvalue.ID) {
+                            var temp = {};
+                            //temp.ID = value.ID;
+                            temp.Name = value.Name;
+                            //temp.LID = value.LID;
+                            temp.FileName = value.DocumentPath;
+                            temp.Delete = "No";
+                            Doc.push(temp);
+                            Parentvalue.PrevFiles = Doc;
+                        }
+
+                    });
+
+                });
                 if (Action == "View") {
                     $scope.Report = true;
                 }

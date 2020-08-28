@@ -235,7 +235,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         angular.forEach(response.data[1], function (value, key) {
             //this.push(key + ': ' + value);
             $scope["Mile" + value.ID] = value;
-            $scope.MileRow = row;
+            $rootScope.MileRow = row;
             var i = key + 1;
             Html += '<tr><td data-label="Milestone"><span class = "details-td" id = "Task' + value.ID + '">';
             if (value.InternalStatus != "MilestoneCreated") {
@@ -300,7 +300,10 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         }
         else {
             var data = {
-                'MilestoneId': Milestone.ID
+                'MilestoneId': Milestone.ID,
+                'Members': Project.Members,
+                'ProjectManager': Project.ProjectManager
+
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
@@ -329,7 +332,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             $scope["Task" + value.ID] = value;
             Html += '<tr><td data-label="Task"><span class = "details-td" id = "SubTask' + value.ID + '">';
             if (value.InternalStatus != "TaskCreated")
-                Html += '<span><i class="si si si-plus" ng-click = "ShowSubTask(' + value.ID + ', ' + value.ID + ')"  aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;</span>';
+                Html += '<span><i class="si si si-plus" ng-click = "ShowSubTask(' + value.ID + ', ' + value.ID + ', Project)"  aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;</span>';
             else
                 Html += '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
 
@@ -370,7 +373,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         }, 2);
     }
 
-    $scope.ShowSubTask = function (index, TaskId) {
+    $scope.ShowSubTask = function (index, TaskId, Project) {
         $("#SubTask" + index).find('i').removeClass('si si si-plus');
         $("#SubTask" + index).find('i').addClass('spinner-border spinner-border-sm');
 
@@ -389,7 +392,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         }
         else {
             var data = {
-                'TaskId': TaskId
+                'TaskId': TaskId,
+                'Members': Project.Members,
+                'ProjectManager': Project.ProjectManager
             }
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetSubTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
@@ -510,7 +515,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //Url = '/TIM_AddTask' + "?SPHostUrl=" + spsite;
         //window.location.href = Url;
         var data = {
-            'ProjectId': Project.ID
+            'ProjectId': Project.ID,
+            'Members': Project.Members,
+            'ProjectManager': Project.ProjectManager
         }
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectDoc", data).then(function (response) {
             if (response.data[0] == "OK") {
@@ -524,6 +531,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                         $rootScope.PrevUploadFiles.push(temp);
                     });
                 }
+
+                $scope.MembersArr = response.data[2];
             }
         });
         $rootScope.MiletableRow = MileTableRow;
@@ -541,6 +550,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         }
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddSubTaskMain", data).then(function (response) {
             if (response.data[0] == "OK") {
+                $scope.MembersSubTaskArr = response.data[4];
                 $rootScope.ProjectPopData = response.data[1];
                 $rootScope.MilestonePopData = response.data[2];
                 $rootScope.TaskPopData = TaskData;
@@ -567,7 +577,9 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //Url = '/TIM_AddSubTask' + "?SPHostUrl=" + spsite;
         //window.location.href = Url;
         var data = {
-            'ProjectId': Project.ID
+            'ProjectId': Project.ID,
+            'Members': Project.Members,
+            'ProjectManager': Project.ProjectManager
         }
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetProjectDoc", data).then(function (response) {
             if (response.data[0] == "OK") {
@@ -581,6 +593,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                         $rootScope.PrevUploadFiles.push(temp);
                     });
                 }
+                $scope.MembersSubTaskArr = response.data[2];
             }
         });
         $rootScope.TaskRow = TaskTableRow;
@@ -675,14 +688,19 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     }
 
     function AddProject() {
-        $scope.ProjectCreationLoad = true;
+        var msg = "Project added successfully";
+        $scope.ProjectCreateLoad = true;
         $(".overlay").show();
-        
+
         var MembersText = $("#ddlMembers option:selected").map(function () { return this.text }).get().join(', ');
         var MembersCode = $("#ddlMembers option:selected").map(function () { return this.id }).get().join(', ');
+        var MembersEmail = $("#ddlMembers option:selected").map(function () { return this.dataset.email }).get().join('; ');
+        var ProjectManagerEmail = $("#ddlProjectManager option:selected").attr('data-email');
+        var ProjectManager = $("#ddlProjectManager option:selected").text();
         //var data = $("#frmProjectCreation").serialize();
         //data += "&Members=" + $("#ddlMembers").val() + "&MembersText=" + MembersText;
-        //alert(data);
+        //alert(MembersEmail + ";" + ProjectManagerEmail);
+
         var data = {
             'ProjectName': $scope.ngtxtProjectName,
             'StartDate': moment($("#txtProjectStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss"),
@@ -692,11 +710,14 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             'Description': $scope.ngtxtDescription,
             'Members': $("#ddlMembers").val(),
             'MembersCodeText': MembersCode,
+            'MembersEmail': MembersEmail + ";" + ProjectManagerEmail,
             'MembersText': MembersText,
             'NoOfDays': $scope.ngtxtNoOfDays,
             'ProjectManager': $scope.ngddlProjectManager,
             'ProjectType': $scope.ngddlProjectType,
+            'ProjectManagerName': ProjectManager,
         }
+        
         
 
         if ($scope.ngProjectDelete == true)
@@ -706,16 +727,17 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         var fileData = new FormData();
 
         if ($scope.ProjectDetails.length > 0) {
-            data.ID = ProjectID;
-
-            var PrevDocArr = [];
-            angular.forEach($rootScope.PrevUploadFiles, function (value, key) {
-                if (value.Delete == "Yes")
-                    PrevDocArr.push(value);
-            });
-
-            fileData.append('PrevDocument', JSON.stringify(PrevDocArr));
+            data.ID = ProjectID;  
+            msg = "Project updated successfully";
         }
+
+        var PrevDocArr = [];
+        angular.forEach($rootScope.PrevUploadFiles, function (value, key) {
+            if (value.Delete == "Yes")
+                PrevDocArr.push(value);
+        });
+
+        fileData.append('PrevDocument', JSON.stringify(PrevDocArr));
        
         for (var i = 0; i < $scope.UploadFiles.length; i++) {
             fileData.append($scope.UploadFiles[i].name, $scope.UploadFiles[i].file);
@@ -726,14 +748,15 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
         CommonAppUtilityService.DataWithFile("/TIM_ProjectDashboard/SaveProject", fileData).then(function (response) {
             if (response[0] == "OK") {
-                $scope.ProjectCreationLoad = false;
+                //alert(msg);
+                $scope.ProjectCreateLoad = false;
                 $('#AddProjectPopUp').modal('hide');
                 $scope.LoadProjectData();
                 $(".overlay").hide();
             }
             else {
                 alert("Something went wrong. Please try after some time.");
-                $scope.ProjectCreationLoad = false;
+                $scope.ProjectCreateLoad = false;
                 $(".overlay").hide();
             }
                 
@@ -812,20 +835,25 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     }
 
     $scope.OpenEditTaskPop = function (Milestone, Project, MileTableRow) {
+        $rootScope.MiletableRow = MileTableRow;
         $rootScope.ProjectPopData = Project;
         $rootScope.MilestonePopData = Milestone;
 
         var data = {
-            'MilestoneId': Milestone.ID
+            'MilestoneId': Milestone.ID,
+            'Members': Project.Members,
+            'ProjectManager': Project.ProjectManager
         }
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
             if (response.data[0] == "OK") {
+                $scope.MembersArr = response.data[3];
                 $rootScope.EditTask = response.data[1];
                 angular.forEach($rootScope.EditTask, function (value, key) {
                     var obj = {};
                     obj.ID = value.ID;
                     obj.Task = value.Task;
                     obj.Members = value.Members;
+                    obj.Membersvalue = value.Members + ":" + value.MembersEmail;
                     obj.MemberTitle = value.MembersName;
                     obj.StartDateView = moment(value.StartDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
                     obj.EndDateView = moment(value.EndDate, 'DD-MM-YYYY').format("DD-MM-YYYY");
@@ -901,10 +929,13 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         $rootScope.MilestonePopData = Milestone;
         $rootScope.TaskPopData = Task;
         var data = {
-            'TaskId': Task.ID
+            'TaskId': Task.ID,
+            'Members': Project.Members,
+            'ProjectManager': Project.ProjectManager
         }
         CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetSubTask", data).then(function (response) {
             if (response.data[0] == "OK") {
+                $scope.MembersSubTaskArr = response.data[3];
                 $rootScope.EditSubTask = response.data[1];
                 angular.forEach($rootScope.EditSubTask, function (value, key) {
 
@@ -1024,68 +1055,16 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         });
     }
 
-    //$scope.AddProject = function () {
-    //    var spsite = getUrlVars()["SPHostUrl"];
-    //    Url = '/TIM_ProjectCreation' + "?SPHostUrl=" + spsite;
-    //    window.location.href = Url;
-    //}
-
-
-    //function for Project Deletion Alert Message
-    //$scope.ProjectDeletionAlert = function (ProjectId) {
-    //    swal({
-    //        title: "Project Deletion",
-    //        text: "Are you sure do you really want to delete this project?",
-    //        type: "info",
-    //        showCancelButton: true,
-    //        closeOnConfirm: false,
-    //        showLoaderOnConfirm: true
-    //    }, function () {
-    //        $scope.DeleteProject(ProjectId);
-    //    });
-    //}
-
-    //$scope.DeleteProject = function (ProjectId) {
-    //    $.cookie('ProjectId', ProjectId);
-    //    CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/DeleteProject", "").then(function (response) {
-    //        if (response.data[0] == "OK") {
-    //            swal("Project deleted successfully.");
-    //            $scope.LoadProjectData();
-    //        }
-    //    });
-    //}
-
-
-    //$scope.GoToMilestone = function (ProjectId) {
-    //    $.cookie('ProjectId', ProjectId);
-    //    var spsite = getUrlVars()["SPHostUrl"];
-    //    Url = '/TIM_AddMilestone' + "?SPHostUrl=" + spsite;
-    //    window.location.href = Url;
-    //}
-
-    //$scope.GoToTask = function (ProjectId) {
-    //    $.cookie('ProjectId', ProjectId);
-    //    var spsite = getUrlVars()["SPHostUrl"];
-    //    Url = '/TIM_AddTask' + "?SPHostUrl=" + spsite;
-    //    window.location.href = Url;
-    //}
-
-    //$scope.GoToSubTask = function (ProjectId) {
-    //    $.cookie('ProjectId', ProjectId);
-    //    var spsite = getUrlVars()["SPHostUrl"];
-    //    Url = '/TIM_AddSubTask' + "?SPHostUrl=" + spsite;
-    //    window.location.href = Url;
-    //}
-
-    //$scope.GoToLanding = function (ProjectId) {
-    //    $.cookie('ProjectId', ProjectId);
-    //    var spsite = getUrlVars()["SPHostUrl"];
-    //    Url = '/TIM_DashboardLanding' + "?SPHostUrl=" + spsite;
-    //    window.location.href = Url;
-    //}
 });
 
 ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http, $rootScope, $timeout, CommonAppUtilityService) {
+
+    $scope.ResizeDatePicker = function (popup) {
+        var popupTop = popup.top - 110;
+        $('.datetimepicker').css({
+            'top': popupTop
+        });
+    }
 
 
     $scope.OnLoadMilestone = function () {
@@ -1100,9 +1079,16 @@ ProjectDashboardApp.controller('AddMilestoneController', function ($scope, $http
             $("#btnMilestoneCreation").text("Submit");
         });
 
-        $("#txtMileStartDate").on('click',function () {
+        $("#txtMileStartDate").on('click', function () {
+            var popup = $(this).offset();
+            $scope.ResizeDatePicker(popup);
             if ($("#divAddMile").attr("data-id") > 0)
                 $('.datetimepicker').hide();
+        });
+
+        $("#txtMileEndDate").on('click', function () {
+            var popup = $(this).offset();
+            $scope.ResizeDatePicker(popup);
         });
 
         $('#txtMileStartDate').datetimepicker({
@@ -1367,7 +1353,9 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
         $('#AddTaskPopUp').on('hide.bs.modal', function () {
             $rootScope.PrevUploadFiles.length = 0;
             $("#frmProjectDashboard")[0].reset();
-            $("#ddlMember").val(null).trigger('change.select2');
+            $('#txtTaskStartDate').attr('readonly', false);
+            $("#divAddTask").attr("data-id", 0);
+            $("#ddlMember").val(null).trigger('change');
            // $("#ddlStatus").val(null).trigger('change.select2');
             $("#btnTaskCreation").text("Submit");
             $('#txtTaskStartDate').attr('readonly', false);
@@ -1589,8 +1577,10 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
             var obj = {};
             obj.ID = $("#divAddTask").attr("data-id");
             obj.Task = $scope.ngtxtTask;
-            obj.Members = $scope.ngddlMember;
+            obj.Membersvalue = $scope.ngddlMember;
+            obj.Members = $scope.ngddlMember.split(':')[0];
             obj.MemberTitle = $("#ddlMember option:selected").text();
+            obj.MembersEmail = $scope.ngddlMember.split(':')[1];
             obj.StartDateView = moment($("#txtTaskStartDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
             obj.EndDateView = moment($("#txtTaskEndDate").val(), 'DD-MM-YYYY').format("DD-MM-YYYY");
             obj.StartDate = moment($("#txtTaskStartDate").val(), 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
@@ -1649,9 +1639,11 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
         $scope.ngtxtTaskDays =$rootScope.Task[index].NoOfDays;
 
         $timeout(function () {
-            $("#ddlMember").val($scope.Task[index].Members).trigger('change');
+            
+            //$scope.ngddlMember = $scope.Task[index].Members;
+            $("#ddlMember").val("string:" + $rootScope.Task[index].Membersvalue).trigger('change');
             //$("#ddlStatus").val($scope.Task[index].TaskStatus).trigger('change');
-           $rootScope.Task.splice(index, 1);
+            $rootScope.Task.splice(index, 1);
         }, 10);
 
         $("#divAddTask").attr("data-internalstatus", $rootScope.Task[index].InternalStatus);
@@ -1685,16 +1677,18 @@ ProjectDashboardApp.controller('AddTaskController', function ($scope, $http, $ro
 
             CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/AddTask", data).then(function (response) {
                 if (response.data[0] == "OK") {
-                    //$('#SuccessModelTask').modal('show');
-                    $rootScope.TaskLoad = false;
-                    $("#AddTaskPopUp").modal("hide");
-                    $(".overlay").hide();
+                    
                     var data = {
                         'ProjectId': $rootScope.ProjectPopData.ID
                     }
                     CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetMilestone", data).then(function (response) {
                         if (response.data[0] == "OK") {
                             $rootScope.BindMilestoneTable(response, $rootScope.ProjectPopData, $rootScope.MiletableRow);
+                            $timeout(function () {
+                                $rootScope.TaskLoad = false;
+                                $("#AddTaskPopUp").modal("hide");
+                                $(".overlay").hide();
+                            },100)
                         }
 
                     });
@@ -1723,7 +1717,9 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
         $('#AddSubTaskPopUp').on('hide.bs.modal', function () {
             $rootScope.PrevUploadFiles.length = 0;
             $("#frmProjectDashboard")[0].reset();
-            $("#ddlSubTaskMember").val(null).trigger('change.select2');
+            $("#divAddSubTask").attr("data-id", 0);
+            $('#txtSubTaskStartDate').attr('readonly', false);
+            $("#ddlSubTaskMember").val(null).trigger('change');
             $("#ddlSubTaskStatus").val(null).trigger('change.select2');
             $("#btnSubTaskCreation").text("Submit");
             $rootScope.SubTask.length = 0;
@@ -2008,7 +2004,7 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
         $scope.ngtxtSubTaskDays = $rootScope.SubTask[index].NoOfDays;
 
         $timeout(function () {
-            $("#ddlSubTaskMember").val($rootScope.SubTask[index].Members).trigger('change');
+            $("#ddlSubTaskMember").val("number:"+$rootScope.SubTask[index].Members).trigger('change');
             //$("#ddlSubTaskStatus").val($rootScope.SubTask[index].SubTaskStatus).trigger('change');
             $rootScope.SubTask.splice(index, 1);
         }, 10);
@@ -2045,7 +2041,9 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
                 if (response.data[0] == "OK") {
 
                     var data = {
-                        'MilestoneId': $rootScope.MilestonePopData.ID
+                        'MilestoneId': $rootScope.MilestonePopData.ID,
+                        'Members': $rootScope.ProjectPopData.Members,
+                        'ProjectManager': $rootScope.ProjectPopData.ProjectManager
                     }
                     CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetTask", data).then(function (response) {
                         if (response.data[0] == "OK") {
@@ -2055,9 +2053,12 @@ ProjectDashboardApp.controller('AddSubTaskController', function ($scope, $http, 
                             else
                                 $rootScope.LoadProjectData();
 
-                            $rootScope.SubTaskLoad = false;
-                            $("#AddSubTaskPopUp").modal("hide");
-                            $(".overlay").show();
+                            $timeout(function () {
+                                $rootScope.SubTaskLoad = false;
+                                $("#AddSubTaskPopUp").modal("hide");
+                                $(".overlay").show();
+                            }, 100);
+                            
 
                         }
                     });

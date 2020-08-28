@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using DeepeshWeb.BAL.EmployeeManagement;
 using Newtonsoft.Json;
+using DeepeshWeb.Models.EmployeeManagement;
 
 namespace DeepeshWeb.Controllers.TimeSheet
 {
@@ -23,6 +24,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         Emp_BasicInfoBal BalEmp = new Emp_BasicInfoBal();
         TIM_StatusMasterBal BalStatus = new TIM_StatusMasterBal();
         TIM_DocumentLibraryBal BalDocument = new TIM_DocumentLibraryBal();
+        TIM_SendEmailController EmailCtrl = new TIM_SendEmailController();
 
         public ActionResult Index()
         {
@@ -33,7 +35,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 {
                     ViewBag.ProjectTypeData = BalProjectType.GetProjectType(clientContext);
                     ViewBag.ClientData = BalClient.GetClient(clientContext);
-                    ViewBag.EmpData = BalEmp.GetEmp(clientContext);
+                    ViewBag.ProjectEmpData = BalEmp.GetEmp(clientContext);
                     //ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
                 }
             }
@@ -109,9 +111,36 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
+        public List<Emp_BasicInfoModel> GetEmpMembers(int[] Members, int ProjectManager)
+        {
+            List<Emp_BasicInfoModel> lstEmp = new List<Emp_BasicInfoModel>();
+            try
+            {
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    var filter = "(ID eq " + ProjectManager + " ) or ";
+                    for (int i = 0; i < Members.Length; i++)
+                    {
+                        if (i == Members.Length - 1)
+                            filter += "(ID eq " + Members[i] + ")";
+                        else
+                            filter += "(ID eq " + Members[i] + ") or ";
+                    }
+                    lstEmp = BalEmp.GetEmpCodeByLogIn(clientContext, filter);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return lstEmp;
+        }
+
         [HttpPost]
         [ActionName("GetProjectDoc")]
-        public JsonResult GetProjectDoc(int ProjectId)
+        public JsonResult GetProjectDoc(int ProjectId, int[] Members, int ProjectManager)
         {
             List<object> obj = new List<object>();
             List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
@@ -122,11 +151,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 {
                     var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
                     lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, ProjectId.ToString(), path);
-                    if (lstDocument.Count > 0)
-                    {
-                        obj.Add("OK");
-                        obj.Add(lstDocument);
-                    }
+                    
+                    ViewBag.EmpData = GetEmpMembers(Members, ProjectManager);
+                    obj.Add("OK");
+                    obj.Add(lstDocument);
+                    obj.Add(ViewBag.EmpData);
                 }
             }
             catch (Exception ex)
@@ -181,7 +210,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             itemdata += " ,'InternalStatus': '" + lstWorkFlow[0].InternalStatus + "'";
                         }
                         returnID = BalProjectCreation.SaveProjectCreation(clientContext, itemdata);
-                        if (Convert.ToInt32(returnID) > 0) {
+                        if (Convert.ToInt32(returnID) > 0)
+                        {
                             if (Request.Files.Count > 0)
                             {
                                 HttpFileCollectionBase files = Request.Files;
@@ -193,13 +223,25 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                     item += ",'DocumentType' : '" + Type + "'";
                                     item += ",'DocumentPath' : '" + files[i].FileName + "'";
                                     int res = BalProjectCreation.UploadDocument(clientContext, postedFile, item);
-                                    if(res > 0)
-                                        obj.Add("OK");
+                                    if (res > 0)
+                                    {
+                                        string Mailres = EmailCtrl.ProjectCreationNotification(clientContext, Project[0]);
+                                        if (Convert.ToInt32(Mailres) > 0)
+                                            obj.Add("OK");
+                                    }
+
                                 }
 
                             }
-                        }else
-                            obj.Add("OK");
+                            else
+                            {
+                                string Mailres = EmailCtrl.ProjectCreationNotification(clientContext, Project[0]);
+                                if (Convert.ToInt32(Mailres) > 0)
+                                    obj.Add("OK");
+                            }
+                        }
+                        else
+                            obj.Add("ERROR");
                     }
                     else
                     {
@@ -357,7 +399,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
         [HttpPost]
         [ActionName("GetTask")]
-        public JsonResult GetTask(int MilestoneId)
+        public JsonResult GetTask(int MilestoneId, int[] Members, int ProjectManager)
         {
             List<object> obj = new List<object>();
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
@@ -368,11 +410,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 lstTask = BalTask.GetTaskByMilestoneId(clientContext, MilestoneId);
                 var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
                 lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, lstTask[0].Project.ToString(), path);
+                ViewBag.EmpData = GetEmpMembers(Members, ProjectManager);
+
                 if (lstTask.Count > 0)
                 {
                     obj.Add("OK");
                     obj.Add(lstTask);
                     obj.Add(lstDocument);
+                    obj.Add(ViewBag.EmpData);
                 }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
@@ -380,7 +425,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
         [HttpPost]
         [ActionName("GetSubTask")]
-        public JsonResult GetSubTask(int TaskId)
+        public JsonResult GetSubTask(int TaskId, int[] Members, int ProjectManager)
         {
             List<object> obj = new List<object>();
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
@@ -391,11 +436,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 lstSubTask = BalSubTask.GetSubTaskByTaskId(clientContext, TaskId);
                 var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
                 lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, lstSubTask[0].Project.ToString(), path);
+                ViewBag.EmpData = GetEmpMembers(Members, ProjectManager);
                 if (lstSubTask.Count > 0)
                 {
                     obj.Add("OK");
                     obj.Add(lstSubTask);
                     obj.Add(lstDocument);
+                    obj.Add(ViewBag.EmpData);
                 }
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
@@ -644,12 +691,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         {
                             returnID = BalTask.SaveTask(clientContext, itemdata);
                             if (Convert.ToInt32(returnID) > 0)
-                                i++;
+                            {
+                                //string Mailres = EmailCtrl.ProjectCreationNotification(clientContext, Project[0]);
+                                //if(Convert.ToInt32(Mailres) > 0)
+                                    i++;
+                            }
+                                
                         }
 
-                        //returnID = BalTask.SaveTask(clientContext, itemdata);
-                        //if (Convert.ToInt32(returnID) > 0)
-                        //    i++;
 
                     }
                     if (i == AddTask.Count && Action == "Insert")
@@ -926,6 +975,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstMilestone = BalMilestone.GetMilestoneByMilestoneId(clientContext, MilestoneId);
                     var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
                     lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, ProjectId.ToString(), path);
+                    ViewBag.EmpData = GetEmpMembers(lstProject[0].Members, lstProject[0].ProjectManager);
 
                     if (lstProject.Count>0 && lstMilestone.Count > 0)
                     {
@@ -933,6 +983,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         obj.Add(lstProject[0]);
                         obj.Add(lstMilestone[0]);
                         obj.Add(lstDocument);
+                        obj.Add(ViewBag.EmpData);
                     }
                 }
             }

@@ -85,13 +85,17 @@
                                                 <td data-label="Task"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtTask" id="txtTask" placeholder="Enter Task"></td>
 
                                                 <td data-label="Members">
-                                                    <select  class="form-control TaskSelect2" ng-model="ngddlMember" id="ddlMember">
+                                                    @*<select class="form-control TaskSelect2" ng-model="ngddlMember" id="ddlMember">
                                                         <option value="">Choose One</option>
-                                                        @foreach (var i in ViewBag.EmpData)
-                                                        {
-                                                            <option value="@i.ID">@i.FullName</option>
+                                                        @if(ViewBag.EmpData != null){
+                                                            foreach (var i in ViewBag.EmpData)
+                                                            {
+                                                                <option value="@i.ID">@i.FullName</option>
+                                                            }
                                                         }
-                                                    </select>
+
+                                                    </select>*@
+                                                    <select class="form-control TaskSelect2"  ng-options="item.ID+':'+item.OfficeEmail as item.FullName for item in MembersArr" ng-model="ngddlMember" id="ddlMember"><option value="">Choose One</option></select>
                                                 </td>
 
                                                 <td data-label="Start Date">

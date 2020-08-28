@@ -124,13 +124,17 @@
                                                 <td data-label="SubTask"><input type="text" class="form-control responsivetablediv" ng-model="ngtxtSubTask" id="txtSubTask" placeholder="Enter SubTask" ></td>
 
                                                 <td data-label="Members">
-                                                    <select  class="form-control SubTaskSelect2" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember">
+                                                    @*<select class="form-control SubTaskSelect2" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember">
                                                         <option value="">Choose One</option>
-                                                        @foreach (var i in ViewBag.EmpData)
-                                                        {
-                                                            <option value="@i.ID">@i.FullName</option>
+                                                        @if(ViewBag.EmpData != null){
+                                                            foreach (var i in ViewBag.EmpData)
+                                                            {
+                                                                <option value="@i.ID">@i.FullName</option>
+                                                            }
                                                         }
-                                                    </select>
+
+                                                    </select>*@
+                                                    <select class="form-control SubTaskSelect2"  ng-options="item.ID as item.FullName for item in MembersSubTaskArr" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember"><option value="">Choose One</option></select>
                                                 </td>
 
                                                 <td data-label="Start Date">

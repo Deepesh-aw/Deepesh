@@ -29,6 +29,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_EmployeeTimesheetBal BalEmpTimesheet = new TIM_EmployeeTimesheetBal();
         GEN_ApproverMasterBal BalApprover = new GEN_ApproverMasterBal();
         TIM_DocumentLibraryBal BalDocument = new TIM_DocumentLibraryBal();
+        TIM_TimesheetParentBal BalParentTimesheet = new TIM_TimesheetParentBal();
 
         // GET: TIM_TimesheetDashboard
         public ActionResult Index()
@@ -133,8 +134,19 @@ namespace DeepeshWeb.Controllers.TimeSheet
         public JsonResult AddTimesheet(System.Web.Mvc.FormCollection formCollection)
         {
             List<object> obj = new List<object>();
+            List<TIM_DocumentLibraryModel> DeleteDocument = new List<TIM_DocumentLibraryModel>();
+            List<TIM_EmployeeTimesheetModel> DeleteEmpTimesheet = new List<TIM_EmployeeTimesheetModel>();
+
             var Timesheet = formCollection["TimesheetDetails"];
             List<TIM_EmployeeTimesheetModel> EmpTimesheet = JsonConvert.DeserializeObject<List<TIM_EmployeeTimesheetModel>>(Timesheet);
+
+            var DeleteTimesheet = formCollection["DeleteTimesheet"];
+            if(DeleteTimesheet != null)
+                DeleteEmpTimesheet = JsonConvert.DeserializeObject<List<TIM_EmployeeTimesheetModel>>(DeleteTimesheet);
+
+            var deletedoc = formCollection["DeleteDocument"];
+             if(deletedoc != null)
+               DeleteDocument = JsonConvert.DeserializeObject<List<TIM_DocumentLibraryModel>>(deletedoc);
 
             int i = 0;
             string InternalStatus = "Inprogress";
@@ -146,6 +158,56 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     List<TIM_StatusMasterModel> lstPendingStatus = new List<TIM_StatusMasterModel>();
                     lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
                     List<GEN_ApproverRoleNameModel> lstApprover = BalApprover.getApproverData(clientContext, BalEmp.GetEmpCodeByLogIn(clientContext), "Timesheet", "Main");
+
+                    if (DeleteDocument.Count > 0)
+                    {
+                        int z = 0;
+                        foreach (var deleteItem in DeleteDocument)
+                        {
+                            string Result = BalDocument.DeleteDocument(clientContext, deleteItem.ID.ToString());
+                            if (Result == "Delete")
+                                z++;
+                        }
+                        if (z != DeleteDocument.Count)
+                        {
+                            obj.Add("ERROR");
+                            return Json(obj, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+
+                    if (DeleteEmpTimesheet.Count > 0)
+                    {
+                        int z = 0;
+                        foreach (var deleteEmpItem in DeleteEmpTimesheet)
+                        {
+                            string Result = BalEmpTimesheet.DeleteTimesheet(clientContext, deleteEmpItem.ID.ToString());
+                            if (Result == "Delete")
+                                z++;
+                        }
+                        if (z != DeleteEmpTimesheet.Count)
+                        {
+                            obj.Add("ERROR");
+                            return Json(obj, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+
+                    int ParentID = 0;
+                    List<TIM_TimesheetParentModel> PrevParentTimesheet = new List<TIM_TimesheetParentModel>();
+                    PrevParentTimesheet = BalParentTimesheet.GetEmpTimesheetByTimesheetId(clientContext, EmpTimesheet[0].TimesheetID);
+                    if (PrevParentTimesheet.Count == 0)
+                    {
+                        string ParentItemData = " 'EmployeeId': '" + BalEmp.GetEmpByLogIn(clientContext) + "'";
+                        ParentItemData += " ,'TimesheetID': '" + EmpTimesheet[0].TimesheetID + "'";
+                        ParentItemData += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
+                        ParentItemData += " ,'InternalStatus': '" + InternalStatus + "'";
+                        ParentItemData += " ,'ManagerId': '" + lstApprover[0].ID + "'";
+                        ParentItemData += " ,'TimesheetAddedDate': '" + EmpTimesheet[0].TimesheetAddedDate + "'";
+                        ParentID = Convert.ToInt32(BalParentTimesheet.SaveTimesheet(clientContext, ParentItemData));
+                    }
+                    else
+                    {
+                        ParentID = PrevParentTimesheet[0].ID;
+                    }
 
                     string returnID = "0";
                     foreach (var item in EmpTimesheet)
@@ -164,7 +226,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         itemdata += " ,'AllTaskStatusId': '" + item.AllTaskStatus + "'";
                         itemdata += " ,'TimesheetID': '" + item.TimesheetID + "'";
                         itemdata += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
-                        itemdata += " ,'InternalStatus': '" + InternalStatus + "'";
+                        itemdata += " ,'InternalStatus': '" + InternalStatus + "'"; 
+                        itemdata += " ,'ParentIDId': '" + ParentID + "'";
 
                         itemdata += " ,'OtherClient': '" + item.OtherClient + "'";
                         itemdata += " ,'OtherProject': '" + item.OtherProject + "'";
@@ -177,7 +240,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             if (returnID == "Update")
                             {
                                 if (Request.Files.Count > 0)
-                                    UploadTimesheetDoc(clientContext, Request.Files, item, returnID);
+                                    UploadTimesheetDoc(clientContext, Request.Files, item, item.ID.ToString());
                                 i++;
                             }
                         }
@@ -220,13 +283,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 string Type = "TimesheetCreation";
                 for (int j = 0; j < files.Count; j++)
                 {
-                    if (item.FileCount == files[j].FileName.Split('_')[0])
+                    var DocName = files[j].FileName.Split('_')[0];
+                    if (item.FileCount == DocName)
                     {
                         var postedFile = files[j];
                         string Docitem = "'LID' : '" + returnID + "'";
                         Docitem += ",'TimesheetID' : '" + item.TimesheetID + "'";
                         Docitem += ",'DocumentType' : '" + Type + "'";
-                        Docitem += ",'DocumentPath' : '" + files[j].FileName.Split('_')[1] + "'";
+                        Docitem += ",'DocumentPath' : '" + files[j].FileName.Substring(DocName.Length + 1) + "'";
                         int res = BalProjectCreation.UploadDocument(clientContext, postedFile, Docitem);
                     }
                 }

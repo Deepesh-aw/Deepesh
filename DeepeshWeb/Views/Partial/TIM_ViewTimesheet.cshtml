@@ -172,6 +172,7 @@
                                                     <th>Estd. Hrs.</th>
                                                     <th>Utld. Hrs.</th>
                                                     <th>Rem. Hrs.</th>
+                                                    <th>Doc.</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -202,6 +203,11 @@
                                                     <td>{{t.EstimatedHours}}</td>
                                                     <td>{{t.UtilizedHours}}</td>
                                                     <td ng-class="{'text-red': t.RemainingHours.includes('-')}">{{t.RemainingHours}}</td>
+                                                    <td>
+                                                        <span ng-repeat="f in t.PrevFiles" ng-if="f.Delete == 'No'">
+                                                            <li><a href="{{f.Name}}" target="_blank">{{f.FileName}}</a></li>
+                                                        </span>
+                                                    </td>
                                                 </tr>
 
                                             </tbody>
@@ -209,7 +215,7 @@
                                                 <tr>
                                                     <td class="right" colspan="9">Total Hours:</td>
                                                     <td class="right">{{GetTotalHours()}}</td>
-                                                    <td colspan="3"></td>
+                                                    <td colspan="4"></td>
                                                 </tr>
                                             </tfoot>
                                         </table>

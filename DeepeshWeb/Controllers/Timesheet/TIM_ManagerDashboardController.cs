@@ -82,7 +82,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             var itemdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
                             itemdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
                             itemdata += " ,'ApproveDescription': '" + Descrition.Replace("'", @"\'") + "'";
-                            itemdata += " ,'ApproveDate': '" + DateTime.Today.ToString("MM/dd/yyyy HH:mm:ss") + "'";
+                            itemdata += " ,'ApproveDate': '" + DateTime.Today.ToString("MM-dd-yyyy hh:mm:ss") + "'";
 
                             string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")

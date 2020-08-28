@@ -308,10 +308,10 @@
                                                           <button class="btn btn-danger badge" ng-click="RemoveTimesheetFiles($index)"><i class="fa fa-trash"></i></button>
                                                             </li>
                                                         </div>
-                                                        <span ng-repeat="f in TempPrevTimesheetFiles">
+                                                        <span ng-repeat="f in TempPrevTimesheetFiles" ng-if="f.Delete == 'No'">
                                                             <li>
                                                                 <a href="{{f.Name}}" target="_blank">{{f.FileName}}</a>&nbsp;
-                                                                <button class="btn btn-danger badge" ng-click="RemovePrevDoc($index)"><i class="fa fa-trash"></i></button>
+                                                                <button type="button" class="btn btn-danger badge" ng-click="RemovePrevDoc($index)"><i class="fa fa-trash"></i></button>
                                                             </li>
                                                         </span>
                                                     </td>
@@ -372,9 +372,8 @@
                                                         <li>{{f.FileName}}</li>
                                                         </span>
                                                         
-                                                        <span ng-repeat="f in t.PrevFiles">
+                                                        <span ng-repeat="f in t.PrevFiles" ng-if="f.Delete == 'No'">
                                                             <li><a href="{{f.Name}}" target="_blank">{{f.FileName}}</a></li>
-                                                            <button class="btn btn-danger badge" ng-click="RemovePrevDoc($index)"><i class="fa fa-trash"></i></button>
                                                         </span>
                                                     </td>
                                                     <td ng-hide="ViewTimesheet">

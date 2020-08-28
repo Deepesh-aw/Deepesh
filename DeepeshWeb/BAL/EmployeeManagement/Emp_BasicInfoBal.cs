@@ -33,8 +33,9 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 {
                     ID = Convert.ToInt32(j["Id"]),
                     EmpCode = j["EmpCode"].ToString(),
+                    OfficeEmail = j["OfficeEmail"].ToString(),
                     FullName = j["FirstName"].ToString() +" "+ j["LastName"].ToString(),
-                });; ;
+                });
             }
             return lstEmp;
         }
@@ -73,6 +74,24 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 }); ; ;
             }
             return lstEmp[0].EmpCode;
+        }
+
+        public List<Emp_BasicInfoModel> GetEmpCodeByLogIn(ClientContext clientContext, string filter)
+        {
+            List<Emp_BasicInfoModel> lstEmp = new List<Emp_BasicInfoModel>();
+            int UserId = Convert.ToInt32(HttpContext.Current.Session["UserID"]);
+            JArray jArray = RESTGet(clientContext, filter);
+            foreach (JObject j in jArray)
+            {
+                lstEmp.Add(new Emp_BasicInfoModel
+                {
+                    ID = Convert.ToInt32(j["Id"]),
+                    EmpCode = j["EmpCode"].ToString(),
+                    OfficeEmail = j["OfficeEmail"].ToString(),
+                    FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
+                }); ; ;
+            }
+            return lstEmp;
         }
 
         public List<Emp_BasicInfoModel> GetAllEmployee(ClientContext clientContext)

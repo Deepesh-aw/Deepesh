@@ -20,28 +20,11 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     $scope.TimesheetFiles = [];
     $scope.PrevTimesheetFiles = [];
     $scope.TempPrevTimesheetFiles = [];
+    var DeleteTimesheet = [];
+    var DeleteTimesheetDoc = [];
 
     $(function () {
         $(".overlay").hide();
-        //$scope.OnLoad();
-
-        //$('#Pending').DataTable({
-        //    responsive: true,
-        //    language: {
-        //        searchPlaceholder: 'Search...',
-        //        sSearch: '',
-        //        lengthMenu: '_MENU_ ',
-        //    }
-        //});
-
-        //$('#Approved').DataTable({
-        //    responsive: true,
-        //    language: {
-        //        searchPlaceholder: 'Search...',
-        //        sSearch: '',
-        //        lengthMenu: '_MENU_ ',
-        //    }
-        //});
 
         $('#frmTimesheetDashboard').parsley().on('field:validated', function () {
             var ok = $('.parsley-error').length === 0;
@@ -142,6 +125,8 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
        
 
         $('#AddTimesheetPopUp').on('hide.bs.modal', function () {
+            DeleteTimesheet.length = 0;
+            DeleteTimesheetDoc.length = 0;
             $scope.PrevTimesheetFiles.length = 0;
             $scope.TimesheetFiles.length = 0;
             $scope.UploadFiles.length = 0;
@@ -193,7 +178,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     $scope.TimesheetData.length = 0;
 
                 var count = 1
-                count = count + Number($scope.TimesheetData.length);
+                count = Number(count) + Number($scope.TimesheetData.length);
                 $scope.TimeId = "TIM-" + count;
 
                 $('#Pending').DataTable().clear().destroy();
@@ -614,7 +599,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         obj.ToTimeView = $("#txtToTime").val();
         obj.AllTaskStatus = $scope.ngddlAllTaskStatus;
         obj.AllTaskStatusText = $("#ddlAllTaskStatus option:selected").text();
-
+        obj.Flag = "New";
         if ($scope.UploadFiles.length > 0) {
             //var Doc = [];
             //angular.forEach($scope.UploadFiles, function (value, key) {
@@ -709,27 +694,18 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     CommonObj.Name = value.Name.substring(FileName.length + 1);
                     CommonObj.file = value.File;
                     $scope.UploadFiles.push(CommonObj);
-                    //$scope.TimesheetFiles.splice(key, 1);
                 }
 
             });
         }
 
-        if ($scope.TimesheetArr[i].PrevFiles.length > 0) {
-            //angular.forEach($scope.TimesheetArr[i].PrevFiles, function (value, key) {
-            //    var temp = {};
-            //    temp.ID = value.ID;
-            //    temp.Name = value.Name;
-            //    temp.LID = value.LID;
-            //    temp.FileName = value.FileName;
-            //    temp.Delete = "No";
-            //    $scope.TempPrevTimesheetFiles.push(temp);
-            //});
-            $scope.TempPrevTimesheetFiles = $scope.TimesheetArr[i].PrevFiles;
+        if ($scope.TimesheetArr[i].hasOwnProperty("PrevFiles")) {
+            if ($scope.TimesheetArr[i].PrevFiles.length > 0) {
+                $scope.TempPrevTimesheetFiles = $scope.TimesheetArr[i].PrevFiles;
+            }
         }
         
-
-
+        
         if ($scope.TimesheetArr[i].OtherClientStatus == true) {
             $scope.OtherClient = true;
 
@@ -766,7 +742,26 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     }
 
     $scope.DeleteTimesheet = function (i) {
+        if ($scope.TimesheetArr[i].Flag == "Old") {
+            var obj = {};
+            obj.ID = $scope.TimesheetArr[i].ID;
+            DeleteTimesheet.push(obj);
+            if ($scope.TimesheetArr[i].PrevFiles.length > 0) {
+                angular.forEach($scope.TimesheetArr[i].PrevFiles, function (value, key) {
+                    var obj = {};
+                    obj.ID = value.ID;
+                    DeleteTimesheetDoc.push(obj);
+                });
+            }
+        }
         $scope.TimesheetArr.splice(i, 1);
+    }
+
+    $scope.RemovePrevDoc = function (index) {
+        $scope.TempPrevTimesheetFiles[index].Delete = "Yes";
+        var obj = {};
+        obj.ID = $scope.TempPrevTimesheetFiles[index].ID;
+        DeleteTimesheetDoc.push(obj);
     }
 
     $scope.OpenAddTimesheet = function () {
@@ -791,6 +786,10 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
             fileData.append('TimesheetDetails', JSON.stringify($scope.TimesheetArr));
 
+            fileData.append('DeleteDocument', JSON.stringify(DeleteTimesheetDoc));
+
+            fileData.append('DeleteTimesheet', JSON.stringify(DeleteTimesheet));
+
             //CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/AddTimesheet", data).then(function (response) {
             CommonAppUtilityService.DataWithFile("/TIM_TimesheetDashboard/AddTimesheet", fileData).then(function (response) {
                 if (response[0] == "OK") {
@@ -803,6 +802,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     alert("Something went wrong. Please try after some time.");
                     $scope.TimesheetLoad = false;
                     $(".overlay").hide();
+                    $("#AddTimesheetPopUp").modal("hide");
                 }
             });
         }
@@ -810,7 +810,6 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             alert("Please add at least one record");
         }
     }
-
 
     $scope.DateFormat = function (d) {
         if (d != undefined || d != null) {
@@ -875,7 +874,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     obj.UtilizedHours = value.UtilizedHours;
                     obj.RemainingHours = value.RemainingHours;
                     obj.TimesheetID = value.TimesheetID;
-                    obj.TimesheetAddedDate = value.TimesheetAddedDate;
+                    obj.TimesheetAddedDate = moment(value.TimesheetAddedDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
                     obj.FromTime = moment(value.FromTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
                     obj.ToTime = moment(value.ToTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
                     obj.FromTimeView = moment(value.FromTime, ["dd-MM-yyyy h:mm:ss"]).format("HH:mm");
@@ -889,9 +888,11 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     obj.ApprovedDate = value.ApproveDate;
                     obj.ApproveDescription = value.ApproveDescription;
                     obj.RejectDescription = value.RejectDescription;
+                    obj.Flag = "Old";
 
                     //Document code
                     var Doc = [];
+                    obj.PrevFiles = Doc;
                     angular.forEach(response.data[2], function (value, key) {
                         if (value.LID == obj.ID) {
                             var temp = {};
