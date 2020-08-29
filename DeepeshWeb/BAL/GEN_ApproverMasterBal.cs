@@ -67,7 +67,9 @@ namespace DeepeshWeb.BAL
                             Sequence = i,
                             Role = rolenamearr[i],
                             Empcode = basicInfoManager.ManagerCode,
-                            ID = basicInfoManager.ManagerId
+                            Email = basicInfoManager.OfficeEmail,
+                            FullName = basicInfoManager.Manager + " "+ basicInfoManager.LastName,
+                            ID = basicInfoManager.ManagerId,
                         });
                      }
                 }

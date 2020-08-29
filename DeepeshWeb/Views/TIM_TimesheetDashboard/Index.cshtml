@@ -184,7 +184,7 @@
 </style>
 
 
-<form id="frmTimesheetDashboard" name="frmTimesheetDashboard" ng-app="TimesheetDashboardApp" ng-controller="TimesheetDashboardController" ng-init="OnLoad()" autocomplete="off">
+<form id="frmTimesheetDashboard" name="frmTimesheetDashboard" ng-app="TimesheetDashboardApp" ng-controller="TimesheetDashboardController" ng-init="TimesheetDashboardLoad()" autocomplete="off">
     <!-- container opened -->
     <div class="container">
         <div class="modal left fade" id="AddTimesheetPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -223,18 +223,18 @@
                                 <th class="border-bottom-0">Sr.no.</th>
                                 <th class="border-bottom-0">Date</th>
                                 <th class="border-bottom-0">Timesheet ID</th>
-                                <th class="border-bottom-0">Description</th>
+                                <th class="border-bottom-0">Employee</th>
                                 @*<th class="border-bottom-0">Hours</th>*@
                                 <th class="border-bottom-0">Pending At</th>
                                 <th class="border-bottom-0">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="tm in  TimesheetDataPending">
+                            <tr ng-repeat="tm in  TimesheetData" ng-if="tm.InternalStatus == 'Inprogress'">
                                 <td>{{$index+1}}</td>
                                 <td>{{tm.TimesheetAddedDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
-                                <td>{{tm.Description}}</td>
+                                <td>{{tm.EmployeeName}}</td>
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ManagerName}}</td>
                                 <td>
@@ -270,7 +270,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="tm in  TimesheetDataApproved">
+                            <tr ng-repeat="tm in  TimesheetData" ng-if="tm.InternalStatus == 'Approved'">
                                 <td>{{$index+1}}</td>
                                 <td>{{tm.ApproveDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
@@ -310,7 +310,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="tm in  TimesheetDataRejected">
+                            <tr ng-repeat="tm in  TimesheetData" ng-if="tm.InternalStatus == 'Rejected'">
                                 <td>{{$index+1}}</td>
                                 <td>{{tm.ModifyDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>

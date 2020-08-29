@@ -2,6 +2,7 @@
 using DeepeshWeb.BAL.EmployeeManagement;
 using DeepeshWeb.BAL.Timesheet;
 using DeepeshWeb.Models;
+using DeepeshWeb.Models.EmployeeManagement;
 using DeepeshWeb.Models.Timesheet;
 using Microsoft.Ajax.Utilities;
 using Microsoft.SharePoint.Client;
@@ -30,16 +31,45 @@ namespace DeepeshWeb.Controllers.TimeSheet
         GEN_ApproverMasterBal BalApprover = new GEN_ApproverMasterBal();
         TIM_DocumentLibraryBal BalDocument = new TIM_DocumentLibraryBal();
         TIM_TimesheetParentBal BalParentTimesheet = new TIM_TimesheetParentBal();
-
+        TIM_SendEmailController EmailCtrl = new TIM_SendEmailController();
         // GET: TIM_TimesheetDashboard
         public ActionResult Index()
         {
-            var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
+            try
             {
-                ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
+                }
             }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+           
             return View();
+        }
+        [HttpPost]
+        [ActionName("TimesheetLoadData")]
+        public JsonResult TimesheetLoadData()
+        {
+            List<object> obj = new List<object>();
+            try
+            {
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    List<TIM_TimesheetParentModel> lstTimesheetParent = BalParentTimesheet.GetEmpTimesheetByEmpId(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    obj.Add("OK");
+                    obj.Add(lstTimesheetParent);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -50,9 +80,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
             List<TIM_WorkingHoursModel> lstWorkingHours = new List<TIM_WorkingHoursModel>();
-            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetPending = new List<TIM_EmployeeTimesheetModel>();
-            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetApproved = new List<TIM_EmployeeTimesheetModel>();
-            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetRejected = new List<TIM_EmployeeTimesheetModel>();
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -62,22 +89,13 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstSubTask = BalSubTask.GetAllSubTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     ViewBag.AllTask = lstTask.Cast<object>().Concat(lstSubTask).ToList();
                     lstWorkingHours = BalWorkinghours.GetWorkingHour(clientContext);
-                    lstEmployeeTimesheetPending = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndPending(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstEmployeeTimesheetPending = lstEmployeeTimesheetPending.DistinctBy(x => x.TimesheetID).ToList();
-                    lstEmployeeTimesheetApproved = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndApprove(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstEmployeeTimesheetApproved = lstEmployeeTimesheetApproved.DistinctBy(x => x.TimesheetID).ToList();
-                    lstEmployeeTimesheetRejected = BalEmpTimesheet.GetEmpTimesheetByEmpIdAndRejected(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstEmployeeTimesheetRejected = lstEmployeeTimesheetRejected.DistinctBy(x => x.TimesheetID).ToList();
 
                     ViewBag.AllTimesheet = BalEmpTimesheet.GetAllEmpTimesheet(clientContext);
 
                     obj.Add("OK");
                     obj.Add(ViewBag.AllTask);
                     obj.Add(lstWorkingHours);
-                    obj.Add(lstEmployeeTimesheetPending);
-                    obj.Add(lstEmployeeTimesheetApproved);
                     obj.Add(ViewBag.AllTimesheet);
-                    obj.Add(lstEmployeeTimesheetRejected);
                 }
             }
             catch (Exception ex)
@@ -158,6 +176,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     List<TIM_StatusMasterModel> lstPendingStatus = new List<TIM_StatusMasterModel>();
                     lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
                     List<GEN_ApproverRoleNameModel> lstApprover = BalApprover.getApproverData(clientContext, BalEmp.GetEmpCodeByLogIn(clientContext), "Timesheet", "Main");
+                    Emp_BasicInfoModel Employee = BalEmp.GetEmpMailByLogIn(clientContext);
 
                     if (DeleteDocument.Count > 0)
                     {
@@ -196,7 +215,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     PrevParentTimesheet = BalParentTimesheet.GetEmpTimesheetByTimesheetId(clientContext, EmpTimesheet[0].TimesheetID);
                     if (PrevParentTimesheet.Count == 0)
                     {
-                        string ParentItemData = " 'EmployeeId': '" + BalEmp.GetEmpByLogIn(clientContext) + "'";
+                        string ParentItemData = " 'EmployeeId': '" + Employee.ID + "'";
                         ParentItemData += " ,'TimesheetID': '" + EmpTimesheet[0].TimesheetID + "'";
                         ParentItemData += " ,'StatusId': '" + lstPendingStatus[0].ID + "'";
                         ParentItemData += " ,'InternalStatus': '" + InternalStatus + "'";
@@ -219,7 +238,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         itemdata += " ,'UtilizedHours': '" + item.UtilizedHours + "'";
                         itemdata += " ,'RemainingHours': '" + item.RemainingHours + "'";
                         itemdata += " ,'TimesheetAddedDate': '" + item.TimesheetAddedDate + "'";
-                        itemdata += " ,'EmployeeId': '" + BalEmp.GetEmpByLogIn(clientContext) + "'";
+                        itemdata += " ,'EmployeeId': '" + Employee.ID + "'";
                         itemdata += " ,'ManagerId': '" + lstApprover[0].ID + "'";
                         itemdata += " ,'FromTime': '" + item.FromTime + "'";
                         itemdata += " ,'ToTime': '" + item.ToTime + "'";
@@ -264,7 +283,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     }
 
                     if (i == EmpTimesheet.Count)
-                        obj.Add("OK");
+                    {
+                        string Mailres = EmailCtrl.TimesheetCreationNotification(clientContext, EmpTimesheet[0], lstApprover[0], Employee);
+                        if (Convert.ToInt32(Mailres) > 0)
+                            obj.Add("OK");
+                    }
                 }
             }
             catch (Exception ex)

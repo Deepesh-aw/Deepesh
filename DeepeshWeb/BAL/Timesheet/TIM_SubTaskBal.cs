@@ -79,6 +79,7 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.SubTaskStatusName = j["SubTaskStatus"]["StatusName"] == null ? "" : j["SubTaskStatus"]["StatusName"].ToString();
                 data.Members = j["Members"]["ID"] == null ? 0 : Convert.ToInt32(j["Members"]["ID"]);
                 data.MembersName = j["Members"]["FirstName"] == null ? "" : j["Members"]["FirstName"].ToString() + " " + j["Members"]["LastName"].ToString();
+                data.MembersEmail = j["Members"]["OfficeEmail"] == null ? "" : Convert.ToString(j["Members"]["OfficeEmail"]);
                 data.ClientName = j["Client"]["ClientName"] == null ? "" : Convert.ToString(j["Client"]["ClientName"].ToString());
                 data.Client = j["Client"]["ID"] == null ? 0 : Convert.ToInt32(j["Client"]["ID"].ToString());
                 lstSubTask.Add(data);
@@ -100,7 +101,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "ID,SubTask,StartDate,EndDate,Client/ID,Client/ClientName,Task/Id,Task/Task,Status/StatusName,Status/ID,SubTaskStatus/StatusName,SubTaskStatus/ID,InternalStatus,NoOfDays,Members/ID,Members/FirstName,Members/LastName,Project/Id,Project/ProjectName,MileStone/ID,MileStone/MileStone";
+            rESTOption.select = "ID,SubTask,StartDate,EndDate,Client/ID,Client/ClientName,Task/Id,Task/Task,Status/StatusName,Status/ID,SubTaskStatus/StatusName,SubTaskStatus/ID,InternalStatus,NoOfDays,Members/ID,Members/FirstName,Members/LastName,Members/OfficeEmail,Project/Id,Project/ProjectName,MileStone/ID,MileStone/MileStone";
             rESTOption.expand = "Project,MileStone,Members,Status,SubTaskStatus,Task,Client";
             rESTOption.top = "5000";
 

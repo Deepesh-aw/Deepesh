@@ -128,15 +128,18 @@ namespace DeepeshWeb.BAL.Timesheet
                 TIM_EmployeeTimesheetModel data = new TIM_EmployeeTimesheetModel();
 
                 data.ID = j["ID"] == null ? 0 : Convert.ToInt32(j["ID"]);
+                data.ParentID = j["ParentIDId"] == null ? 0 : Convert.ToInt32(j["ParentIDId"]);
                 data.ApproveDescription = j["ApproveDescription"] == null ? "" : Convert.ToString(j["ApproveDescription"]);
                 data.RejectDescription = j["RejectDescription"] == null ? "" : Convert.ToString(j["RejectDescription"]);
                 data.Description = j["Description"] == null ? "" : Convert.ToString(j["Description"]);
                 data.Employee = j["Employee"]["ID"] == null ? 0 : Convert.ToInt32(j["Employee"]["ID"]);
                 data.EmployeeName = j["Employee"]["FirstName"] == null ? "" : j["Employee"]["FirstName"].ToString() + " " + j["Employee"]["LastName"].ToString();
+                data.EmployeeEmail = j["Employee"]["OfficeEmail"] == null ? "" : j["Employee"]["OfficeEmail"].ToString();
                 data.EstimatedHours = j["EstimatedHours"] == null ? "" : Convert.ToString(j["EstimatedHours"]);
                 data.Hours = j["Hours"] == null ? "" : Convert.ToString(j["Hours"]);
                 data.Manager = j["Manager"]["ID"] == null ? 0 : Convert.ToInt32(j["Manager"]["ID"]);
                 data.ManagerName = j["Manager"]["FirstName"] == null ? "" : j["Manager"]["FirstName"].ToString() + " " + j["Manager"]["LastName"].ToString();
+                data.ManagerEmail = j["Manager"]["OfficeEmail"] == null ? "" : j["Manager"]["OfficeEmail"].ToString();
                 data.MileStone = j["MileStone"]["ID"] == null ? 0 : Convert.ToInt32(j["MileStone"]["ID"]);
                 data.MileStoneName = j["MileStone"]["MileStone"] == null ? "" : Convert.ToString(j["MileStone"]["MileStone"]);
                 data.Project = j["Project"]["Id"] == null ? 0 : Convert.ToInt32(j["Project"]["Id"]);
@@ -148,19 +151,19 @@ namespace DeepeshWeb.BAL.Timesheet
                 data.SubTaskName = j["SubTask"]["SubTask"] == null ? "" : Convert.ToString(j["SubTask"]["SubTask"]);
                 data.Task = j["Task"]["Id"] == null ? 0 : Convert.ToInt32(j["Task"]["Id"]);
                 data.TaskName = j["Task"]["Task"] == null ? "" : j["Task"]["Task"].ToString();
-                //data.TimesheetAddedDate = j["TimesheetAddedDate"] == null ? "" : Convert.ToString(j["TimesheetAddedDate"]);
 
                 DateTime TimesheetAdded = Convert.ToDateTime(j["TimesheetAddedDate"]);
                 data.TimesheetAddedDate = TimesheetAdded.ToString("dd-MM-yyyy");
 
                 data.ModifyName = j["Editor"]["Title"] == null ? "" : j["Editor"]["Title"].ToString();
+                DateTime TimesheetModify = Convert.ToDateTime(j["Modified"]);
+                data.ModifyDate = TimesheetModify.ToString("dd-MM-yyyy");
+
                 if (j["ApproveDate"].ToString() != "") {
                     DateTime TimesheetApproved = Convert.ToDateTime(j["ApproveDate"]);
                     data.ApproveDate = TimesheetApproved.ToString("dd-MM-yyyy");
                 }
 
-                DateTime TimesheetModify = Convert.ToDateTime(j["Modified"]);
-                data.ModifyDate = TimesheetModify.ToString("dd-MM-yyyy");
 
                 data.UtilizedHours = j["UtilizedHours"] == null ? "" : Convert.ToString(j["UtilizedHours"]);
                 data.TimesheetID = j["TimesheetID"] == null ? "" : Convert.ToString(j["TimesheetID"]);
@@ -210,7 +213,7 @@ namespace DeepeshWeb.BAL.Timesheet
             RESTOption rESTOption = new RESTOption();
 
             rESTOption.filter = filter;
-            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Manager/ID,Manager/FirstName,Manager/LastName,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID,OtherClient,OtherMilestone,OtherProject,OtherTask,ApproveDate,Modified,Editor/Title";
+            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Employee/OfficeEmail,Manager/ID,Manager/FirstName,Manager/LastName,Manager/OfficeEmail,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID,OtherClient,OtherMilestone,OtherProject,OtherTask,ApproveDate,Modified,Editor/Title";
             rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status,Client,AllTaskStatus,Editor";
             rESTOption.orderby = "ID desc";
             rESTOption.top = "5000";

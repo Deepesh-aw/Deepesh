@@ -21,6 +21,16 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstTIM_TimesheetParent;
         }
 
+        public List<TIM_TimesheetParentModel> GetEmpTimesheetByEmpId(ClientContext clientContext, int EmpId)
+        {
+            List<TIM_TimesheetParentModel> lstTIM_TimesheetParent = new List<TIM_TimesheetParentModel>();
+            string filter = "EmployeeId eq " + EmpId + "";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_TimesheetParent = BindList(jArray);
+            return lstTIM_TimesheetParent;
+        }
+
+
 
         public List<TIM_TimesheetParentModel> BindList(JArray jArray)
         {
@@ -50,9 +60,9 @@ namespace DeepeshWeb.BAL.Timesheet
                     data.ApproveDate = TimesheetApproved.ToString("dd-MM-yyyy");
                 }
 
-                if (j["RejectDate"].ToString() != "")
+                if (j["RejectedDate"].ToString() != "")
                 {
-                    DateTime TimesheetRejected = Convert.ToDateTime(j["RejectDate"]);
+                    DateTime TimesheetRejected = Convert.ToDateTime(j["RejectedDate"]);
                     data.RejectDate = TimesheetRejected.ToString("dd-MM-yyyy");
                 }
 

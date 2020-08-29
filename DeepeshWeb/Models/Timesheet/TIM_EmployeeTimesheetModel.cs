@@ -8,16 +8,19 @@ namespace DeepeshWeb.Models.Timesheet
     public class TIM_EmployeeTimesheetModel
     {
         public int ID { get; set; }
+        public int ParentID { get; set; }
         public string Description { get; set; }
         public string RejectDescription { get; set; }
         public string ApproveDate { get; set; }
         public string ApproveDescription { get; set; }
         public int Employee { get; set; }
         public string EmployeeName { get; set; }
+        public string EmployeeEmail { get; set; }
         public string EstimatedHours { get; set; }
         public string Hours { get; set; }
         public int Manager { get; set; }
         public string ManagerName { get; set; }
+        public string ManagerEmail { get; set; }
         public int MileStone { get; set; }
         public string MileStoneName { get; set; }
         public int Project { get; set; }

@@ -134,7 +134,7 @@
                                                         }
 
                                                     </select>*@
-                                                    <select class="form-control SubTaskSelect2"  ng-options="item.ID as item.FullName for item in MembersSubTaskArr" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember"><option value="">Choose One</option></select>
+                                                    <select class="form-control SubTaskSelect2"  ng-options="item.ID+':'+item.OfficeEmail as item.FullName for item in MembersSubTaskArr" ng-model="ngddlSubTaskMember" id="ddlSubTaskMember"><option value="">Choose One</option></select>
                                                 </td>
 
                                                 <td data-label="Start Date">
@@ -210,7 +210,7 @@
                                             <tr ng-repeat="t in SubTask">
                                                 <td data-label="Sr.No.">{{$index+1}}</td>
                                                 <td data-label="SubTask">{{t.SubTask}}</td>
-                                                <td data-label="Members">{{t.MemberTitle}}</td>
+                                                <td data-label="Members">{{t.MembersName}}</td>
                                                 <td data-label="Start Date">{{t.StartDateView}}</td>
                                                 <td data-label="Estimated End Date">{{t.EndDateView}}</td>
                                                 <td data-label="Days">{{t.NoOfDays}}</td>

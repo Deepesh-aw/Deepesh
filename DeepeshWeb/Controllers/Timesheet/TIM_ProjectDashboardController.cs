@@ -425,7 +425,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
         [HttpPost]
         [ActionName("GetSubTask")]
-        public JsonResult GetSubTask(int TaskId, int[] Members, int ProjectManager)
+        public JsonResult GetSubTask(int TaskId, int[] Members = null, int ProjectManager = 0)
         {
             List<object> obj = new List<object>();
             List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
@@ -436,7 +436,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 lstSubTask = BalSubTask.GetSubTaskByTaskId(clientContext, TaskId);
                 var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
                 lstDocument = BalDocument.GetDocumentByLookUpId(clientContext, lstSubTask[0].Project.ToString(), path);
-                ViewBag.EmpData = GetEmpMembers(Members, ProjectManager);
+                if(ProjectManager != 0)
+                    ViewBag.EmpData = GetEmpMembers(Members, ProjectManager);
                 if (lstSubTask.Count > 0)
                 {
                     obj.Add("OK");
@@ -650,6 +651,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     lstPendingStatus = BalStatus.GetPendingStatus(clientContext);
                     List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                     lstWorkFlow = BalWorkflow.GetWorkFlowForAddTask(clientContext);
+                    Emp_BasicInfoModel AssignedBy = BalEmp.GetEmpMailByLogIn(clientContext);
                     string returnID = "0";
                     foreach (var item in AddTask)
                     {
@@ -692,8 +694,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             returnID = BalTask.SaveTask(clientContext, itemdata);
                             if (Convert.ToInt32(returnID) > 0)
                             {
-                                //string Mailres = EmailCtrl.ProjectCreationNotification(clientContext, Project[0]);
-                                //if(Convert.ToInt32(Mailres) > 0)
+                                string Mailres = EmailCtrl.TaskAssignmentNotification(clientContext, item, AssignedBy);
+                                if(Convert.ToInt32(Mailres) > 0)
                                     i++;
                             }
                                 
@@ -827,6 +829,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
                     List<TIM_WorkFlowMasterModel> lstWorkFlow = new List<TIM_WorkFlowMasterModel>();
                     lstWorkFlow = BalWorkflow.GetWorkFlowForAddSubTask(clientContext);
+                    Emp_BasicInfoModel AssignedBy = BalEmp.GetEmpMailByLogIn(clientContext);
+
                     string returnID = "0";
                     foreach (var item in AddSubTask)
                     {
@@ -863,7 +867,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         {
                             returnID = BalSubTask.SaveSubTask(clientContext, itemdata);
                             if (Convert.ToInt32(returnID) > 0)
-                                i++;
+                            {
+                                string Mailres = EmailCtrl.SubTaskAssignmentNotification(clientContext, item, AssignedBy);
+                                if (Convert.ToInt32(Mailres) > 0)
+                                    i++;
+                            }
                         }
 
                         //if (lstWorkFlow.Count > 0)

@@ -159,30 +159,13 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
     })
 
-    $scope.OnLoad = function () {
-        CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/OnLoadData", "").then(function (response) {
+    $scope.TimesheetDashboardLoad = function () {
+        CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/TimesheetLoadData", "").then(function (response) {
             if (response.data[0] == "OK") {
-
-                if (response.data[3].length > 0) 
-                    $scope.TimesheetDataPending = response.data[3];
-
-                if (response.data[4].length > 0)
-                    $scope.TimesheetDataApproved = response.data[4];
-
-                if (response.data[6].length > 0)
-                    $scope.TimesheetDataRejected = response.data[6];
-
-                if (response.data[5].length > 0)
-                    $scope.TimesheetData.length = [...new Map(response.data[5].map(item => [item['TimesheetID'], item])).values()].length;                   
-                else
-                    $scope.TimesheetData.length = 0;
-
-                var count = 1
-                count = Number(count) + Number($scope.TimesheetData.length);
-                $scope.TimeId = "TIM-" + count;
-
+                $scope.TimesheetData = response.data[1];
                 $('#Pending').DataTable().clear().destroy();
                 $('#Approved').DataTable().clear().destroy();
+                $('#Rejected').DataTable().clear().destroy();
 
                 setTimeout(function () {
                     $('#Pending').DataTable({
@@ -219,35 +202,35 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     });
                 });
 
+            }
+        });
+    }
+
+    $scope.GetClientData = function () {
+        CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/OnLoadData", "").then(function (response) {
+            if (response.data[0] == "OK") {
+
+                if (response.data[3].length > 0)
+                    $scope.TimesheetData.length = [...new Map(response.data[3].map(item => [item['TimesheetID'], item])).values()].length;                   
+                else
+                    $scope.TimesheetData.length = 0;
+
+                var count = 1
+                count = Number(count) + Number($scope.TimesheetData.length);
+                $scope.TimeId = "TIM-" + count;
+
                 if (response.data[1].length > 0) {
                     $scope.AllTaskArr = response.data[1];
                     $scope.ClientDetails = [...new Map($scope.AllTaskArr.map(item => [item['Client'], item])).values()];
                     $scope.ClientDetails.push({ "Client": 0 , "ClientName" : "Other"});
-                    //$timeout(function () {
-                        //$("#ddlClient").append("<option>Other</option>");
-                        //$(".AllSelect").select2({
-                        //    placeholder: 'Choose one',
-                        //    searchInputPlaceholder: 'Search',
-                        //    width: '100%',
-                        //    dropdownParent: $("#AddTimesheetPopUp")
-                        //})
-                    //})
-                    //if ($scope.ClientDetails.length == 1) {
-                    //    $timeout(function () {
-                    //        $("#ddlClient").val("number:" + $scope.ClientDetails[0].Client).trigger('change');
-                    //        $("#ddlClient").append("<option>Other</option>");
-
-                    //    })
-                    //}
-                    //else {
-                    //    $("#ddlClient").append("<option>Other</option>");
-                    //}
-                        
-
                 }
 
                 if (response.data[2].length > 0)
-                    WorkingHour = response.data[2][0].Hour;               
+                    WorkingHour = response.data[2][0].Hour;   
+
+                $scope.ngtxtTimesheetDate = moment().format("DD/MM/YYYY");
+                $("#MilestoneTitle").text("Add Timesheet");
+                $("#AddTimesheetPopUp").modal('show');
             }
         });
     }
@@ -765,9 +748,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     }
 
     $scope.OpenAddTimesheet = function () {
-        $scope.ngtxtTimesheetDate = moment().format("DD/MM/YYYY");
-        $("#MilestoneTitle").text("Add Timesheet");
-        $("#AddTimesheetPopUp").modal('show');
+        $scope.GetClientData();
     }
 
     $scope.FinalAddTimesheet = function () {

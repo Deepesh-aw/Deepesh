@@ -19,6 +19,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_MilestoneBal BalMilestone = new TIM_MilestoneBal();
         TIM_TaskBal BalTask = new TIM_TaskBal();
         TIM_SubTaskBal BalSubTask = new TIM_SubTaskBal();
+        TIM_SendEmailController EmailCtrl = new TIM_SendEmailController();
+        TIM_TimesheetParentBal BalTimesheetParent = new TIM_TimesheetParentBal();
 
         // GET: TIM_ManagerDashboard
         public ActionResult Index()
@@ -74,16 +76,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     {
                         List<TIM_WorkFlowMasterModel> lstWorkFlowForApproveTimesheet = new List<TIM_WorkFlowMasterModel>();
                         lstWorkFlowForApproveTimesheet = BalWorkflow.GetWorkFlowForTimesheetApprove(clientContext);
-                        //string taskdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                        //taskdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
                         int i = 0;
+                        var itemdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                        itemdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
+                        itemdata += " ,'ApproveDescription': '" + Descrition.Replace("'", @"\'") + "'";
+                        itemdata += " ,'ApproveDate': '" + DateTime.Today.ToString("MM-dd-yyyy hh:mm:ss") + "'";
+
                         foreach (var item in TimesheetData)
                         {
-                            var itemdata = "'StatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                            itemdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
-                            itemdata += " ,'ApproveDescription': '" + Descrition.Replace("'", @"\'") + "'";
-                            itemdata += " ,'ApproveDate': '" + DateTime.Today.ToString("MM-dd-yyyy hh:mm:ss") + "'";
-
                             string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")
                             {
@@ -95,26 +95,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                         var taskdata = "'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
                                         string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, item.Task.ToString());
                                     }
-                                    //List<TIM_EmployeeTimesheetModel> lstTimesheetForTask = new List<TIM_EmployeeTimesheetModel>();
-                                    //lstTimesheetForTask = BalEmpTimesheet.GetEmpTimesheetByTaskId(clientContext, item.Task);
-                                    //if (lstTimesheetForTask.Count > 0)
-                                    //{
-                                    //    if (lstTimesheetForTask[0].RemainingHours.Split(':')[0] == "0" || lstTimesheetForTask[0].RemainingHours.Split(':')[0] == "00")
-                                    //    {
-                                    //        List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-                                    //        lstSubTask = BalSubTask.GetSubTaskByTaskId(clientContext, item.Task);
-                                    //        if(lstSubTask.Count == 0)
-                                    //        {
-                                    //            taskdata += " ,'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                                    //            string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, item.Task.ToString());
-                                    //            if (TaskUpdate == "Update")
-                                    //            {
-                                    //                UpdateAllStatus(taskdata, item, lstWorkFlowForApproveTimesheet);
-                                    //            }
-                                    //        }
-
-                                    //    }
-                                    //}
 
                                 }
                                 else if(item.SubTask > 0)
@@ -124,40 +104,21 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                         var taskdata = "'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
                                         string SubTaskUpdate = BalSubTask.UpdateSubTask(clientContext, taskdata, item.SubTask.ToString());
                                     }
-                                    //List<TIM_EmployeeTimesheetModel> lstTimesheetForSubTask = new List<TIM_EmployeeTimesheetModel>();
-                                    //lstTimesheetForSubTask = BalEmpTimesheet.GetEmpTimesheetBySubTaskId(clientContext, item.SubTask);
-                                    //if (lstTimesheetForSubTask.Count > 0)
-                                    //{
-                                    //    if (lstTimesheetForSubTask[0].RemainingHours.Split(':')[0] == "0" || lstTimesheetForSubTask[0].RemainingHours.Split(':')[0] == "00")
-                                    //    {
-                                    //        taskdata += " ,'SubTaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                                    //        string SubTaskUpdate = BalSubTask.UpdateSubTask(clientContext, taskdata, item.SubTask.ToString());
-                                    //        if (SubTaskUpdate == "Update")
-                                    //        {
-                                    //            List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-                                    //            lstSubTask = BalSubTask.GetSubTaskBySubTaskId(clientContext, item.SubTask);
-                                    //            if(lstSubTask.Count > 0)
-                                    //            {
-                                    //                List<TIM_SubTaskModel> lstSubTaskCount = new List<TIM_SubTaskModel>();
-                                    //                lstSubTaskCount = BalSubTask.GetSubTaskByTaskId(clientContext, lstSubTask[0].Task);
-                                    //                if(lstSubTask.Count == 0)
-                                    //                {
-                                    //                    taskdata += " ,'SubTaskStatus': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
-                                    //                    string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, lstSubTaskCount[0].Task.ToString());
-                                    //                    if(TaskUpdate == "Update")
-                                    //                    {
-                                    //                        UpdateAllStatus(taskdata, item, lstWorkFlowForApproveTimesheet);
-                                    //                    }
-                                    //                }
-                                    //            }
-                                    //        }
-                                    //    }
-                                    //}
                                 }
                             }
                         }
                         if (i == TimesheetData.Count)
-                            obj.Add("OK");
+                        {
+                            string returnID = BalTimesheetParent.UpdateTimesheet(clientContext, itemdata, TimesheetData[0].ParentID.ToString());
+                            if(returnID == "Update")
+                            {
+                                string Mailres = EmailCtrl.TimesheetApproveAndRejectNotification(clientContext, TimesheetData[0], "Approved");
+                                if (Convert.ToInt32(Mailres) > 0)
+                                    obj.Add("OK");
+                            }
+                            
+                        }
+                            
                     }
                     else if (Action == "Reject")
                     {
@@ -166,18 +127,27 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         string taskdata = "'StatusId': '" + lstWorkFlowForRejectTimesheet[0].ToStatusID + "'";
                         taskdata += " ,'InternalStatus': '" + lstWorkFlowForRejectTimesheet[0].InternalStatus + "'";
                         int i = 0;
+                        var itemdata = "'StatusId': '" + lstWorkFlowForRejectTimesheet[0].ToStatusID + "'";
+                        itemdata += " ,'InternalStatus': '" + lstWorkFlowForRejectTimesheet[0].InternalStatus + "'";
+                        itemdata += " ,'RejectDescription': '" + Descrition.Replace("'", @"\'") + "'";
+                        itemdata += " ,'RejectedDate': '" + DateTime.Today.ToString("MM/dd/yyyy HH:mm:ss") + "'";
+
                         foreach (var item in TimesheetData)
                         {
-                            var itemdata = "'StatusId': '" + lstWorkFlowForRejectTimesheet[0].ToStatusID + "'";
-                            itemdata += " ,'InternalStatus': '" + lstWorkFlowForRejectTimesheet[0].InternalStatus + "'";
-                            itemdata += " ,'RejectDescription': '" + Descrition.Replace("'", @"\'") + "'";
-                            itemdata += " ,'RejectedDate': '" + DateTime.Today.ToString("MM/dd/yyyy HH:mm:ss") + "'";
                             string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")
                                 i++;
                         }
                         if (i == TimesheetData.Count)
-                            obj.Add("OK");
+                        {
+                            string returnID = BalTimesheetParent.UpdateTimesheet(clientContext, itemdata, TimesheetData[0].ParentID.ToString());
+                            if (returnID == "Update")
+                            {
+                                string Mailres = EmailCtrl.TimesheetApproveAndRejectNotification(clientContext, TimesheetData[0], "Rejected");
+                                if (Convert.ToInt32(Mailres) > 0)
+                                    obj.Add("OK");
+                            }
+                        }
                     }
                 }
             }

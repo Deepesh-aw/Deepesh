@@ -52,6 +52,7 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 {
                     ID = Convert.ToInt32(j["Id"]),
                     EmpCode = j["EmpCode"].ToString(),
+                    OfficeEmail = j["OfficeEmail"].ToString(),
                     FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
                 }); 
             }
@@ -70,10 +71,30 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 {
                     ID = Convert.ToInt32(j["Id"]),
                     EmpCode = j["EmpCode"].ToString(),
+                    OfficeEmail = j["OfficeEmail"].ToString(),
+                    FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
+                }); 
+            }
+            return lstEmp[0].EmpCode;
+        }
+
+        public Emp_BasicInfoModel GetEmpMailByLogIn(ClientContext clientContext)
+        {
+            List<Emp_BasicInfoModel> lstEmp = new List<Emp_BasicInfoModel>();
+            int UserId = Convert.ToInt32(HttpContext.Current.Session["UserID"]);
+            string filter = "User_NameId eq " + UserId;
+            JArray jArray = RESTGet(clientContext, filter);
+            foreach (JObject j in jArray)
+            {
+                lstEmp.Add(new Emp_BasicInfoModel
+                {
+                    ID = Convert.ToInt32(j["Id"]),
+                    EmpCode = j["EmpCode"].ToString(),
+                    OfficeEmail = j["OfficeEmail"].ToString(),
                     FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
                 }); ; ;
             }
-            return lstEmp[0].EmpCode;
+            return lstEmp[0];
         }
 
         public List<Emp_BasicInfoModel> GetEmpCodeByLogIn(ClientContext clientContext, string filter)
@@ -155,6 +176,8 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 UserNameId = jArray[0]["User_Name"]["Id"] == null ? "" : Convert.ToString(jArray[0]["User_Name"]["Id"]),
                 User_Name = jArray[0]["User_Name"]["Title"] == null ? "" : Convert.ToString(jArray[0]["User_Name"]["Title"]).Trim(),
                 Manager = jArray[0]["Manager"]["FirstName"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["FirstName"]),
+                LastName = jArray[0]["Manager"]["LastName"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["LastName"]),
+                OfficeEmail = jArray[0]["Manager"]["OfficeEmail"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["OfficeEmail"]),
                 ManagerCode = jArray[0]["Manager"]["EmpCode"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["EmpCode"]),
                 Manager_Code = jArray[0]["Manager"]["ManagerCode"] == null ? "" : Convert.ToString(jArray[0]["Manager"]["ManagerCode"]),
                 Department = jArray[0]["Department"]["DepartmentName"] == null ? "" : Convert.ToString(jArray[0]["Department"]["DepartmentName"]),
@@ -211,7 +234,7 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                 JArray jArray = new JArray();
                 RESTOption rESTOption = new RESTOption();
                 rESTOption.filter = filter;
-            rESTOption.select = "ID,FirstName,MiddleName,LastName,EmpCode,Gender,MaritalStatus,DOB,JoiningDate,OnProbationTill,ProbationStatus,OfficeEmail,ContactNumber,EmpStatus,Designation/Id,Designation/Designation,Department/Id,Department/DepartmentName,Division/Id,Division/Division,Region/Id,Region/Region,Branch/Id,Branch/Branch,Company/Id,Company/CompanyName,Manager/Id,Manager/FirstName,User_Name/Id,User_Name/Title,Profile_Pic_Url,Facebook,Google,LinkedIn,Twitter,Instagram,Tiktok";
+            rESTOption.select = "ID,FirstName,MiddleName,LastName,EmpCode,Gender,MaritalStatus,DOB,JoiningDate,OnProbationTill,ProbationStatus,OfficeEmail,ContactNumber,EmpStatus,Designation/Id,Designation/Designation,Department/Id,Department/DepartmentName,Division/Id,Division/Division,Region/Id,Region/Region,Branch/Id,Branch/Branch,Company/Id,Company/CompanyName,Manager/Id,Manager/FirstName,Manager/LastName,Manager/OfficeEmail,User_Name/Id,User_Name/Title,Profile_Pic_Url,Facebook,Google,LinkedIn,Twitter,Instagram,Tiktok";
             rESTOption.expand = "Company,Designation,Department,Division,Region,Branch,User_Name,Manager";
             rESTOption.top = "5000";
 
