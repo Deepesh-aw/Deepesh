@@ -5,13 +5,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DeepeshWeb.DAL;
-
- 
+using DeepeshWeb.BAL.EmployeeManagement;
+using DeepeshWeb.Models.EmployeeManagement;
 
 namespace DeepeshWeb.Controllers
 {
     public class HomeController : Controller
     {
+        Emp_BasicInfoBal BalEmp = new Emp_BasicInfoBal();
+
         [SharePointContextFilter]
         public ActionResult Index()
         {
@@ -51,6 +53,13 @@ namespace DeepeshWeb.Controllers
                         Session["UserID"] = spUser.Id;
                         Session["Navigation"] = "";
                         ViewBag.UserName = spUser.Id;
+                        Emp_BasicInfoModel lstEmp = BalEmp.GetEmpMailByLogIn(clientContext);
+                        Session["UserName"] = lstEmp.FullName;
+                        Session["UserChar"] = lstEmp.FullName.Split(' ')[0].Substring(0, 1) + lstEmp.FullName.Split(' ')[1].Substring(0, 1);
+                        Session["UserMail"] = lstEmp.OfficeEmail;
+                        Session["UserPic"] = lstEmp.Profile_pic_url;
+                        Session["Hosturl"] = "http://"+spContext.SPHostUrl.Host;
+
                     }
                 }
             }

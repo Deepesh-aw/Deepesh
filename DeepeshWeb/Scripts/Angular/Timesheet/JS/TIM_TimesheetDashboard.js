@@ -211,7 +211,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             if (response.data[0] == "OK") {
 
                 if (response.data[3].length > 0)
-                    $scope.TimesheetData.length = [...new Map(response.data[3].map(item => [item['TimesheetID'], item])).values()].length;                   
+                    $scope.TimesheetData.length = [...new Map(response.data[3].map(item => [item['TimesheetID'], item])).values()].length;
                 else
                     $scope.TimesheetData.length = 0;
 
@@ -222,16 +222,22 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 if (response.data[1].length > 0) {
                     $scope.AllTaskArr = response.data[1];
                     $scope.ClientDetails = [...new Map($scope.AllTaskArr.map(item => [item['Client'], item])).values()];
-                    $scope.ClientDetails.push({ "Client": 0 , "ClientName" : "Other"});
+                    $scope.ClientDetails.push({ "Client": 0, "ClientName": "Other" });
                 }
 
                 if (response.data[2].length > 0)
-                    WorkingHour = response.data[2][0].Hour;   
+                    WorkingHour = response.data[2][0].Hour;
 
                 $scope.ngtxtTimesheetDate = moment().format("DD/MM/YYYY");
                 $("#MilestoneTitle").text("Add Timesheet");
+                $scope.LoadAddTimesheet = false;
                 $("#AddTimesheetPopUp").modal('show');
             }
+            else {
+                alert("Something went wrong. Please try after some time.");
+                $scope.LoadAddTimesheet = false;
+            }
+                
         });
     }
 
@@ -748,6 +754,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     }
 
     $scope.OpenAddTimesheet = function () {
+        $scope.LoadAddTimesheet = true;
         $scope.GetClientData();
     }
 
@@ -774,7 +781,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             //CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/AddTimesheet", data).then(function (response) {
             CommonAppUtilityService.DataWithFile("/TIM_TimesheetDashboard/AddTimesheet", fileData).then(function (response) {
                 if (response[0] == "OK") {
-                    $scope.OnLoad();
+                    $scope.TimesheetDashboardLoad();
                     $scope.TimesheetLoad = false;
                     $("#AddTimesheetPopUp").modal("hide");
                     $(".overlay").hide();
@@ -798,7 +805,27 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
     }
 
-    $scope.EditViewMainTimesheet = function (Timesheet,Action) {
+    $scope.EditViewMainTimesheet = function (Timesheet, Action, Type) {
+        if (Type == 'Inprogress') {
+            if (Action == "View")
+                $scope.InprogressViewLoad = true;
+            else
+                $scope.InprogressEditLoad = true;
+        }
+        else if (Type == 'Approved') {
+            if (Action == "View")
+                $scope.ApprovedViewLoad = true;
+            else
+                $scope.ApprovedEditLoad = true;
+        }
+        else if (Type == 'Reject') {
+            if (Action == "View")
+                $scope.RejectViewLoad = true;
+            else
+                $scope.RejectEditLoad = true;
+        }
+        
+
         var data = {
             'TimesheetId': Timesheet.TimesheetID
         }
@@ -885,7 +912,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                             Doc.push(temp);
                             obj.PrevFiles = Doc;
                         }
-                        
+
                     });
 
                     $scope.TimesheetArr.push(obj);
@@ -893,17 +920,60 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 if (Action == "View") {
                     $scope.ViewTimesheet = true;
                     $("#MilestoneTitle").text("View Timesheet");
+
                 }
                 else {
                     $("#MilestoneTitle").text("Edit Timesheet");
+
                 }
 
                 $("#btnAddTimesheet").text("Update");
                 $timeout(function () {
                     $("#ddlClient").val('').trigger('change');
                 }, 10);
+
+
                 $("#AddTimesheetPopUp").modal('show');
 
+                if (Type == 'Inprogress') {
+                    if (Action == "View")
+                        $scope.InprogressViewLoad = false;
+                    else
+                        $scope.InprogressEditLoad = false;
+                }
+                else if (Type == 'Approved') {
+                    if (Action == "View")
+                        $scope.ApprovedViewLoad = false;
+                    else
+                        $scope.ApprovedEditLoad = false;
+                }
+                else if (Type == 'Reject') {
+                    if (Action == "View")
+                        $scope.RejectViewLoad = false;
+                    else
+                        $scope.RejectEditLoad = false;
+                }
+
+            }
+            else {
+                if (Type == 'Inprogress') {
+                    if (Action == "View")
+                        $scope.InprogressViewLoad = false;
+                    else
+                        $scope.InprogressEditLoad = false;
+                }
+                else if (Type == 'Approved') {
+                    if (Action == "View")
+                        $scope.ApprovedViewLoad = false;
+                    else
+                        $scope.ApprovedEditLoad = false;
+                }
+                else if (Type == 'Reject') {
+                    if (Action == "View")
+                        $scope.RejectViewLoad = false;
+                    else
+                        $scope.RejectEditLoad = false;
+                }
             }
         });
     }
@@ -929,6 +999,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
 
     }
+
 
 
 });

@@ -29,30 +29,23 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return View();
         }
 
+        
+
         [HttpPost]
         [ActionName("LoadTimesheetData")]
         public JsonResult LoadTimesheetData()
         {
             List<object> obj = new List<object>();
-            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetPending = new List<TIM_EmployeeTimesheetModel>();
-            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetApproved = new List<TIM_EmployeeTimesheetModel>();
-            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheetRejected = new List<TIM_EmployeeTimesheetModel>();
 
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstEmployeeTimesheetPending = BalEmpTimesheet.GetEmpTimesheetByManagerIdAndPending(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstEmployeeTimesheetPending = lstEmployeeTimesheetPending.DistinctBy(x => x.TimesheetID).ToList();
-                    lstEmployeeTimesheetApproved = BalEmpTimesheet.GetEmpTimesheetByManagerIdAndApprove(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstEmployeeTimesheetApproved = lstEmployeeTimesheetApproved.DistinctBy(x => x.TimesheetID).ToList();
-                    lstEmployeeTimesheetRejected = BalEmpTimesheet.GetEmpTimesheetByManagerIdAndReject(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstEmployeeTimesheetRejected = lstEmployeeTimesheetRejected.DistinctBy(x => x.TimesheetID).ToList();
+                    List<TIM_TimesheetParentModel> lstTimesheetParent = BalTimesheetParent.GetEmpTimesheetByManagerId(clientContext, BalEmp.GetEmpByLogIn(clientContext));
                     obj.Add("OK");
-                    obj.Add(lstEmployeeTimesheetPending);
-                    obj.Add(lstEmployeeTimesheetApproved);
-                    obj.Add(lstEmployeeTimesheetRejected);
+                    obj.Add(lstTimesheetParent);
+
                 }
             }
             catch (Exception ex)

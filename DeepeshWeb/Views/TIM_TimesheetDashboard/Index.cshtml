@@ -203,7 +203,11 @@
             </div>
             <div class="my-auto">
                 <div class="d-flex">
-                    <a href="#" class="btn btn-primary float-right" ng-click="OpenAddTimesheet()">Add Timesheet</a>
+                    <a href="#" class="btn btn-primary float-right" ng-click="OpenAddTimesheet()" ng-hide="LoadAddTimesheet">Add Timesheet</a>
+                    <button class="btn btn-primary float-right" type="button" ng-show="LoadAddTimesheet" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Please wait...
+                    </button>
                 </div>
             </div>
         </div>
@@ -238,8 +242,12 @@
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ManagerName}}</td>
                                 <td>
-                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditViewMainTimesheet(tm,'Edit')"></i>&nbsp;
-                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View')"></i>
+                                    <i class="si si-pencil text-primary mr-2" ng-hide="InprogressEditLoad"  data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditViewMainTimesheet(tm,'Edit', 'Inprogress')"></i>&nbsp;
+                                    <i class="spinner-border spinner-border-sm" ng-show="InprogressEditLoad"></i>&nbsp;
+
+                                    <i class="si si-eye text-success mr-2" ng-hide="InprogressViewLoad"  data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View','Inprogress')"></i>
+                                    <i class="spinner-border spinner-border-sm" ng-show="InprogressViewLoad"></i>&nbsp;
+
                                 </td>
                             </tr>
                         </tbody>
@@ -277,9 +285,10 @@
                                 <td>{{tm.ApproveDescription}}</td>
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                  <td>{{tm.ModifyName}}</td>
-                                <td>
-                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View')"></i>
-                                </td>
+                                 <td>
+                                     <i class="si si-eye text-success mr-2" ng-hide="ApprovedViewLoad" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View','Approved')"></i>
+                                     <i class="spinner-border spinner-border-sm" ng-show="ApprovedViewLoad"></i>&nbsp;
+                                 </td>
                             </tr>
                         </tbody>
                     </table>
@@ -310,7 +319,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="tm in  TimesheetData" ng-if="tm.InternalStatus == 'Rejected'">
+                            <tr ng-repeat="tm in  TimesheetData" ng-if="tm.InternalStatus == 'Reject'">
                                 <td>{{$index+1}}</td>
                                 <td>{{tm.ModifyDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
@@ -318,7 +327,8 @@
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ModifyName}}</td>
                                 <td>
-                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View')"></i>
+                                    <i class="si si-eye text-success mr-2" ng-hide="RejectViewLoad" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View','Reject')"></i>
+                                    <i class="spinner-border spinner-border-sm" ng-show="RejectViewLoad"></i>&nbsp;
                                 </td>
                             </tr>
                         </tbody>

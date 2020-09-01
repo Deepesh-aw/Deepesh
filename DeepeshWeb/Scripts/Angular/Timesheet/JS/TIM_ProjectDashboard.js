@@ -116,6 +116,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
     $scope.OpenAddProjectPop = function () {
         //$('#testPop1').addClass('active');
+        $scope.ProjectDetails.length = 0;
         setTimeout(function () {
             $("#ddlMembers").val(' ').trigger('change');
         }, 20);
@@ -770,7 +771,8 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
 
         CommonAppUtilityService.DataWithFile("/TIM_ProjectDashboard/SaveProject", fileData).then(function (response) {
             if (response[0] == "OK") {
-                //alert(msg);
+                alert(msg);
+                $scope.ProjectDetails.length = 0;
                 $scope.ProjectCreateLoad = false;
                 $('#AddProjectPopUp').modal('hide');
                 $scope.LoadProjectData();

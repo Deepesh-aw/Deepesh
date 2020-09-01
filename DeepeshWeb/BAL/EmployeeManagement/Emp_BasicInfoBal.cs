@@ -92,7 +92,8 @@ namespace DeepeshWeb.BAL.EmployeeManagement
                     EmpCode = j["EmpCode"].ToString(),
                     OfficeEmail = j["OfficeEmail"].ToString(),
                     FullName = j["FirstName"].ToString() + " " + j["LastName"].ToString(),
-                }); ; ;
+                    Profile_pic_url = j["Profile_Pic_Url"] == null ? "" : Convert.ToString(j["Profile_Pic_Url"]),
+                }); 
             }
             return lstEmp[0];
         }

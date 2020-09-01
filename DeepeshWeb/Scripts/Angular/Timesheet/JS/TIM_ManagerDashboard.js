@@ -20,16 +20,7 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
         });
         CommonAppUtilityService.CreateItem("/TIM_ManagerDashboard/LoadTimesheetData", "").then(function (response) {
             if (response.data[0] == "OK") {
-
-                if (response.data[1].length > 0)
-                    $scope.TimesheetDataPending = response.data[1];
-
-                if (response.data[2].length > 0)
-                    $scope.TimesheetDataApproved = response.data[2];
-
-                if (response.data[3].length > 0)
-                    $scope.TimesheetDataRejected = response.data[3];
-
+                $scope.BindTimesheetData = response.data[1];
 
                 $('#Pending').DataTable().clear().destroy();
                 $('#Approved').DataTable().clear().destroy();
@@ -80,7 +71,9 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
         }
     }
 
-    $scope.ApproveTimesheet = function (Timesheet, Action) {
+    $scope.ApproveTimesheet = function (Timesheet, Action, ID, iclass) {
+        $("#Load" + ID).removeClass(iclass);
+        $("#Load" + ID).addClass('spinner-border spinner-border-sm');
         var data = {
             'TimesheetId': Timesheet.TimesheetID
         }
@@ -112,7 +105,14 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
                 else
                     $scope.Report = false;
 
+                $("#Load" + ID).removeClass('spinner-border spinner-border-sm');
+                $("#Load" + ID).addClass(iclass);
+
                 $("#ViewTimesheetPopUp").modal('show');
+            }
+            else {
+                $("#Load" + ID).removeClass('spinner-border spinner-border-sm');
+                $("#Load" + ID).addClass(iclass);
             }
         });
     }

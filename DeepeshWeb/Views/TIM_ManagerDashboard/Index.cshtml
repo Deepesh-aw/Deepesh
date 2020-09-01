@@ -219,15 +219,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="tm in  TimesheetDataPending">
+                            <tr ng-repeat="tm in  BindTimesheetData" ng-if="tm.InternalStatus == 'Inprogress'">
                                 <td>{{$index+1}}</td>
                                 <td>{{tm.TimesheetAddedDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
-                                <td>{{tm.Description}}</td>
+                                <td>{{tm.EmployeeName}}</td>
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ManagerName}}</td>
                                 <td>
-                                    <i class="si si-check text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Approve" ng-click="ApproveTimesheet(tm,'Approve')"></i>&nbsp;
+                                    <i class="si si-check text-primary mr-2" id="Load{{tm.ID}}" data-toggle="tooltip" data-placement="top" data-original-title="Approve" ng-click="ApproveTimesheet(tm,'Approve',tm.ID, 'si si-check text-primary mr-2')"></i>&nbsp;
                                 </td>
                             </tr>
                         </tbody>
@@ -258,7 +258,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="tm in  TimesheetDataApproved">
+                            <tr ng-repeat="tm in  BindTimesheetData" ng-if="tm.InternalStatus == 'Approved'">
                                 <td>{{$index+1}}</td>
                                 <td>{{tm.ApproveDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
@@ -266,7 +266,7 @@
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ModifyName}}</td>
                                 <td>
-                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ApproveTimesheet(tm,'View')"></i>
+                                    <i class="si si-eye text-success mr-2" id="Load{{tm.ID}}" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ApproveTimesheet(tm,'View', tm.ID, 'si si-eye text-success mr-2')"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -298,7 +298,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="tm in  TimesheetDataRejected">
+                            <tr ng-repeat="tm in  BindTimesheetData" ng-if="tm.InternalStatus == 'Reject'">
                                 <td>{{$index+1}}</td>
                                 <td>{{tm.ModifyDate}}</td>
                                 <td>{{tm.TimesheetID}}</td>
@@ -306,7 +306,7 @@
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ModifyName}}</td>
                                 <td>
-                                    <i class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ApproveTimesheet(tm,'View')"></i>
+                                    <i class="si si-eye text-success mr-2" id="Load{{tm.ID}}" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="ApproveTimesheet(tm, 'View', tm.ID, 'si si-eye text-success mr-2')"></i>
                                 </td>
                             </tr>
                         </tbody>

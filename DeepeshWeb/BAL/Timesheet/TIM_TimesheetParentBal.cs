@@ -30,7 +30,14 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstTIM_TimesheetParent;
         }
 
-
+        public List<TIM_TimesheetParentModel> GetEmpTimesheetByManagerId(ClientContext clientContext, int ManagerId)
+        {
+            List<TIM_TimesheetParentModel> lstTIM_EmployeeTimesheetParent = new List<TIM_TimesheetParentModel>();
+            string filter = "ManagerId eq " + ManagerId + "";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheetParent = BindList(jArray);
+            return lstTIM_EmployeeTimesheetParent;
+        }
 
         public List<TIM_TimesheetParentModel> BindList(JArray jArray)
         {
