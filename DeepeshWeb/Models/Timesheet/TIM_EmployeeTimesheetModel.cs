@@ -51,6 +51,10 @@ namespace DeepeshWeb.Models.Timesheet
         public string ModifyName { get; set; }
         public List<TimeDoc> ListTimeDoc { get; set; }
         public string FileCount { get; set; }
+        public string Flag { get; set; }
+        public int MinAlterDay { get; set; }
+        public string AlterUtilizeHour { get; set; }
+
     }
 
     public class TimeDoc

@@ -13,6 +13,15 @@ namespace DeepeshWeb.BAL.Timesheet
 {
     public class TIM_EmployeeTimesheetBal
     {
+        public List<TIM_EmployeeTimesheetModel> AlterPrevEmpTimesheet(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "ClientId eq " + item.Client + " and ProjectId eq  " + item.Project + " and MileStoneId eq  " + item.MileStone + " and (TaskId eq  " + item.Task + " or SubTaskId eq  " + item.SubTask + ") and TimesheetAddedDate ge '" + item.TimesheetAddedDate + "'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByTaskId(ClientContext clientContext, int TaskId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
@@ -94,6 +103,7 @@ namespace DeepeshWeb.BAL.Timesheet
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
         }
+
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByAllTaskId(ClientContext clientContext, int AllTaskId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();

@@ -193,7 +193,7 @@
     <Compile Include="BAL\Timesheet\TIM_ProjectCreationBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_ProjectTypeMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_SendEmailBal.cs" />
-    <Compile Include="BAL\Timesheet\TIM_Setting.cs" />
+    <Compile Include="BAL\Timesheet\TIM_SettingBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_StatusMasterBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_SubTaskBal.cs" />
     <Compile Include="BAL\Timesheet\TIM_TimesheetParentBal.cs" />

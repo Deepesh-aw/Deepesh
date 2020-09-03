@@ -10,9 +10,9 @@ using System.Web;
 
 namespace DeepeshWeb.BAL.Timesheet
 {
-    public class TIM_Setting
+    public class TIM_SettingBal
     {
-        public List<TIM_SettingModel> GetWorkingHour(ClientContext clientContext)
+        public List<TIM_SettingModel> GetSettingData(ClientContext clientContext)
         {
             List<TIM_SettingModel> lstSetting = new List<TIM_SettingModel>();
             JArray jArray = RESTGet(clientContext, null);
@@ -59,7 +59,7 @@ namespace DeepeshWeb.BAL.Timesheet
             return restService.SaveItem(clientContext, "TIM_Setting", ItemData);
         }
 
-        public string UpdateProject(ClientContext clientContext, string ItemData, string ID)
+        public string UpdateSetting(ClientContext clientContext, string ItemData, string ID)
         {
 
             string response = RESTUpdate(clientContext, ItemData, ID);

@@ -15,7 +15,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_TaskModel> GetAllTask(ClientContext clientContext, int LogInId)
         {
             List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
-            string filter = "MembersId eq " + LogInId + " and InternalStatus ne 'TaskDeleted' and InternalStatus ne 'ProjectDeleted'";
+            string filter = "MembersId eq " + LogInId + " and InternalStatus ne 'TaskDeleted' and InternalStatus ne 'ProjectDeleted' and InternalStatus ne 'Approved'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTask = BindList(jArray);
             return lstTask;

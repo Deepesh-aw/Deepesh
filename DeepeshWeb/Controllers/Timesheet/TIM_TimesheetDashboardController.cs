@@ -32,6 +32,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_DocumentLibraryBal BalDocument = new TIM_DocumentLibraryBal();
         TIM_TimesheetParentBal BalParentTimesheet = new TIM_TimesheetParentBal();
         TIM_SendEmailController EmailCtrl = new TIM_SendEmailController();
+        TIM_SettingBal BalSetting = new TIM_SettingBal();
+
         // GET: TIM_TimesheetDashboard
         public ActionResult Index()
         {
@@ -61,9 +63,21 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
+                    List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
+                    List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
                     List<TIM_TimesheetParentModel> lstTimesheetParent = BalParentTimesheet.GetEmpTimesheetByEmpId(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    lstTask = BalTask.GetAllTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    lstSubTask = BalSubTask.GetAllSubTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
+                    ViewBag.AllTask = lstTask.Cast<object>().Concat(lstSubTask).ToList();
+
+                    ViewBag.Setting = BalSetting.GetSettingData(clientContext);
+
+
                     obj.Add("OK");
                     obj.Add(lstTimesheetParent);
+                    obj.Add(ViewBag.AllTask);
+                    obj.Add(ViewBag.Setting);
+
                 }
             }
             catch (Exception ex)
@@ -78,25 +92,20 @@ namespace DeepeshWeb.Controllers.TimeSheet
         public JsonResult OnLoadData()
         {
             List<object> obj = new List<object>();
-            List<TIM_TaskModel> lstTask = new List<TIM_TaskModel>();
-            List<TIM_SubTaskModel> lstSubTask = new List<TIM_SubTaskModel>();
-            List<TIM_WorkingHoursModel> lstWorkingHours = new List<TIM_WorkingHoursModel>();
+            //List<TIM_WorkingHoursModel> lstWorkingHours = new List<TIM_WorkingHoursModel>();
             try
             {
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstTask = BalTask.GetAllTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    lstSubTask = BalSubTask.GetAllSubTask(clientContext, BalEmp.GetEmpByLogIn(clientContext));
-                    ViewBag.AllTask = lstTask.Cast<object>().Concat(lstSubTask).ToList();
-                    lstWorkingHours = BalWorkinghours.GetWorkingHour(clientContext);
+                    //lstWorkingHours = BalWorkinghours.GetWorkingHour(clientContext);
 
-                    ViewBag.AllTimesheet = BalEmpTimesheet.GetAllEmpTimesheet(clientContext);
+                    //ViewBag.AllTimesheet = BalEmpTimesheet.GetAllEmpTimesheet(clientContext);
+                    //ViewBag.Setting = BalSetting.GetSettingData(clientContext);
 
                     obj.Add("OK");
-                    obj.Add(ViewBag.AllTask);
-                    obj.Add(lstWorkingHours);
-                    obj.Add(ViewBag.AllTimesheet);
+                    //obj.Add(lstWorkingHours);
+                    //obj.Add(ViewBag.Setting);
                 }
             }
             catch (Exception ex)
@@ -223,6 +232,17 @@ namespace DeepeshWeb.Controllers.TimeSheet
                         ParentItemData += " ,'ManagerId': '" + lstApprover[0].ID + "'";
                         ParentItemData += " ,'TimesheetAddedDate': '" + EmpTimesheet[0].TimesheetAddedDate + "'";
                         ParentID = Convert.ToInt32(BalParentTimesheet.SaveTimesheet(clientContext, ParentItemData));
+                        if(ParentID > 0)
+                        {
+                            var count = Convert.ToInt32(EmpTimesheet[0].TimesheetID.Split('-')[1]) + 1;
+                            string SettingItemData = " 'TimesheetCount': '" + count + "'";
+                            string resID = BalSetting.UpdateSetting(clientContext, SettingItemData, "1");
+                            if (resID != "Update")
+                            {
+                                obj.Add("ERROR");
+                                return Json(obj, JsonRequestBehavior.AllowGet);
+                            }
+                        }
                     }
                     else
                     {
@@ -256,6 +276,11 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
                         if (item.ID > 0)
                         {
+                            if (item.AlterUtilizeHour != " ")
+                            {
+                                GetAndEditPrevTimesheet(clientContext, item);
+                            }
+
                             returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
                             if (returnID == "Update")
                             {
@@ -298,6 +323,63 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        public void GetAndEditPrevTimesheet(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
+        {
+            List<TIM_EmployeeTimesheetModel> lstPrevtimesheet = BalEmpTimesheet.AlterPrevEmpTimesheet(clientContext, item);
+            if (lstPrevtimesheet.Count > 0)
+            {
+                foreach (var data in lstPrevtimesheet)
+                {
+                    string NewUtilized = GetTimeDiff(data.UtilizedHours, item.AlterUtilizeHour);
+                    string NewRemaining = GetTimeDiff(data.RemainingHours, item.AlterUtilizeHour);
+                }
+                    
+            }
+        }
+
+        public string GetTimeDiff(string before, string after)
+        {
+            string result = "";
+            var b = before.Split(':');
+            var a = after.Split(':');
+
+            var hour_carry = 0;
+            var Ihour = 0;
+
+            var Imin = Convert.ToInt32(b[1]) + Convert.ToInt32(a[1]);
+            var Smin = Imin.ToString();
+
+            if (Imin < 0)
+            {
+                Imin += 60;
+                if (Imin.ToString().Length == 1)
+                    Smin = "0" + Imin.ToString();
+                hour_carry += 1;
+
+                Ihour = Convert.ToInt32(b[0]) + Convert.ToInt32(a[0]) - Convert.ToInt32(hour_carry);
+
+            }
+            else if (Imin > 59)
+            {
+                hour_carry = Imin / 60 | 0;
+                Imin = Imin % 60 | 0;
+
+                Ihour = Convert.ToInt32(b[0]) + Convert.ToInt32(a[0]) + Convert.ToInt32(hour_carry);
+
+                if (Imin.ToString().Length == 1)
+                    Smin = "0" + Imin.ToString();
+            }
+            else
+            {
+                Ihour = Convert.ToInt32(b[0]) + Convert.ToInt32(a[0]);
+            }
+
+            var Shour = Ihour.ToString();
+            result = Shour + ":" + Smin;
+
+            return result;
         }
 
         public void UploadTimesheetDoc(ClientContext clientContext, HttpFileCollectionBase files, TIM_EmployeeTimesheetModel item, string returnID)

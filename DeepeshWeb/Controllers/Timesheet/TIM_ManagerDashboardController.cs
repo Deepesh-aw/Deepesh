@@ -86,6 +86,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                     if(item.AllTaskStatusName == "Completed")
                                     {
                                         var taskdata = "'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                        taskdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
                                         string TaskUpdate = BalTask.UpdateTask(clientContext, taskdata, item.Task.ToString());
                                     }
 
@@ -95,6 +96,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                                     if (item.AllTaskStatusName == "Completed")
                                     {
                                         var taskdata = "'TaskStatusId': '" + lstWorkFlowForApproveTimesheet[0].ToStatusID + "'";
+                                        taskdata += " ,'InternalStatus': '" + lstWorkFlowForApproveTimesheet[0].InternalStatus + "'";
                                         string SubTaskUpdate = BalSubTask.UpdateSubTask(clientContext, taskdata, item.SubTask.ToString());
                                     }
                                 }

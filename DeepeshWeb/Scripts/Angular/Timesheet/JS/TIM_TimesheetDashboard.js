@@ -22,6 +22,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     $scope.TempPrevTimesheetFiles = [];
     var DeleteTimesheet = [];
     var DeleteTimesheetDoc = [];
+    $scope.MinTimesheetEdit;
 
     $(function () {
         $(".overlay").hide();
@@ -45,6 +46,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             autoclose: true,
             //minuteStep: 60
         }).on("show", function () {
+            $(this).data('val', $(this).val());
             $(".table-condensed .prev").css('visibility', 'hidden');
             $(".table-condensed .switch").text("Pick Time").css('visibility', 'hidden');
             $(".table-condensed .next").css('visibility', 'hidden');
@@ -71,7 +73,46 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     $scope.ngtxtHours = diff.hours() + ':' + (diff.minutes() < 10 ? "0" : '') + diff.minutes();
                     $("#txtHours").val($scope.ngtxtHours);
                     $scope.ngtxtUtilizedHours = ExistUtilize;
-                    $scope.GetRemainingHorus();
+
+                    if ($("#divAddTimesheet").attr("data-id") != "0") {
+                        var valuestart = moment.duration(From, "HH:mm");
+                        var valuestop = moment.duration(To, "HH:mm");
+                        var nowdifference = valuestop.subtract(valuestart);
+                        //alert(difference._data.hours + ":" + difference._data.minutes);
+
+                        var FromPrev = $("#divAddTimesheet").attr("data-from");
+                        var ToPrev = $("#divAddTimesheet").attr("data-to");
+                        var valuestartPrev = moment.duration(FromPrev, "HH:mm");
+                        var valuestopPrev = moment.duration(ToPrev, "HH:mm");
+                        Prevdifference = valuestopPrev.subtract(valuestartPrev);
+
+                        var TotalUtilize;
+                        var RemainingHours;
+
+                       // if (nowdifference._data.hours < Prevdifference._data.hours || nowdifference._data.minutes < Prevdifference._data.minutes) {
+                            var difference = Prevdifference.subtract(nowdifference);
+                        var strDiff = difference._data.hours + ":" + difference._data.minutes;
+
+                        if (difference._data.hours >= 0 || difference._data.minutes >= 0) {
+                            TotalUtilize = $scope.timeConvert($scope.ngtxtUtilizedHours, strDiff, "Minus");
+                        }
+                        else {
+                            TotalUtilize = $scope.timeConvert($scope.ngtxtUtilizedHours, strDiff, "Add");
+                        }
+
+                            RemainingHours = $scope.timeConvert($scope.ngtxtEstimatedHours, TotalUtilize, "Minus");
+                            $timeout(function () {
+                                $scope.ngtxtRemainingHours = RemainingHours;
+                                $scope.ngtxtUtilizedHours = TotalUtilize;
+                                return false;
+                            })
+                        //}
+
+                    }
+                    else {
+                        $scope.GetRemainingHorus();
+                    }
+
                 }
             }
             if ($scope.TimesheetArr.length > 0) {
@@ -132,7 +173,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             $scope.UploadFiles.length = 0;
             $scope.TempPrevTimesheetFiles.length = 0;
             $scope.ViewTimesheet = false;
-            $scope.TimeId = "TIM-" + $scope.TimesheetData.length + 1;
+            //$scope.TimeId = "TIM-" + $scope.TimesheetData.length + 1;
             $("#btnAddTimesheet").text("Submit");
             $scope.TimesheetArr.length = 0;
             $scope.EditTimesheetArr.length = 0;
@@ -154,6 +195,8 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
             if ($('.parsley-required').length>0)
                 $('.parsley-required').text('');
+
+            
         });
 
 
@@ -162,10 +205,24 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     $scope.TimesheetDashboardLoad = function () {
         CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/TimesheetLoadData", "").then(function (response) {
             if (response.data[0] == "OK") {
-                $scope.TimesheetData = response.data[1];
                 $('#Pending').DataTable().clear().destroy();
                 $('#Approved').DataTable().clear().destroy();
                 $('#Rejected').DataTable().clear().destroy();
+
+                $scope.TimesheetData = response.data[1];
+
+                if (response.data[2].length > 0) {
+                    $scope.AllTaskArr = response.data[2];
+                    $scope.ClientDetails = [...new Map($scope.AllTaskArr.map(item => [item['Client'], item])).values()];
+                    $scope.ClientDetails.push({ "Client": 0, "ClientName": "Other" });
+                }
+
+                if (response.data[3].length > 0) {
+                    $scope.TimesheetSettingData = response.data[3][0];
+                    $scope.TimeId = "TIM-" + $scope.TimesheetSettingData.TimesheetCount;
+                    WorkingHour = Number($scope.TimesheetSettingData.WorkingHour);
+                    $scope.MinTimesheetEdit = Number($scope.TimesheetSettingData.MinTimesheetEditDays);
+                }
 
                 setTimeout(function () {
                     $('#Pending').DataTable({
@@ -210,23 +267,21 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/OnLoadData", "").then(function (response) {
             if (response.data[0] == "OK") {
 
-                if (response.data[3].length > 0)
-                    $scope.TimesheetData.length = [...new Map(response.data[3].map(item => [item['TimesheetID'], item])).values()].length;
-                else
-                    $scope.TimesheetData.length = 0;
+                //if (response.data[3].length > 0)
+                //    $scope.TimesheetData.length = [...new Map(response.data[3].map(item => [item['TimesheetID'], item])).values()].length;
+                //else
+                //    $scope.TimesheetData.length = 0;
 
-                var count = 1
-                count = Number(count) + Number($scope.TimesheetData.length);
-                $scope.TimeId = "TIM-" + count;
+                //var count = 1
+                //count = Number(count) + Number($scope.TimesheetData.length);
+                //$scope.TimeId = "TIM-" + count;
 
-                if (response.data[1].length > 0) {
-                    $scope.AllTaskArr = response.data[1];
-                    $scope.ClientDetails = [...new Map($scope.AllTaskArr.map(item => [item['Client'], item])).values()];
-                    $scope.ClientDetails.push({ "Client": 0, "ClientName": "Other" });
-                }
+                
 
-                if (response.data[2].length > 0)
-                    WorkingHour = response.data[2][0].Hour;
+                //if (response.data[2].length > 0)
+                //    WorkingHour = response.data[2][0].Hour;
+
+                
 
                 $scope.ngtxtTimesheetDate = moment().format("DD/MM/YYYY");
                 $("#MilestoneTitle").text("Add Timesheet");
@@ -329,15 +384,19 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             ExistUtilize = 0;
             if ($scope.TimesheetArr.length > 0) {
                 $scope.ChkUtilizeHour = $scope.TimesheetArr.filter(function (e) {
-                    return e.AllTaskID == $scope.ngddlTask;
+                        return e.AllTaskID == $scope.ngddlTask;
                 })
 
-                if ($scope.ChkUtilizeHour.length > 0 && $scope.ChkUtilizeHour[0].Edit != true) {
+                /*if ($scope.ChkUtilizeHour.length > 0 && $scope.ChkUtilizeHour[0].Edit != true) {
                     ExistUtilize = $scope.ChkUtilizeHour[0].UtilizedHours;
+                }*/
+
+                if ($scope.ChkUtilizeHour.length > 0 && $scope.ChkUtilizeHour[0].Edit == true) {
+                    ExistUtilize = $scope.ChkUtilizeHour[0].UtilizedHours;
+                    return false;
                 }
 
-                if ($scope.ChkUtilizeHour.length > 0 && $scope.ChkUtilizeHour[0].Edit == true)
-                    return false;
+                    
             }
 
             
@@ -415,6 +474,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
     }
     //});
+
     $scope.GetTotalHours = function () {
         var Hours = 0, Minute = 0;
         angular.forEach($scope.TimesheetArr, function (value, key) {
@@ -535,6 +595,15 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         $scope.TimesheetFiles.splice(index, 1);
     }
 
+    $scope.HoursAlterDifferent = function (before, after) {
+        let valuestart = moment.duration(before, "HH:mm");
+        let valuestop = moment.duration(after, "HH:mm");
+        let difference = valuestop.subtract(valuestart);
+        alert(difference._data.hours + ":" + difference._data.minutes);
+        return difference._data.hours + ":" + difference._data.minutes;
+
+    }
+
     var count = 0;
     $scope.AddTimesheet = function () {
         count++;
@@ -563,7 +632,8 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             obj.ProjectName = $scope.CurrentTask[0].ProjectName;
             obj.MileStone = $scope.CurrentTask[0].MileStone;
             obj.MileStoneName = $scope.CurrentTask[0].MileStoneName;
-            obj.AllTaskID = $scope.CurrentTask[0].ID;
+            //obj.AllTaskID = $scope.CurrentTask[0].ID;
+            obj.AllTaskID = $scope.ngddlTask;
             obj.AllTask = $scope.CurrentTask[0].AllTask;
 
             if ($scope.CurrentTask[0].hasOwnProperty("SubTask"))
@@ -589,24 +659,10 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         obj.AllTaskStatus = $scope.ngddlAllTaskStatus;
         obj.AllTaskStatusText = $("#ddlAllTaskStatus option:selected").text();
         obj.Flag = "New";
+        obj.MinAlterDay = $scope.MinTimesheetEdit;
+        obj.OldUtilizedHours = $("#divAddTimesheet").attr("data-oldutilize");
+        
         if ($scope.UploadFiles.length > 0) {
-            //var Doc = [];
-            //angular.forEach($scope.UploadFiles, function (value, key) {
-
-            //    //obj.NewFile = value.file;
-            //    var DocObj = {};
-            //    DocObj.Name = value.Name;
-            //    var FileObj = {};
-            //    FileObj.name = value.file.name;
-            //    FileObj.size = value.file.size;
-            //    FileObj.type = value.file.type;
-            //    //var FileArr = [];
-            //    //FileObj.ByteArr = value.ByteArr; 
-            //    //FileArr.push(FileObj);
-            //    DocObj.File = FileObj;
-            //    Doc.push(DocObj);
-            //});
-            //obj.ListTimeDoc = Doc;
             var Doc = [];
             angular.forEach($scope.UploadFiles, function (value, key) {
                 var CommonObj = {};
@@ -619,9 +675,6 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 Doc.push({ 'FileName': value.Name });
                 obj.Files = Doc;
             });
-
-
-
         }
 
         if ($scope.TempPrevTimesheetFiles.length > 0) {
@@ -642,10 +695,15 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         obj.FileCount = count;
 
         $scope.TimesheetArr.push(obj);
-        console.log($scope.TimesheetArr);
-        console.log($scope.TimesheetFiles);
         $scope.UploadFiles.length = 0;
         $scope.TempPrevTimesheetFiles.length = 0;
+
+
+        if ($("#divAddTimesheet").attr("data-oldutilize") != obj.UtilizedHours) {
+            obj.AlterUtilized = $scope.HoursAlterDifferent($("#divAddTimesheet").attr("data-oldutilize"), obj.UtilizedHours);
+        }        
+
+
         //clear all the fields
         $scope.ClearPopData();
 
@@ -659,6 +717,15 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         Array.from(document.getElementsByClassName('parsley-success')).forEach(function (el) {
             el.classList.remove('parsley-success');
         });
+
+        $("#divAddTimesheet").attr("data-id", "0");
+        $("#divAddTimesheet").attr("data-from", "0");
+        $("#divAddTimesheet").attr("data-to", "0");
+        $("#divAddTimesheet").attr("data-UtilizedHours", "0");
+        $("#divAddTimesheet").attr("data-oldutilize", "0"); 
+
+        $(".AllSelect").attr("disabled", false);
+
     }
 
     $scope.EditTimesheet = function (i) {
@@ -728,6 +795,13 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
 
         $("#divAddTimesheet").attr("data-id", $scope.TimesheetArr[i].ID); 
+        $("#divAddTimesheet").attr("data-utilize", $scope.TimesheetArr[i].UtilizedHours);
+        $("#divAddTimesheet").attr("data-from", $scope.TimesheetArr[i].FromTimeView); 
+        $("#divAddTimesheet").attr("data-to", $scope.TimesheetArr[i].ToTimeView); 
+        $("#divAddTimesheet").attr("data-oldutilize", $scope.TimesheetArr[i].OldUtilizedHours); 
+
+        if ($("#divAddTimesheet").attr("data-id") > 0)
+            $(".AllSelect").attr("disabled", true);
     }
 
     $scope.DeleteTimesheet = function (i) {
@@ -757,7 +831,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         $scope.LoadAddTimesheet = true;
         $scope.GetClientData();
     }
-
+    
     $scope.FinalAddTimesheet = function () {
         if ($scope.TimesheetArr.length > 0) {
             $scope.TimesheetLoad = true;
@@ -806,25 +880,6 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     }
 
     $scope.EditViewMainTimesheet = function (Timesheet, Action, Type) {
-        if (Type == 'Inprogress') {
-            if (Action == "View")
-                $scope.InprogressViewLoad = true;
-            else
-                $scope.InprogressEditLoad = true;
-        }
-        else if (Type == 'Approved') {
-            if (Action == "View")
-                $scope.ApprovedViewLoad = true;
-            else
-                $scope.ApprovedEditLoad = true;
-        }
-        else if (Type == 'Reject') {
-            if (Action == "View")
-                $scope.RejectViewLoad = true;
-            else
-                $scope.RejectEditLoad = true;
-        }
-        
 
         var data = {
             'TimesheetId': Timesheet.TimesheetID
@@ -897,7 +952,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     obj.ApproveDescription = value.ApproveDescription;
                     obj.RejectDescription = value.RejectDescription;
                     obj.Flag = "Old";
-
+                    obj.OldUtilizedHours = value.UtilizedHours;
                     //Document code
                     var Doc = [];
                     obj.PrevFiles = Doc;
@@ -935,45 +990,11 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
 
                 $("#AddTimesheetPopUp").modal('show');
 
-                if (Type == 'Inprogress') {
-                    if (Action == "View")
-                        $scope.InprogressViewLoad = false;
-                    else
-                        $scope.InprogressEditLoad = false;
-                }
-                else if (Type == 'Approved') {
-                    if (Action == "View")
-                        $scope.ApprovedViewLoad = false;
-                    else
-                        $scope.ApprovedEditLoad = false;
-                }
-                else if (Type == 'Reject') {
-                    if (Action == "View")
-                        $scope.RejectViewLoad = false;
-                    else
-                        $scope.RejectEditLoad = false;
-                }
+                
 
             }
             else {
-                if (Type == 'Inprogress') {
-                    if (Action == "View")
-                        $scope.InprogressViewLoad = false;
-                    else
-                        $scope.InprogressEditLoad = false;
-                }
-                else if (Type == 'Approved') {
-                    if (Action == "View")
-                        $scope.ApprovedViewLoad = false;
-                    else
-                        $scope.ApprovedEditLoad = false;
-                }
-                else if (Type == 'Reject') {
-                    if (Action == "View")
-                        $scope.RejectViewLoad = false;
-                    else
-                        $scope.RejectEditLoad = false;
-                }
+               
             }
         });
     }
@@ -999,7 +1020,5 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }
 
     }
-
-
 
 });
