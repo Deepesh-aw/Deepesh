@@ -75,29 +75,28 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     $scope.ngtxtUtilizedHours = ExistUtilize;
 
                     if ($("#divAddTimesheet").attr("data-id") != "0") {
-                        var valuestart = moment.duration(From, "HH:mm");
-                        var valuestop = moment.duration(To, "HH:mm");
-                        var nowdifference = valuestop.subtract(valuestart);
-                        //alert(difference._data.hours + ":" + difference._data.minutes);
 
                         var FromPrev = $("#divAddTimesheet").attr("data-from");
                         var ToPrev = $("#divAddTimesheet").attr("data-to");
-                        var valuestartPrev = moment.duration(FromPrev, "HH:mm");
-                        var valuestopPrev = moment.duration(ToPrev, "HH:mm");
-                        Prevdifference = valuestopPrev.subtract(valuestartPrev);
+
+                        var PrevFrm = moment($scope.ngtxtTimesheetDate + " " + FromPrev, 'DD-MM-YYYY hh:mm').format("hh:mm a");
+                        var Prevto = moment($scope.ngtxtTimesheetDate + " " + ToPrev, 'DD-MM-YYYY hh:mm').format("hh:mm a");
+                        var PrevtFrom = moment(PrevFrm, 'h:mma');
+                        var prevtTo = moment(Prevto, 'h:mma');
+                        var prevdiff = moment.duration(prevtTo.diff(PrevtFrom));
+
 
                         var TotalUtilize;
                         var RemainingHours;
 
-                       // if (nowdifference._data.hours < Prevdifference._data.hours || nowdifference._data.minutes < Prevdifference._data.minutes) {
-                            var difference = Prevdifference.subtract(nowdifference);
-                        var strDiff = difference._data.hours + ":" + difference._data.minutes;
+                        var difference = prevdiff.subtract(diff);
+                        var strDiff = Math.abs(difference._data.hours) + ":" + Math.abs(difference._data.minutes);
 
-                        if (difference._data.hours >= 0 || difference._data.minutes >= 0) {
-                            TotalUtilize = $scope.timeConvert($scope.ngtxtUtilizedHours, strDiff, "Minus");
+                        if (difference._data.hours < 0 || difference._data.minutes < 0) {
+                            TotalUtilize = $scope.timeConvert($scope.ngtxtUtilizedHours, strDiff, "Add");
                         }
                         else {
-                            TotalUtilize = $scope.timeConvert($scope.ngtxtUtilizedHours, strDiff, "Add");
+                            TotalUtilize = $scope.timeConvert($scope.ngtxtUtilizedHours, strDiff, "Minus");
                         }
 
                             RemainingHours = $scope.timeConvert($scope.ngtxtEstimatedHours, TotalUtilize, "Minus");
@@ -106,7 +105,6 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                                 $scope.ngtxtUtilizedHours = TotalUtilize;
                                 return false;
                             })
-                        //}
 
                     }
                     else {
@@ -599,7 +597,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         let valuestart = moment.duration(before, "HH:mm");
         let valuestop = moment.duration(after, "HH:mm");
         let difference = valuestop.subtract(valuestart);
-        alert(difference._data.hours + ":" + difference._data.minutes);
+        //alert(difference._data.hours + ":" + difference._data.minutes);
         return difference._data.hours + ":" + difference._data.minutes;
 
     }
@@ -694,14 +692,16 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                
         obj.FileCount = count;
 
+        if ($("#divAddTimesheet").attr("data-oldutilize") != obj.UtilizedHours) {
+            obj.AlterUtilizeHour = $scope.HoursAlterDifferent($("#divAddTimesheet").attr("data-oldutilize"), obj.UtilizedHours);
+        }        
+
+
         $scope.TimesheetArr.push(obj);
         $scope.UploadFiles.length = 0;
         $scope.TempPrevTimesheetFiles.length = 0;
 
 
-        if ($("#divAddTimesheet").attr("data-oldutilize") != obj.UtilizedHours) {
-            obj.AlterUtilized = $scope.HoursAlterDifferent($("#divAddTimesheet").attr("data-oldutilize"), obj.UtilizedHours);
-        }        
 
 
         //clear all the fields

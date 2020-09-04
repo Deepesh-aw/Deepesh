@@ -276,9 +276,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
                         if (item.ID > 0)
                         {
-                            if (item.AlterUtilizeHour != " ")
+                            if (item.AlterUtilizeHour != null || item.AlterUtilizeHour != "")
                             {
-                                GetAndEditPrevTimesheet(clientContext, item);
+                               string status = GetAndEditPrevTimesheet(clientContext, item);
+                                if (status != "OK")
+                                {
+                                    obj.Add("ERROR");
+                                    return Json(obj, JsonRequestBehavior.AllowGet);
+                                }
                             }
 
                             returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, item.ID.ToString());
@@ -325,21 +330,82 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        public void GetAndEditPrevTimesheet(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
+        public string GetAndEditPrevTimesheet(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
         {
+            string result = "ERROR";
+            int count = 0;
             List<TIM_EmployeeTimesheetModel> lstPrevtimesheet = BalEmpTimesheet.AlterPrevEmpTimesheet(clientContext, item);
             if (lstPrevtimesheet.Count > 0)
             {
                 foreach (var data in lstPrevtimesheet)
                 {
-                    string NewUtilized = GetTimeDiff(data.UtilizedHours, item.AlterUtilizeHour);
-                    string NewRemaining = GetTimeDiff(data.RemainingHours, item.AlterUtilizeHour);
+                    string NewUtilized = GetTimeDiffForUtilizedHours(data.UtilizedHours, item.AlterUtilizeHour);
+                    string NewRemaining = GetTimeDiffForRemainingHours(data.RemainingHours, item.AlterUtilizeHour);
+                    string itemdata = " 'UtilizedHours': '" + NewUtilized + "'";
+                    itemdata += " ,'RemainingHours': '" + NewRemaining + "'";
+                    string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, data.ID.ToString());
+                    if (returnID == "Update")
+                    {
+                        count++;
+                    }
+
                 }
                     
             }
+            if (lstPrevtimesheet.Count == count)
+                result = "OK";
+
+            return result;
         }
 
-        public string GetTimeDiff(string before, string after)
+        public string GetTimeDiffForRemainingHours(string before, string after)
+        {
+            string result = "";
+            var b = before.Split(':');
+            var a = after.Split(':');
+
+            var hour_carry = 0;
+            var Ihour = 0;
+            var Imin = 0;
+            var Smin = string.Empty;
+
+            Imin = Convert.ToInt32(b[1]) - Convert.ToInt32(a[1]);
+            Smin = Imin.ToString();
+
+            
+            if (Imin < 0)
+            {
+                Imin += 60;
+                if (Imin.ToString().Length == 1)
+                    Smin = "0" + Imin.ToString();
+                hour_carry += 1;
+
+                Ihour = Convert.ToInt32(b[0]) - Convert.ToInt32(a[0]) - Convert.ToInt32(hour_carry);
+
+            }
+            else if (Imin > 59)
+            {
+                hour_carry = Imin / 60 | 0;
+                Imin = Imin % 60 | 0;
+
+                Ihour = Convert.ToInt32(b[0]) - Convert.ToInt32(a[0]) + Convert.ToInt32(hour_carry);
+
+                if (Imin.ToString().Length == 1)
+                    Smin = "0" + Imin.ToString();
+            }
+            else
+            {
+                Ihour = Convert.ToInt32(b[0]) - Convert.ToInt32(a[0]);
+            }
+
+            var Shour = Ihour.ToString();
+            result = Shour + ":" + Smin;
+
+            return result;
+        }
+
+
+        public string GetTimeDiffForUtilizedHours(string before, string after)
         {
             string result = "";
             var b = before.Split(':');
