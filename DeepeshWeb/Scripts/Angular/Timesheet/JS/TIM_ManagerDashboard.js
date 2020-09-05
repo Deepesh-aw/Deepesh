@@ -72,6 +72,9 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
     }
 
     $scope.ApproveTimesheet = function (Timesheet, Action, ID, iclass) {
+        $scope.ngRemark = "";
+        $('#tblValidateMsg').empty();
+
         $("#Load" + ID).removeClass(iclass);
         $("#Load" + ID).addClass('spinner-border spinner-border-sm');
         var data = {
@@ -129,6 +132,10 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
         $(".parsley-errors-list").remove();
     }
 
+    $scope.CloseAlert = function () {
+        $("#ViewTimesheetAlert").modal("hide");
+    }
+
     $scope.FinalApproveTimesheet = function (Action) {
         clearErrorClass();
         if ($scope.ngRemark == undefined || $scope.ngRemark == null || $scope.ngRemark == "") {
@@ -138,7 +145,7 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
         }
 
         $(".overlay").show();
-        if (Action == "Approve") 
+        if (Action == "Approve")
             $scope.ApproveLoad = true;
         else
             $scope.RejectLoad = true;
@@ -158,6 +165,23 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
                 clearErrorClass();
                 $scope.ngRemark = "";
             }
+            else if (response.data[0] == "EXIST") {
+                var html = '<tr><th>Timesheet ID</th><th>Task</th></tr>';
+                angular.forEach(response.data[1][0], function (value, key) {
+                    html += '<tr><td>' + value.TimesheetID + '</td >';
+                    if (value.Task != 0)
+                        html += '<td>' + value.TaskName + '</td>';
+                    else
+                        html += '<td>' + value.TaskName + '</td>';
+
+                    html += '</tr>';
+                });
+                $("#tblValidateMsg").append(html);
+                $("#ViewTimesheetAlert").modal("show")
+                $scope.RejectLoad = false;
+                $scope.ApproveLoad = false;
+                $(".overlay").hide();
+            }
             else {
                 alert("Something went wrong. Please try after some time.");
                 $scope.ApproveLoad = false;
@@ -167,7 +191,7 @@ ManagerDashboardApp.controller('ManagerDashboardController', function ($scope, $
             }
 
         });
-
+        
     }
 
     $scope.GetTotalHours = function () {

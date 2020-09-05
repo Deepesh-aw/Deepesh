@@ -2,6 +2,7 @@
 using DeepeshWeb.BAL.Timesheet;
 using DeepeshWeb.Models.Timesheet;
 using Microsoft.Ajax.Utilities;
+using Microsoft.SharePoint.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,10 +63,19 @@ namespace DeepeshWeb.Controllers.TimeSheet
             List<object> obj = new List<object>();
             try
             {
+
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    if(Action == "Approve")
+                    List<object> ExistObj = CheckPrevTimesheet(clientContext,TimesheetData);
+                    if(ExistObj.Count > 0)
+                    {
+                        obj.Add("EXIST");
+                        obj.Add(ExistObj);
+                        return Json(obj, JsonRequestBehavior.AllowGet);
+                    }
+
+                    if (Action == "Approve")
                     {
                         List<TIM_WorkFlowMasterModel> lstWorkFlowForApproveTimesheet = new List<TIM_WorkFlowMasterModel>();
                         lstWorkFlowForApproveTimesheet = BalWorkflow.GetWorkFlowForTimesheetApprove(clientContext);
@@ -154,7 +164,24 @@ namespace DeepeshWeb.Controllers.TimeSheet
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
-        
+
+
+        public List<object> CheckPrevTimesheet(ClientContext clientContext, List<TIM_EmployeeTimesheetModel> TimesheetData)
+        {
+            List<object> obj = new List<object>();
+            List<TIM_EmployeeTimesheetModel> lstPrevTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            foreach (var item in TimesheetData)
+            {
+                lstPrevTimesheet = BalEmpTimesheet.ValidatePrevEmpTimesheet(clientContext, item);
+                if (lstPrevTimesheet.Count > 0)
+                {
+                    obj.Add(lstPrevTimesheet);
+                }
+            }
+            return obj;
+        }
+
+
         public void UpdateAllStatus(string taskdata, TIM_EmployeeTimesheetModel item, List<TIM_WorkFlowMasterModel> lstWorkFlowForApproveTimesheet)
         {
             var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);

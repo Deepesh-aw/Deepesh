@@ -245,7 +245,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer justify-content-center" ng-hide="Report">
                     <button type="button" class="btn btn-primary" id="btnApproveTimesheet" ng-hide="ApproveLoad" ng-click="FinalApproveTimesheet('Approve')">Approve</button>
@@ -269,4 +268,45 @@
         </div>
     </div>
 </div>
+
+<div class="modal left fade" id="ViewTimesheetAlert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title w-100" id="MilestoneTitle">Timesheet Alert</h4>
+                <button type="button" aria-label="Close" class="close" ng-click="CloseAlert()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row row-sm">
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row row-sm">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <b>There is already pending timesheet waiting for approval for these tasks. Please approve that first.</b>
+                                                <div class="table-responsive">
+                                                    <table id="tblValidateMsg" class="mg-b-0 text-md-nowrap tableCss" style="width:100%"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" ng-click="CloseAlert()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
