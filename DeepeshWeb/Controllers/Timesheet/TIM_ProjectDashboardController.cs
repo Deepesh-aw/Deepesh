@@ -25,6 +25,8 @@ namespace DeepeshWeb.Controllers.TimeSheet
         TIM_StatusMasterBal BalStatus = new TIM_StatusMasterBal();
         TIM_DocumentLibraryBal BalDocument = new TIM_DocumentLibraryBal();
         TIM_SendEmailController EmailCtrl = new TIM_SendEmailController();
+        TIM_EmployeeTimesheetBal BalEmpTimesheet = new TIM_EmployeeTimesheetBal();
+
 
         public ActionResult Index()
         {
@@ -36,6 +38,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     ViewBag.ProjectTypeData = BalProjectType.GetProjectType(clientContext);
                     ViewBag.ClientData = BalClient.GetClient(clientContext);
                     ViewBag.ProjectEmpData = BalEmp.GetEmp(clientContext);
+                    ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
                     //ViewBag.StatusData = BalStatus.GetStatusForAction(clientContext);
                 }
             }
@@ -1003,6 +1006,34 @@ namespace DeepeshWeb.Controllers.TimeSheet
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [ActionName("GetCompletedTimesheet")]
+        public JsonResult GetCompletedTimesheet(int MilestoneId)
+        {
+            List<object> obj = new List<object>();
+            List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            List<TIM_DocumentLibraryModel> lstDocument = new List<TIM_DocumentLibraryModel>();
+            try
+            {
+                var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    lstEmployeeTimesheet = BalEmpTimesheet.GetCompletedTimesheet(clientContext, MilestoneId);
+                    var path = spContext.SPHostUrl.Scheme + "://" + spContext.SPHostUrl.Host.ToString();
+                    if(lstEmployeeTimesheet.Count>0)
+                        lstDocument = BalDocument.GetDocumentByTimesheetId(clientContext, lstEmployeeTimesheet[0].TimesheetID, path);
+
+                    obj.Add("OK");
+                    obj.Add(lstEmployeeTimesheet);
+                    obj.Add(lstDocument);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
+            }
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
 
         //[HttpPost]
         //[ActionName("DeleteProject")]

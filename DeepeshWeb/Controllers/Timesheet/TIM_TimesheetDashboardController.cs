@@ -136,7 +136,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
         [HttpPost]
         [ActionName("GetPrevTimesheet")]
-        public JsonResult GetPrevTimesheet(int AllTaskId)
+        public JsonResult GetPrevTimesheet(int AllTaskId, string TimesheetAddedDate, string ParentID)
         {
             List<object> obj = new List<object>();
             List<TIM_EmployeeTimesheetModel> lstEmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
@@ -145,7 +145,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-                    lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByAllTaskId(clientContext, AllTaskId);
+                    lstEmployeeTimesheet = BalEmpTimesheet.GetEmpTimesheetByAllTaskId(clientContext, AllTaskId, TimesheetAddedDate, ParentID);
                     obj.Add("OK");
                     obj.Add(lstEmployeeTimesheet);
                 }
@@ -207,11 +207,29 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     if (DeleteEmpTimesheet.Count > 0)
                     {
                         int z = 0;
+                        List<TIM_WorkFlowMasterModel> lstTimesheetDeletion = new List<TIM_WorkFlowMasterModel>();
+                        lstTimesheetDeletion = BalWorkflow.GetTimesheetDeletion(clientContext);
+                        var DeleteItem = "'StatusId': '" + lstTimesheetDeletion[0].ToStatusID + "'";
+                        DeleteItem += " ,'InternalStatus': '" + lstTimesheetDeletion[0].InternalStatus + "'";
                         foreach (var deleteEmpItem in DeleteEmpTimesheet)
                         {
-                            string Result = BalEmpTimesheet.DeleteTimesheet(clientContext, deleteEmpItem.ID.ToString());
-                            if (Result == "Delete")
-                                z++;
+                            string Result = BalEmpTimesheet.UpdateTimesheet(clientContext, DeleteItem, deleteEmpItem.ID.ToString());
+                            if (Result == "Update")
+                            {
+                                var hours = deleteEmpItem.Hours.Split(':');
+                                var h = Convert.ToInt32(hours[0]) * (-1);
+                                var m = Convert.ToInt32(hours[1]) * (-1);
+                                var NewHours = h.ToString() + ":" + m.ToString();
+                                deleteEmpItem.AlterUtilizeHour = NewHours;
+                                string status = GetAndEditPrevTimesheet(clientContext, deleteEmpItem);
+                                if (status != "OK")
+                                {
+                                    obj.Add("ERROR");
+                                    return Json(obj, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                    z++;
+                            }
                         }
                         if (z != DeleteEmpTimesheet.Count)
                         {
@@ -219,7 +237,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             return Json(obj, JsonRequestBehavior.AllowGet);
                         }
                     }
-
+                   
                     int ParentID = 0;
                     List<TIM_TimesheetParentModel> PrevParentTimesheet = new List<TIM_TimesheetParentModel>();
                     PrevParentTimesheet = BalParentTimesheet.GetEmpTimesheetByTimesheetId(clientContext, EmpTimesheet[0].TimesheetID);
@@ -276,7 +294,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
                         if (item.ID > 0)
                         {
-                            if (item.AlterUtilizeHour != null || item.AlterUtilizeHour != "")
+                            if (item.AlterUtilizeHour != null && item.AlterUtilizeHour != "")
                             {
                                string status = GetAndEditPrevTimesheet(clientContext, item);
                                 if (status != "OK")
@@ -304,9 +322,23 @@ namespace DeepeshWeb.Controllers.TimeSheet
                             returnID = BalEmpTimesheet.SaveTimesheet(clientContext, itemdata);
                             if (Convert.ToInt32(returnID) > 0)
                             {
-                                if (Request.Files.Count > 0)
-                                    UploadTimesheetDoc(clientContext, Request.Files, item, returnID);
-                                i++;
+                                item.ParentID = ParentID;
+                                string status = EditPrevTimesheetForNew(clientContext, item);
+                                if (status != "OK")
+                                {
+                                    obj.Add("ERROR");
+                                    return Json(obj, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (Request.Files.Count > 0)
+                                        UploadTimesheetDoc(clientContext, Request.Files, item, returnID);
+
+                                    string Mailres = EmailCtrl.TimesheetCreationNotification(clientContext, EmpTimesheet[0], lstApprover[0], Employee);
+                                    if (Convert.ToInt32(Mailres) > 0)
+                                        i++;
+                                }
+                                
                             }
                             
                         }
@@ -315,9 +347,7 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
                     if (i == EmpTimesheet.Count)
                     {
-                        string Mailres = EmailCtrl.TimesheetCreationNotification(clientContext, EmpTimesheet[0], lstApprover[0], Employee);
-                        if (Convert.ToInt32(Mailres) > 0)
-                            obj.Add("OK");
+                        obj.Add("OK");
                     }
                 }
             }
@@ -328,6 +358,38 @@ namespace DeepeshWeb.Controllers.TimeSheet
                 throw new Exception(string.Format("An error occured while performing action. GUID: {0}", ex.ToString()));
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        public string EditPrevTimesheetForNew(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
+        {
+            string result = "ERROR";
+            int count = 0;
+            List<TIM_EmployeeTimesheetModel> lstPrevtimesheet = BalEmpTimesheet.GetTIMForAlterExist(clientContext, item);
+            if (lstPrevtimesheet.Count > 0)
+            {
+                foreach (var data in lstPrevtimesheet)
+                {
+                    string NewUtilized = GetTimeDiffForUtilizedHours(data.UtilizedHours, item.Hours);
+                    string NewRemaining = GetTimeDiffForRemainingHours(data.RemainingHours, item.Hours);
+                    string itemdata = " 'UtilizedHours': '" + NewUtilized + "'";
+                    itemdata += " ,'RemainingHours': '" + NewRemaining + "'";
+                    string returnID = BalEmpTimesheet.UpdateTimesheet(clientContext, itemdata, data.ID.ToString());
+                    if (returnID == "Update")
+                    {
+                        count++;
+                    }
+
+                }
+
+                if (lstPrevtimesheet.Count == count)
+                    result = "OK";
+            }
+            else
+            {
+                result = "OK";
+            }
+
+            return result;
         }
 
         public string GetAndEditPrevTimesheet(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
@@ -350,10 +412,14 @@ namespace DeepeshWeb.Controllers.TimeSheet
                     }
 
                 }
-                    
+
+                if (lstPrevtimesheet.Count == count)
+                    result = "OK";
             }
-            if (lstPrevtimesheet.Count == count)
+            else
+            {
                 result = "OK";
+            }
 
             return result;
         }
@@ -403,7 +469,6 @@ namespace DeepeshWeb.Controllers.TimeSheet
 
             return result;
         }
-
 
         public string GetTimeDiffForUtilizedHours(string before, string after)
         {

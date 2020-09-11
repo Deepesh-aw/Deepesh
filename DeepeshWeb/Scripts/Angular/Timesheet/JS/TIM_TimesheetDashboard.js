@@ -11,7 +11,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
     $scope.TimesheetArr = [];
     $scope.EditTimesheetArr = [];
     $scope.ngtxtTimesheetDate;
-    $scope.TimeId ;
+    $scope.TimeId;
     $scope.CurrentTask = [];
     var ExistUtilize = 0;
     $scope.OtherClient = false;
@@ -99,12 +99,12 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                             TotalUtilize = $scope.timeConvert($scope.ngtxtUtilizedHours, strDiff, "Minus");
                         }
 
-                            RemainingHours = $scope.timeConvert($scope.ngtxtEstimatedHours, TotalUtilize, "Minus");
-                            $timeout(function () {
-                                $scope.ngtxtRemainingHours = RemainingHours;
-                                $scope.ngtxtUtilizedHours = TotalUtilize;
-                                return false;
-                            })
+                        RemainingHours = $scope.timeConvert($scope.ngtxtEstimatedHours, TotalUtilize, "Minus");
+                        $timeout(function () {
+                            $scope.ngtxtRemainingHours = RemainingHours;
+                            $scope.ngtxtUtilizedHours = TotalUtilize;
+                            return false;
+                        })
 
                     }
                     else {
@@ -115,7 +115,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             }
             if ($scope.TimesheetArr.length > 0) {
                 angular.forEach($scope.TimesheetArr, function (value, key) {
-                    
+
                     var Now = moment($scope.ngtxtTimesheetDate + " " + CurrTime, 'DD-MM-YYYY hh:mm').format("hh:mm a");
                     var FromTime = moment(value.FromTime).format("hh:mm a");
                     var ToTime = moment(value.ToTime).format("hh:mm a");
@@ -125,7 +125,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     var inputtedTime = moment(Now, 'h:mma');
                     var IsBetween = false;
 
-                    
+
 
                     //IsBetween = inputtedTime.isBetween(startTime, endTime, undefined, '[]');
                     if (Id == "txtFromTime") {
@@ -141,7 +141,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                         else
                             IsBetween = inputtedTime.isBetween(startTime, endTime, undefined, '(]');
                     }
-                    
+
 
                     if (IsBetween == true) {
                         alert("This Time already added. Please try another one.");
@@ -154,16 +154,18 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         }).on('hide', function (event) {
             return false;
         });
-        
+
         $(".AllSelect").select2({
             placeholder: 'Choose one',
             searchInputPlaceholder: 'Search',
             width: '100%',
             dropdownParent: $("#AddTimesheetPopUp")
         })
-       
+
 
         $('#AddTimesheetPopUp').on('hide.bs.modal', function () {
+            $("#txtTimesheetDate").attr("data-PatentID", "0");
+            $(".AllSelect").attr("disabled", false);
             DeleteTimesheet.length = 0;
             DeleteTimesheetDoc.length = 0;
             $scope.PrevTimesheetFiles.length = 0;
@@ -191,10 +193,10 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 el.classList.remove('parsley-error');
             });
 
-            if ($('.parsley-required').length>0)
+            if ($('.parsley-required').length > 0)
                 $('.parsley-required').text('');
 
-            
+
         });
 
 
@@ -274,12 +276,12 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 //count = Number(count) + Number($scope.TimesheetData.length);
                 //$scope.TimeId = "TIM-" + count;
 
-                
+
 
                 //if (response.data[2].length > 0)
                 //    WorkingHour = response.data[2][0].Hour;
 
-                
+
 
                 $scope.ngtxtTimesheetDate = moment().format("DD/MM/YYYY");
                 $("#MilestoneTitle").text("Add Timesheet");
@@ -290,7 +292,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 alert("Something went wrong. Please try after some time.");
                 $scope.LoadAddTimesheet = false;
             }
-                
+
         });
     }
 
@@ -382,30 +384,27 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             ExistUtilize = 0;
             if ($scope.TimesheetArr.length > 0) {
                 $scope.ChkUtilizeHour = $scope.TimesheetArr.filter(function (e) {
-                        return e.AllTaskID == $scope.ngddlTask;
+                    return e.AllTaskID == $scope.ngddlTask;
                 })
 
-                /*if ($scope.ChkUtilizeHour.length > 0 && $scope.ChkUtilizeHour[0].Edit != true) {
-                    ExistUtilize = $scope.ChkUtilizeHour[0].UtilizedHours;
-                }*/
+                if ($scope.ChkUtilizeHour.length > 0 && $scope.ChkUtilizeHour[0].Edit != true) {
+                        ExistUtilize = $scope.ChkUtilizeHour[$scope.ChkUtilizeHour.length-1].UtilizedHours;
+                }
 
                 if ($scope.ChkUtilizeHour.length > 0 && $scope.ChkUtilizeHour[0].Edit == true) {
                     ExistUtilize = $scope.ChkUtilizeHour[0].UtilizedHours;
                     return false;
                 }
 
-                    
             }
-
-            
 
             $scope.ClearPopData();
             //$scope.ngtxtHours = undefined;
             $scope.CurrentTask = $scope.AllTaskArr.filter(function (response) {
-                    return response.ID == $scope.ngddlTask;
-                })
-                
-            if (ExistUtilize != 0) {
+                return response.ID == $scope.ngddlTask;
+            })
+
+            if (ExistUtilize != 0 ) {
                 $scope.ngtxtUtilizedHours = ExistUtilize;
                 $scope.ngtxtEstimatedHours = $scope.CurrentTask[0].NoOfDays * WorkingHour;
                 $scope.ngtxtEstimatedHours = $scope.ngtxtEstimatedHours + ":00";
@@ -413,30 +412,33 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             }
             else {
                 var data = {
-                    'AllTaskId': $scope.ngddlTask
+                    'AllTaskId': $scope.ngddlTask,
+                    'TimesheetAddedDate': moment($scope.ngtxtTimesheetDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss"),
+                    'ParentID': $("#txtTimesheetDate").attr("data-PatentID"),
                 }
                 CommonAppUtilityService.CreateItem("/TIM_TimesheetDashboard/GetPrevTimesheet", data).then(function (response) {
                     if (response.data[0] == "OK") {
                         if (response.data[1].length > 0) {
-                            ExistUtilize = response.data[1][0].UtilizedHours;
+                            ExistUtilize = $scope.timeConvert(response.data[1][0].UtilizedHours, ExistUtilize, "Add");
+                            //ExistUtilize = response.data[1][0].UtilizedHours;
                             $scope.ngtxtUtilizedHours = ExistUtilize;
                         }
                         else
-                            $scope.ngtxtUtilizedHours = 0;
+                            $scope.ngtxtUtilizedHours = ExistUtilize;
 
                         $scope.ngtxtEstimatedHours = $scope.CurrentTask[0].NoOfDays * WorkingHour;
-                        $scope.ngtxtEstimatedHours = $scope.ngtxtEstimatedHours +":00";
+                        $scope.ngtxtEstimatedHours = $scope.ngtxtEstimatedHours + ":00";
                         $scope.GetRemainingHorus();
                     }
 
                 });
             }
-                
+
         }
-        
+
     }
 
-   // $("#txtHours").on("keyup", function () {
+    // $("#txtHours").on("keyup", function () {
     $scope.GetRemainingHorus = function () {
         if ($scope.OtherClient == false) {
             if ($scope.ngtxtHours != undefined && $scope.ngtxtEstimatedHours != undefined && $scope.ngtxtUtilizedHours != undefined) {
@@ -512,8 +514,8 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             e = end.split(':');
         else
             e[0] = end, e[1] = 0;
-        
-        
+
+
 
         if (action == "Exceed") {
             let valuestart = moment.duration("20:00", "HH:mm");
@@ -718,6 +720,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             el.classList.remove('parsley-success');
         });
 
+        
         $("#divAddTimesheet").attr("data-id", "0");
         $("#divAddTimesheet").attr("data-from", "0");
         $("#divAddTimesheet").attr("data-to", "0");
@@ -794,6 +797,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
             }, 10);
         }
 
+       
         $("#divAddTimesheet").attr("data-id", $scope.TimesheetArr[i].ID); 
         $("#divAddTimesheet").attr("data-utilize", $scope.TimesheetArr[i].UtilizedHours);
         $("#divAddTimesheet").attr("data-from", $scope.TimesheetArr[i].FromTimeView); 
@@ -808,6 +812,19 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
         if ($scope.TimesheetArr[i].Flag == "Old") {
             var obj = {};
             obj.ID = $scope.TimesheetArr[i].ID;
+            obj.Hours = $scope.TimesheetArr[i].Hours;
+            obj.Client = $scope.TimesheetArr[i].Client;
+            obj.Project = $scope.TimesheetArr[i].Project;
+            obj.MileStone = $scope.TimesheetArr[i].MileStone;
+            obj.TimesheetAddedDate = $scope.TimesheetArr[i].TimesheetAddedDate;
+            if ($scope.TimesheetArr[i].hasOwnProperty("SubTask")) {
+                obj.SubTask = $scope.TimesheetArr[i].SubTask;
+            }
+            else {
+                obj.Task = $scope.TimesheetArr[i].Task;
+            }
+
+
             DeleteTimesheet.push(obj);
             if ($scope.TimesheetArr[i].PrevFiles.length > 0) {
                 angular.forEach($scope.TimesheetArr[i].PrevFiles, function (value, key) {
@@ -889,6 +906,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                 $scope.EditTimesheetArr = response.data[1];
                 $scope.TimeId = $scope.EditTimesheetArr[0].TimesheetID;
                 $scope.ngtxtTimesheetDate = $scope.EditTimesheetArr[0].TimesheetAddedDate.split(' ')[0];
+                $("#txtTimesheetDate").attr("data-PatentID", $scope.EditTimesheetArr[0].ParentID); 
                 angular.forEach($scope.EditTimesheetArr, function (value, key) {
 
                     var obj = {};
@@ -938,6 +956,7 @@ TimesheetDashboardApp.controller('TimesheetDashboardController', function ($scop
                     obj.RemainingHours = value.RemainingHours;
                     obj.TimesheetID = value.TimesheetID;
                     obj.TimesheetAddedDate = moment(value.TimesheetAddedDate, 'DD-MM-YYYY').format("MM-DD-YYYY hh:mm:ss");
+
                     obj.FromTime = moment(value.FromTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
                     obj.ToTime = moment(value.ToTime, 'DD-MM-YYYY hh:mm:ss').format("MM-DD-YYYY hh:mm A");
                     obj.FromTimeView = moment(value.FromTime, ["dd-MM-yyyy h:mm:ss"]).format("HH:mm");

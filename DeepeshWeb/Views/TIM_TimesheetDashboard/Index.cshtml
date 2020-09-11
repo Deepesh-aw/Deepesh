@@ -325,6 +325,7 @@
                                 @*<td>{{tm.EstimatedHours}}</td>*@
                                 <td>{{tm.ModifyName}}</td>
                                 <td>
+                                    <i class="si si-pencil text-primary mr-2" data-toggle="tooltip" data-placement="top" data-original-title="Edit" ng-click="EditViewMainTimesheet(tm,'Edit', 'Inprogress')"></i>&nbsp;
                                     <i class="si si-eye text-success mr-2" ng-hide="RejectViewLoad" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="EditViewMainTimesheet(tm, 'View','Reject')"></i>
                                     <i class="spinner-border spinner-border-sm" ng-show="RejectViewLoad"></i>&nbsp;
                                 </td>

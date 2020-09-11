@@ -15,8 +15,10 @@ namespace DeepeshWeb.BAL.Timesheet
     {
         public List<TIM_EmployeeTimesheetModel> AlterPrevEmpTimesheet(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
         {
+            DateTime dt = DateTime.ParseExact(item.TimesheetAddedDate, "MM-dd-yyyy hh:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            string TimesheetDate = dt.ToString("yyyy-MM-dd");
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "ClientId eq " + item.Client + " and ProjectId eq  " + item.Project + " and MileStoneId eq  " + item.MileStone + " and TaskId eq  " + item.Task + " and SubTaskId eq  " + item.SubTask + " and ID gt "+item.ID+"";
+            string filter = "ClientId eq " + item.Client + " and ProjectId eq  " + item.Project + " and MileStoneId eq  " + item.MileStone + " and TaskId eq  " + item.Task + " and SubTaskId eq  " + item.SubTask + " and TimesheetAddedDate gt '" + TimesheetDate + "' and InternalStatus ne 'TimesheetDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -25,7 +27,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> ValidatePrevEmpTimesheet(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "ClientId eq " + item.Client + " and ProjectId eq  " + item.Project + " and MileStoneId eq  " + item.MileStone + " and TaskId eq  " + item.Task + " and SubTaskId eq  " + item.SubTask + " and ID lt " + item.ID + "";
+            string filter = "ClientId eq " + item.Client + " and ProjectId eq  " + item.Project + " and MileStoneId eq  " + item.MileStone + " and TaskId eq  " + item.Task + " and SubTaskId eq  " + item.SubTask + " and ID lt " + item.ID + " and InternalStatus ne 'TimesheetDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -34,7 +36,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByTaskId(ClientContext clientContext, int TaskId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "TaskId eq " + TaskId + "";
+            string filter = "TaskId eq " + TaskId + " and InternalStatus ne 'TimesheetDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -43,7 +45,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetBySubTaskId(ClientContext clientContext, int SubTaskId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "SubTaskId eq " + SubTaskId + "";
+            string filter = "SubTaskId eq " + SubTaskId + " and InternalStatus ne 'TimesheetDeleted'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -76,7 +78,6 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstTIM_EmployeeTimesheet;
         }
 
-
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndPending(ClientContext clientContext, int EmpId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
@@ -89,7 +90,7 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByEmpIdAndDateFilter(ClientContext clientContext, int EmpId, string From, string To)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "EmployeeId eq " + EmpId + " and (TimesheetAddedDate ge '"+ From + "' and TimesheetAddedDate le '" + To + "')";
+            string filter = "EmployeeId eq " + EmpId + " and InternalStatus ne 'TimesheetDeleted' and (TimesheetAddedDate ge '" + From + "' and TimesheetAddedDate le '" + To + "')";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -113,10 +114,44 @@ namespace DeepeshWeb.BAL.Timesheet
             return lstTIM_EmployeeTimesheet;
         }
 
-        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByAllTaskId(ClientContext clientContext, int AllTaskId)
+        public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByAllTaskId(ClientContext clientContext, int AllTaskId, string TimesheetAddedDate, string ParentID)
         {
+            DateTime dt = DateTime.ParseExact(TimesheetAddedDate, "MM-dd-yyyy hh:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            string TimesheetDate = dt.ToString("yyyy-MM-dd");
+            string filter = string.Empty;
+            if(ParentID == "0")
+            {
+                filter = "(TaskId eq " + AllTaskId + " or  SubTaskId eq " + AllTaskId + " ) and InternalStatus ne 'TimesheetDeleted'";
+            }
+            else
+            {
+                filter = "(TaskId eq " + AllTaskId + " or  SubTaskId eq " + AllTaskId + " ) and InternalStatus ne 'TimesheetDeleted' and TimesheetAddedDate gt '" + TimesheetDate + "' and ParentID lt "+ParentID+"";
+            }
+
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "(TaskId eq " + AllTaskId + " or  SubTaskId eq " + AllTaskId + " )";
+
+            RestService restService = new RestService();
+            JArray jArray = new JArray();
+            RESTOption rESTOption = new RESTOption();
+
+            rESTOption.filter = filter;
+            rESTOption.select = "*,Employee/ID,Client/ClientName,Client/ID,Employee/FirstName,Employee/LastName,Employee/OfficeEmail,Manager/ID,Manager/FirstName,Manager/LastName,Manager/OfficeEmail,MileStone/ID,MileStone/MileStone,Project/Id,Project/ProjectName,Task/Id,Task/Task,SubTask/Id,SubTask/SubTask,Status/StatusName,Status/ID,FromTime,ToTime,AllTaskStatus/StatusName,AllTaskStatus/ID,OtherClient,OtherMilestone,OtherProject,OtherTask,ApproveDate,Modified,Editor/Title";
+            rESTOption.expand = "Employee,Manager,MileStone,Project,Task,SubTask,Status,Client,AllTaskStatus,Editor";
+            rESTOption.orderby = "ParentID desc";
+            rESTOption.top = "5000";
+            jArray = restService.GetAllItemFromList(clientContext, "TIM_EmployeeTimesheet", rESTOption);
+
+
+            //JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
+        public List<TIM_EmployeeTimesheetModel> GetTIMForAlterExist(ClientContext clientContext, TIM_EmployeeTimesheetModel item)
+        {
+            string filter = "TaskId eq " + item.Task + " and  SubTaskId eq " + item.SubTask + "  and InternalStatus ne 'TimesheetDeleted' and ParentID gt " + item.ParentID + "";
+
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;
@@ -125,7 +160,16 @@ namespace DeepeshWeb.BAL.Timesheet
         public List<TIM_EmployeeTimesheetModel> GetEmpTimesheetByTimesheetId(ClientContext clientContext, string TimesheetId)
         {
             List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
-            string filter = "TimesheetID eq '" + TimesheetId + "'";
+            string filter = "TimesheetID eq '" + TimesheetId + "' and InternalStatus ne 'TimesheetDeleted'";
+            JArray jArray = RESTGet(clientContext, filter);
+            lstTIM_EmployeeTimesheet = BindList(jArray);
+            return lstTIM_EmployeeTimesheet;
+        }
+
+        public List<TIM_EmployeeTimesheetModel> GetCompletedTimesheet(ClientContext clientContext, int MilestoneId)
+        {
+            List<TIM_EmployeeTimesheetModel> lstTIM_EmployeeTimesheet = new List<TIM_EmployeeTimesheetModel>();
+            string filter = "MileStoneId eq '" + MilestoneId + "' and InternalStatus ne 'TimesheetDeleted' and AllTaskStatus/StatusName eq 'Completed'";
             JArray jArray = RESTGet(clientContext, filter);
             lstTIM_EmployeeTimesheet = BindList(jArray);
             return lstTIM_EmployeeTimesheet;

@@ -14,6 +14,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     $rootScope.EditSubTask = [];
     $rootScope.PrevUploadFiles = [];
     $scope.UploadFiles = [];
+    $scope.CurrentTimesheet = [];
     var ProjectID;
     var AllDataTableId = {};
 
@@ -110,6 +111,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
         //$('.main-toggle').on('click', function () {
         //    $(this).toggleClass('on');
         //})
+        
 
         
     })
@@ -175,6 +177,7 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
             }
         });
     }
+
     $rootScope.LoadProjectData = function () {
         $('#tblProject').DataTable().clear().destroy();
         $('#tblTask').DataTable().clear().destroy();
@@ -251,10 +254,12 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
     }
 
     $rootScope.BindMilestoneTable = function (response, ProjectData, row) {
+        var Action = 'View';
+        var className = 'si si-eye text-success mr-2';
         var MileID = response.data[1][0].ID;
         $scope.Project = ProjectData;
         
-        var Html = '<div><table class="mg-b-0 text-md-nowrap dataTable" style="width: 82%;" id="tblMilestone' + MileID + '" ><thead><tr><th scope="col" style="padding-left: 35px;">Milestone</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th><th scope="col">Action</th></tr></thead> <tbody>';
+        var Html = '<div><table class="mg-b-0 text-md-nowrap dataTable" style="width: 82%;" id="tblMilestone' + MileID + '" ><thead><tr><th scope="col" style="padding-left: 35px;">Milestone</th><th scope="col">Start Date</th><th scope="col">Estimated End Date</th><th scope="col">Days</th><th scope="col">Action</th><th scope="col">Completed Timesheet</th></tr></thead> <tbody>';
         angular.forEach(response.data[1], function (value, key) {
             //this.push(key + ': ' + value);
             $scope["Mile" + value.ID] = value;
@@ -277,8 +282,11 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 Html += '&nbsp;<i class="si si-trash text-danger mr-2" data-toggle="tooltip" title="" data-placement="top" data-original-title="Delete Task" ng-click="DeleteTask(Mile' + value.ID + ', Project, MileRow)"></i>';
 
             }
+
+            Html += '<td><i id="Load' + value.ID + '" class="si si-eye text-success mr-2" data-toggle="tooltip" data-placement="top" data-original-title="View" ng-click="GetCompletedTimesheet(' + value.ID + ',\'' + Action + '\' ,\'' + className + '\')"></i></td>';
+
         });
-        Html += '</td></tr ></tbody></table></span>';
+        Html += '</td></tr></tbody></table></span>';
         row.child(Html).show();
 
 
@@ -304,6 +312,63 @@ ProjectDashboardApp.controller('ProjectDashboardController', function ($scope, $
                 .appendTo('#tblTask_wrapper .col-md-6:eq(0)');
 
         }, 2);
+    }
+
+    $scope.GetCompletedTimesheet = function (MilestoneId, Action, iclass) {
+        $("#Load" + MilestoneId).removeClass(iclass);
+        $("#Load" + MilestoneId).addClass('spinner-border spinner-border-sm');
+        var data = {
+            'MilestoneId': MilestoneId
+        }
+        CommonAppUtilityService.CreateItem("/TIM_ProjectDashboard/GetCompletedTimesheet", data).then(function (response) {
+            if (response.data[0] == "OK") {
+                if (response.data[1].length > 0) {
+                    $scope.CurrentTimesheet = response.data[1];
+                    angular.forEach($scope.CurrentTimesheet, function (Parentvalue, Parentkey) {
+                        //Document code
+                        var Doc = [];
+                        Parentvalue.PrevFiles = Doc;
+                        angular.forEach(response.data[2], function (value, key) {
+                            if (value.LID == Parentvalue.ID) {
+                                var temp = {};
+                                //temp.ID = value.ID;
+                                temp.Name = value.Name;
+                                //temp.LID = value.LID;
+                                temp.FileName = value.DocumentPath;
+                                temp.Delete = "No";
+                                Doc.push(temp);
+                                Parentvalue.PrevFiles = Doc;
+                            }
+
+                        });
+
+                    });
+                    if (Action == "View") {
+                        $scope.Report = true;
+                    }
+                    else
+                        $scope.Report = false;
+
+                    $("#Load" + MilestoneId).removeClass('spinner-border spinner-border-sm');
+                    $("#Load" + MilestoneId).addClass(iclass);
+
+                    $("#ViewTimesheetPopUp").modal('show');
+                }
+                else {
+                    alert("There is no completed timesheet for this milestone");
+                    $("#Load" + MilestoneId).removeClass('spinner-border spinner-border-sm');
+                    $("#Load" + MilestoneId).addClass(iclass);
+                }
+                
+            }
+            
+        });
+    }
+
+    $scope.TimeFormat = function (t) {
+        if (t != undefined || t != null) {
+            return moment(t, ["dd-MM-yyyy h:mm:ss"]).format("HH:mm");
+        }
     }
 
     $rootScope.ShowTask = function (index, Milestone, Project) {
